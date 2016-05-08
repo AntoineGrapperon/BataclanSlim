@@ -298,7 +298,7 @@ public class ConditionalGenerator
        System.gc();
     }*/
     
-    public boolean GenerateConditionalsStepByStep(String inputDataFile, String inputDescFile, String inputZonalFile, String destPath ) throws IOException
+    public boolean GenerateConditionalsStepByStep(String inputDataFile, String inputDescFile, String destPath ) throws IOException
     {
     	//these data required to copy paste CMA information to DA level (projecting information)
     	//myZonalDataReader.OpenFile(inputZonalFile);
@@ -344,7 +344,6 @@ public class ConditionalGenerator
             HashMap<String, Object> currTable = (HashMap<String, Object>) myCondCollection.get(((ArrayList)myDimensionNames.get(i)).get(0));
             for (Map.Entry<String, Object> currPair : currTable.entrySet())
             {
-            	//System.out.println(((LightKeyValPair)(currPair.getValue())).value);
                 myDataWriter.WriteToFile(currPair.getKey() + "," + Integer.toString((((LightKeyValPair)(currPair.getValue())).value)));
             }
             
@@ -352,19 +351,6 @@ public class ConditionalGenerator
             
             myDataWriter.CloseFile();
             myDataReader.CloseFile();
-            System.gc();
-            
-            //this code was an attempt to duplicate all the data in each folder, but it is just making memory requirement explode...
-            /*currRow = myZonalDataReader.GetNextRow();
-            String pathToDest;
-            String[] list;
-           
-            while(currRow!= null){
-            	currRow = myZonalDataReader.GetNextRow();
-            	list = currRow.split(Utils.COLUMN_DELIMETER);
-            	pathToDest = "D:\\Recherche\\CharlieWorkspace\\PopSynz\\data\\" + list[0] + "\\" + sourceType + ((ArrayList) myDimensionNames.get(i)).get(0) + ".csv";
-            	copy(pathToSource,pathToDest);
-        	}*/
         } 
         return true;
     }

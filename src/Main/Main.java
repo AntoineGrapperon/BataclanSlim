@@ -7,6 +7,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Hashtable;
 
+import javax.swing.JFrame;
+
 import org.omg.CORBA.Environment;
 
 import ActivityChoiceModel.BiogemeControlFileGenerator;
@@ -16,6 +18,7 @@ import ActivityChoiceModel.TravelSurveyPreparator;
 import ActivityChoiceModel.UtilsTS;
 import Associations.HungarianAlgoRithmOptimized;
 import Associations.HungarianAlgorithm;
+import Gui.Window;
 import SRMSE.JointDistributionTravelSurvey;
 import SRMSE.SRMSE;
 import SimulationObjects.World;
@@ -58,35 +61,23 @@ public class Main {
 	    String workingDir = System.getProperty("user.dir");
 		System.out.println("Current working directory : " + workingDir);
 	   
-	    
-	    
+	
+	    Window gui = new Window();
 	    //PublicTransitSystem myPublicTransitSystem = new PublicTransitSystem();
 		
 		
 	    
-	    
-	    try {
+	  //  try {
 	    	
 	    	
 	    	//###############################################################################
-	    	//Create conditional distributions at the metro level from PUMF
+	    	//Create conditional distributions at the metro level from disaggregate data
 	    	//###############################################################################
 	    	/*String data = Utils.DATA_DIR + "data\\CMA505PUMF2006NEW.csv";
 	    	String descFile = Utils.DATA_DIR + "ctrl\\descFile.txt";
-	    	String zonalData = "D:\\Recherche\\modelGatineau\\gatineau_zonalFile.csv";// should be removed from the function
 	    	String destPath = Utils.DATA_DIR + "data\\505\\PUMF";
-	    	condGenerator.GenerateConditionalsStepByStep(data,descFile,zonalData,destPath);*/
-	    	
-	    	//###############################################################################
-	    	//Create conditional distributions at the metro level from OD survey (for 
-	    	//occupation and car ownership distribution
-	    	//###############################################################################
-	    	/*String data = Utils.DATA_DIR + "data\\GATINEAU505OD2005NEW.csv";
-	    	String descFile =Utils.DATA_DIR + "ctrl\\descFile.txt";
-	    	String zonalData = "D:\\Recherche\\modelGatineau\\gatineau_zonalFile.csv";// should be removed
-	    	String destPath = Utils.DATA_DIR + "data\\505\\OD";
-	    	condGenerator.GenerateConditionalsStepByStep(data,descFile,zonalData,destPath);*/
-	    	
+	    	condGenerator.GenerateConditionalsStepByStep(data,descFile,destPath);*/
+
 	    	//###############################################################################
 	    	//create local conditional distributions
 	    	//###############################################################################
@@ -94,7 +85,9 @@ public class Main {
 	    	census.prepareDataColumnStorage();*/
 	    	
 	    	//###############################################################################
-	    	//Create the zonal input file for population sinthesis (DAUID , Population)
+	    	// To speed up the process, we had to synthesize the population by batch and run 
+	    	// the SimPSynz software on each batch.
+	    	// This Create the zonal input file for population synthesis (DAUID , Population)
 	    	//###############################################################################
 	    	
 	    	/*CensusPreparator census = new CensusPreparator(Utils.DATA_DIR + "CENSUS2006DAAROUNDSTOP.csv");
@@ -186,7 +179,7 @@ public class Main {
 	    	//Load hypothesis and dimension for the Joint model with Biogeme
 	    	//############################################################################################
 	    	
-	    	String pathControlFile =Utils.DATA_DIR + "biogeme\\ctrl\\biogeme_ctrl_file_with_nest.txt";
+	    	/*String pathControlFile =Utils.DATA_DIR + "biogeme\\ctrl\\biogeme_ctrl_file_with_nest.txt";
 			String pathOutput = Utils.DATA_DIR + "\\biogeme\\ctrlWithZones.mod";
 			String pathHypothesis = Utils.DATA_DIR + "biogeme\\ctrl\\hypoMultiNestWithZones.txt";
 			//String pathHypothesis = Utils.DATA_DIR + "biogeme\\ctrl\\noHypo.txt";
@@ -219,7 +212,7 @@ public class Main {
 			//BE CAREFUL : HYPOTHESIS SHOULD NOT BE CHANGED, HOWEVER IT IS IMPORTANT TO EDIT THE CONTROL FILE
 			//BEFORE CALIBRATING THE MODEL WITH BIOGEME : THE FIXED PARAMETER SHOULD BE CHOOSEN, DUMMIES SHOULD SPECIFIED
 			//AND 
-			String pathToModel = Utils.DATA_DIR + "ptSystem\\ctrlWithZones~1.F12";
+			/*String pathToModel = Utils.DATA_DIR + "ptSystem\\ctrlWithZones~1.F12";
 			mySimulator = new BiogemeSimulator(myCtrlGenerator);
 			mySimulator.initialize(Utils.DATA_DIR + "biogeme\\dataZones2.csv");
 			mySimulator.importBiogemeModel(pathToModel);
@@ -337,14 +330,14 @@ public class Main {
 	    	
 	    	
 	    	
-	    	
+	    /*	
 		
 	    }
 		catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			
-		}
+		}*/
 	    
 	    long endTime = System.currentTimeMillis();
 		

@@ -45,6 +45,20 @@ public class CensusPreparator extends DataManager {
 		writerZonalInputFile.close();
 	}
 	
+	public void writeZonalInputFile(String headerZoneId, String headerPopulationCount) throws IOException{
+		Utils.COLUMN_DELIMETER = ";";
+		storeData(false);
+		Utils.COLUMN_DELIMETER = ",";
+		FileWriter	writerZonalInputFile = createZonalWriter();
+		System.out.println(myData.get(headerZoneId).size());
+		for(int i = 0; i < myData.get(headerZoneId).size(); i++){
+			String dauid = myData.get(headerZoneId).get(i);
+			String pop = myData.get(headerPopulationCount).get(i);
+			writerZonalInputFile.append(dauid + ", " + pop + "\n");
+		}
+		writerZonalInputFile.close();
+	}
+	
 	public void writeZonalInputFile(int nBatch) throws IOException{
 		int count = 0;
 		Utils.COLUMN_DELIMETER = ";";
@@ -103,6 +117,7 @@ public class CensusPreparator extends DataManager {
 	}
 	
 	public void prepareDataColumnStorage() throws IOException{
+		//We had to use the semi column delimiter instead of the comma because there was comas in the data provided by Statistics Canada
 		Utils.COLUMN_DELIMETER = ";";
 		storeData(false);
 		Utils.COLUMN_DELIMETER = ",";
