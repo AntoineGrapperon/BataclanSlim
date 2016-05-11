@@ -23,7 +23,6 @@ public class CensusPreparator extends DataManager {
 	//HashMap<String, ArrayList<String>> myData = new HashMap<String, ArrayList<String>>();
 	
 	
-	
 	public CensusPreparator(String path){
 		myInputDataReader.OpenFile(path);
 		//String[] temp;
@@ -118,6 +117,7 @@ public class CensusPreparator extends DataManager {
 	
 	public void prepareDataColumnStorage() throws IOException{
 		//We had to use the semi column delimiter instead of the comma because there was comas in the data provided by Statistics Canada
+		//System.out.println("<html>-- start creating local distribution from file: " + myInputDataReader.myPath);
 		Utils.COLUMN_DELIMETER = ";";
 		storeData(false);
 		Utils.COLUMN_DELIMETER = ",";
@@ -367,11 +367,11 @@ public class CensusPreparator extends DataManager {
 		try{
 			boolean b = false;
 			//File file = new File("..\\data\\" + daId);
-			File file = new File(Utils.DATA_DIR + "data\\" + daId);
+			File file = new File(Utils.DATA_DIR + "populationSynthesis\\distributions\\" + daId);
 			if(!file.exists()){b=file.mkdirs();}
-			if(!b){System.out.println("--directories were created");}
+			//if(!b){System.out.println("--directories were created");}
 			
-			FileWriter writer = new FileWriter(Utils.DATA_DIR + "data\\" + daId + "\\Census" + attributeName + ".csv");
+			FileWriter writer = new FileWriter(Utils.DATA_DIR + "populationSynthesis\\distributions\\" + daId + "\\Census" + attributeName + ".csv");
 			//FileWriter writer = new FileWriter("..\\data\\" + daId + "\\Census" + attributeName + ".csv");
 			writer.append("Category, Count \n");
 			return writer;
@@ -405,12 +405,13 @@ public class CensusPreparator extends DataManager {
 		try{
 			boolean b = false;
 			//File file = new File("..\\data\\" + daId);
-			File file = new File(Utils.DATA_DIR );
+			String directory = Utils.DATA_DIR + "\\populationSynthesis\\temp\\";
+			File file = new File(directory );
 			if(!file.exists()){b=file.mkdirs();}
 			//if(!b){System.out.println("--directories were created");}
 			if(!b){}
 			
-			FileWriter writer = new FileWriter( Utils.DATA_DIR + "zonalFile_" + UtilsTS.city +"_auto"+n+".txt");
+			FileWriter writer = new FileWriter(directory +  "zonalFile_" + UtilsTS.city +"_auto"+n+".txt");
 			//FileWriter writer = new FileWriter("..\\data\\" + daId + "\\Census" + attributeName + ".csv");
 			writer.append("da_uid, total \n");
 			return writer;
@@ -425,12 +426,13 @@ public class CensusPreparator extends DataManager {
 		try{
 			boolean b = false;
 			//File file = new File("..\\data\\" + daId);
-			File file = new File(Utils.DATA_DIR + "ctrl\\" );
+			String directory = Utils.DATA_DIR + "\\populationSynthesis\\temp\\";
+			File file = new File(directory);
 			if(!file.exists()){b=file.mkdirs();}
 			//if(!b){System.out.println("--directories were created");}
 			if(!b){}
 			
-			FileWriter writer = new FileWriter( Utils.DATA_DIR + "ctrl\\config" + n +".txt");
+			FileWriter writer = new FileWriter(directory + "config" + n +".txt");
 			//FileWriter writer = new FileWriter("..\\data\\" + daId + "\\Census" + attributeName + ".csv");
 			return writer;
 		}

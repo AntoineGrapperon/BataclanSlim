@@ -35,9 +35,11 @@ public class InputDataReader extends FileManager
 @Override
 public void OpenFile(String fileName)
 {
+	myPath = fileName;
 	FileReader fstream = null;
     try
     {
+    	
     	fstream = new FileReader(fileName);
         myFileReader = new BufferedReader(fstream);
 		reader = new LineNumberReader(myFileReader);

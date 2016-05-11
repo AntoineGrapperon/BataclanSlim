@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import com.sun.java_cup.internal.runtime.Scanner;
 
 import SimulationObjects.Person;
 

@@ -41,11 +41,16 @@ public class TabPreparePopulationSynthesis extends JPanel {
 		
 		
 		JLabel header1 = new JLabel("Prepare global conditional distributions");
-		line1 = new PromptStringInformation("Path to disaggregated data", ".csv file -- Provide the path to the disaggregated data source (travel survey, public use micro sample etc)");
-		line2 = new PromptStringInformation("Path to data description", ".txt file -- You have to create a text file which describes each agent attributes and the number of categories for each attributes, starting from 0. For instance: <br>"
-				+ "gender, 0, 1,, : it means that gender attribute can have two values -0 and 1- whose meaning is to be defined by the user.");
+		line1 = new PromptStringInformation("Path to disaggregated data", 
+				".csv file -- Provide the path to the disaggregated data source (travel survey, public use micro sample etc)",
+				"populationSynthesis\\data\\pumf2006GatineauOttawa.csv");
+		line2 = new PromptStringInformation("Path to data description", 
+				".txt file -- You have to create a text file which describes each agent attributes and the number of categories for each attributes, starting from 0. For instance: <br>"
+				+ "gender, 0, 1,, : it means that gender attribute can have two values -0 and 1- whose meaning is to be defined by the user.",
+				"populationSynthesis\\ctrl\\descFile.txt");
 		line3 = new PromptStringInformation("Path to output directory", "folder -- provide the path to the output directory, if you have multiple disaggregated datasource, it is recommended to provide a different folder for each of them to avoid overwriting information. <br>"
-				+ "If you have if have various data sets, you will have to manually select the source for each conditional distribution by browsing the folders and copy pasting the file you want to use.");
+				+ "If you have if have various data sets, you will have to manually select the source for each conditional distribution by browsing the folders and copy pasting the file you want to use.",
+				"populationSynthesis\\distributions\\");
 		line4 = new PromptButton("Draw conditional distributions","<html>Input: disaggregated data. <br>"
 	    		+ "Output: conditional distributions for each attribute described in the data description file.<br>"
 	    		+ "--<br>"
@@ -57,7 +62,10 @@ public class TabPreparePopulationSynthesis extends JPanel {
 	    		d);
 	    
 	    JLabel header2 = new JLabel("Prepare local conditional distributions");
-	    line5 = new PromptStringInformation("Path to census data", ".csv file -- Provide the path to aggregated data (census)");
+	    line5 = new PromptStringInformation("Path to census data",
+	    		"<html>.csv file -- Provide the path to aggregated data (census)<br>"
+	    		+ "please note that the column delimiter used is the semi colon - ; - because in the Canadian census, the coma - , - is being used in the headers",
+	    		"populationSynthesis\\data\\census2006GatineauOttawaDAlevel.csv");
 	    /*JPanel line6 = new JPanel();
 	    act2 = new Button("Draw local conditional distributions", "<html>Input: aggregated data (census counts over age and sex). <br>"
 	    		+ "Output: conditional distribution for each attributes available at local level (age and gender)<br>"

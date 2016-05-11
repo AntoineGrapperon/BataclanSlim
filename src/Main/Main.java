@@ -5,6 +5,7 @@ package Main;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Hashtable;
 
 import javax.swing.JFrame;
@@ -41,6 +42,15 @@ import Utils.*;
 public class Main {
 
     public static void main(String[] args) {
+    	
+        /*ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        //PrintStream ps = new PrintStream(baos);
+        // IMPORTANT: Save the old System.out!
+        PrintStream old = System.out;
+        // Tell Java to use your special stream
+        //System.setOut(ps);*/
+    	
+    	
         // TODO code application logic here
     	System.out.println(Double.MAX_VALUE);
     	long startTime = System.currentTimeMillis();
@@ -61,7 +71,8 @@ public class Main {
 	    String workingDir = System.getProperty("user.dir");
 		System.out.println("Current working directory : " + workingDir);
 	   
-	
+		Utils.DATA_DIR =  System.getProperty("user.dir") + "\\example\\";
+    	
 	    Window gui = new Window();
 	    //PublicTransitSystem myPublicTransitSystem = new PublicTransitSystem();
 		
@@ -342,6 +353,10 @@ public class Main {
 	    long endTime = System.currentTimeMillis();
 		
 		System.out.println("--time to compute age x gender : "+ (endTime-startTime) + "ms");
+		
+		
+		/*System.out.flush();
+	    System.setOut(old);*/
     }
 
 	

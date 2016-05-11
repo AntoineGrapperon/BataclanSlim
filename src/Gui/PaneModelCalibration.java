@@ -20,7 +20,7 @@ public class PaneModelCalibration extends JScrollPane {
 	JPanel myContent = new JPanel();
 	TabPrepareBiogemeCalibration tabPrepareBiogemeCalibration = new TabPrepareBiogemeCalibration(new Dimension(30,50));
 	TabRunModelCalibration tabRunModelCalibration = new TabRunModelCalibration();
-	TabModelValidation tabModelValidation = new TabModelValidation(new Dimension(30,50));
+	TabRunModelValidation tabRunModelValidation = new TabRunModelValidation(new Dimension(30,50));
 	
 	public PaneModelCalibration(){
 		super();
@@ -32,6 +32,6 @@ public class PaneModelCalibration extends JScrollPane {
 		
 		myTabs.add("Prepare model calibration", tabPrepareBiogemeCalibration);
 		myTabs.add("Run model calibration", tabRunModelCalibration);
-		myTabs.add("Validation on observed data", tabModelValidation);
+		myTabs.add("Validation on observed data", tabRunModelValidation);
 	}
 }

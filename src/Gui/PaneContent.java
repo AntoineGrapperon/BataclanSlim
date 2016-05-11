@@ -22,7 +22,7 @@ public class PaneContent extends JPanel {
 
 	CardLayout cl = new CardLayout();
 	String[] listContent = {"population_synthesis","model_calibration", "destination_inference", "socio_demo_inference", "show_map"};
-	PanePopulationSynthesis popSynPane = new PanePopulationSynthesis();
+	PanePopulationSynthesis panePopulationSynthesis = new PanePopulationSynthesis();
 	PaneModelCalibration paneModelCalibration = new PaneModelCalibration();
 	PaneDestinationInference paneDestinationInference = new PaneDestinationInference();
 	PaneSocioDemographicInference paneSocioDemographicInference = new PaneSocioDemographicInference();
@@ -30,7 +30,7 @@ public class PaneContent extends JPanel {
 	public PaneContent(){
 		
 	    this.setLayout(cl);
-	    this.add(popSynPane, listContent[0]);
+	    this.add(panePopulationSynthesis, listContent[0]);
 	    this.add(paneModelCalibration, listContent[1]);
 	    this.add(paneDestinationInference, listContent[2]);
 	    this.add(paneSocioDemographicInference, listContent[3]);

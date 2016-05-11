@@ -557,19 +557,19 @@ public class SpatialZone extends SimulationObject
     
     public String printLocalMarginalFittingAnalysis(int localPool){
     	
-    	OutputFileWritter outputFile = new OutputFileWritter();
+    	//OutputFileWritter outputFile = new OutputFileWritter();
     	String statAnalysis = ConfigFile.fmt(myAttributes.get(0).value) + Utils.COLUMN_DELIMETER + myAttributes.get(1).value;
-    	try{
-    		outputFile.OpenFile(Utils.DATA_DIR + "data\\" + ConfigFile.fmt(myAttributes.get(0).value) + "\\marginalCheck.csv");
+    	//try{
+    		//outputFile.OpenFile(Utils.DATA_DIR + "data\\" + ConfigFile.fmt(myAttributes.get(0).value) + "\\marginalCheck.csv");
     		
     		String config = "Marginal checking for " + ConfigFile.fmt(myAttributes.get(0).value);
-    		outputFile.WriteToFile(config);
+    		/*outputFile.WriteToFile(config);
     		config = "Warmup iterations: " + Utils.COLUMN_DELIMETER + Utils.WARMUP_ITERATIONS;
     		outputFile.WriteToFile(config);
     		config = "Skip iterations:" + Utils.COLUMN_DELIMETER + Utils.SKIP_ITERATIONS;
     		outputFile.WriteToFile(config);
     		config = "Pool count:" + Utils.COLUMN_DELIMETER + localPool;
-    		outputFile.WriteToFile(config);
+    		outputFile.WriteToFile(config);*/
     		
     		
     		
@@ -578,7 +578,7 @@ public class SpatialZone extends SimulationObject
     			for(int j = 0; j < ConfigFile.AttributeDefinitionsImportance.get(i).value; j++){
     				headers = headers + Utils.COLUMN_DELIMETER  + Integer.toString(j);	
     			}
-    			outputFile.WriteToFile(headers);
+    			//outputFile.WriteToFile(headers);
     			String target = "Distribution target";
     			String result = "Number generated";
     			
@@ -608,18 +608,18 @@ public class SpatialZone extends SimulationObject
     					+ absErr + Utils.COLUMN_DELIMETER 
     					+ relativeErr;
 
-    			outputFile.WriteToFile(target);
-    			outputFile.WriteToFile(result);
+    			/*outputFile.WriteToFile(target);
+    			outputFile.WriteToFile(result);*/
     		}
     		
-        	outputFile.CloseFile();
+        	//outputFile.CloseFile();
         	
-    	}
+    	/*}
     	catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			
-		}
+		}*/
     	return statAnalysis;
      
     }

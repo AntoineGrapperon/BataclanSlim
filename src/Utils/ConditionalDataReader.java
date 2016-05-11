@@ -20,23 +20,16 @@ public class ConditionalDataReader extends FileManager
     LineNumberReader reader;
 
     @Override
-    public void OpenFile(String fileName)
+    public void OpenFile(String fileName) throws FileNotFoundException, IOException
     {
         //myFileReader = new BufferedReader(new StringReader(fileName));
         //[AG] I rewrite this function that didn't work (wring version is above, commented line)
         FileReader fstream = null;
-        try
-        {
+
         	fstream = new FileReader(fileName);
             myFileReader = new BufferedReader(fstream);
     		reader = new LineNumberReader(myFileReader);
-           
-         } 
-        catch (IOException ex)
-        {
-        	Logger.getLogger(OutputFileWritter.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
+
     }
     
   //this function expect the input data to be in format:

@@ -175,7 +175,7 @@ public class World extends SimulationObject
         public void Initialize(boolean createPool, int currType, int batchId) throws IOException
         {
         	
-        	ConfigFile.InitializeImportance(Utils.DATA_DIR+"\\ctrl\\config" + batchId +".txt");
+        	ConfigFile.InitializeImportance(Utils.DATA_DIR+"\\populationSynthesis\\temp\\config" + batchId +".txt");
         	System.out.println("--population synthesis successfully configured");
         	
         	InitializeInputDataImportance(currType);
@@ -233,6 +233,49 @@ public class World extends SimulationObject
             		ModelDistribution myAttributeModel = new ModelDistribution();
                 	myAttributeModel.SetDimensionName(ConfigFile.AttributeDefinitions.get(i-numberofcounts+1).category);
                 	myAttributeModel.add(myAttributeModel);*/
+            		System.out.println("--functionnality not implemented");
+            	}    		
+            }
+        }
+        
+        public void Initialize(boolean createPool, int currType, int batchId, String directory) throws IOException
+        {
+        	
+        	ConfigFile.InitializeImportance(Utils.DATA_DIR+"\\populationSynthesis\\temp\\config" + batchId +".txt");
+        	System.out.println("--population synthesis successfully configured");
+        	
+        	InitializeInputDataImportance(currType);
+        	System.out.println("--data readers successfully created");
+        	
+            if (createPool == true)
+            {
+                LoadZones(currType);
+                LoadZonalDataImportance(currType, directory); //redundancy  with load zones ?
+                
+            }
+            else
+            {
+            System.out.println("--functionnality not implemented");
+            }
+            
+            //initialize marginal counters and marginal target (used for evaluating the synthesized population)
+            
+            int numberofmodels = 1;
+        	int numberofcounts = 1;
+            for (int i=0; i<ConfigFile.AttributeDefinitions.size(); i++)
+            {	
+            	if (ConfigFile.TypeOfConditionals.get(i).equals("count"))
+            	{ 
+            		numberofcounts += numberofcounts;
+            		            		
+            		//System.out.println(ConfigFile.AttributeDefinitionsImportance.get(i-numberofmodels+1).category);
+            		DiscreteMarginalDistribution currCounter = new DiscreteMarginalDistribution();
+            		currCounter.SetDimensionName(ConfigFile.AttributeDefinitions.get(i-numberofmodels+1).category);
+            		marginalCounters.put(ConfigFile.AttributeDefinitions.get(i-numberofmodels+1).category, currCounter);
+            	}
+            	
+            	else if (ConfigFile.TypeOfConditionalsImportance.get(i).equals("model"))
+            	{
             		System.out.println("--functionnality not implemented");
             	}    		
             }
@@ -392,6 +435,37 @@ public class World extends SimulationObject
                 {
                     SpatialZone currZone = (SpatialZone)ent.getValue();
                     OpenFilesImportance(currType, currZone);
+                    LoadPersonDataImportance(currZone);
+                    CloseFilesImportance(currType);
+                }
+              //  LoadMarginalsForAge();
+              //  LoadMarginalsForSex();
+              //  LoadMarginalsForHhldSize2();
+              //  LoadMarginalsForEducation();
+
+            }
+        }
+        
+        public void LoadZonalDataImportance(int currType, String directory) throws IOException
+        //avant de commencer, myZonalCollection est constitué de 1) un identifiant et 2) un object qui le KeyValPair (nom de categorie/valeur de la proba ou du comptage)
+        //myZonalCOllection a été créé a partir du fichier zonal
+        {
+            if (currType == AgentType.Household)
+            {
+                LoadMobelData();
+                LoadMarginalsForCars();
+                LoadMarginalsForDwellings();
+                LoadMarginalsForPersons();
+            }
+            else if (currType == AgentType.Person)
+            {
+            	OpenFilesMain(currType, directory);
+                LoadPersonDataMain();
+                CloseFilesMain(currType);
+            	for (Map.Entry<String, Object> ent : myZonalCollection.entrySet())
+                {
+                    SpatialZone currZone = (SpatialZone)ent.getValue();
+                    OpenFilesImportance(currType, currZone, directory);
                     LoadPersonDataImportance(currZone);
                     CloseFilesImportance(currType);
                 }
@@ -681,6 +755,60 @@ public class World extends SimulationObject
               
          }
         
+        private void OpenFilesImportance(int currType, SpatialZone currZone, String directory) throws IOException
+        {
+            if (currType == AgentType.Household)
+            {
+            	System.out.println("--functionnality not implemented");
+            	/*
+                censusPersonFileReader.OpenFile(
+                    Utils.DATA_DIR + "\\Household\\CensusNumOfPers.csv");
+                censusDwellFileReader.OpenFile(
+                    Utils.DATA_DIR + "\\Household\\CensusDwellingType.csv");
+                censusCarFileReader.OpenFile(
+                    Utils.DATA_DIR + "\\Household\\CensusNumOfCars.csv");
+
+                censusPersonFileReader.GetConditionalList();
+                censusDwellFileReader.GetConditionalList();
+                censusCarFileReader.GetConditionalList();*/
+            }
+            if (currType == AgentType.Person)
+            {
+            	int numberofmodels = 1;
+            	int numberofcounts = 1;
+            	
+            	
+            	for (int i=0; i<ConfigFile.AttributeDefinitionsImportance.size();i++)
+            	{	
+            		if (ConfigFile.TypeOfConditionalsImportance.get(i).equals("count"))
+            		{
+            			
+        				numberofcounts += numberofcounts;
+            			System.out.println(directory + 
+            					fmt(currZone.myAttributes.get(0).value) + // careful of the type that returns from the Double.toString : it had a ".0" to the values            					
+            					"\\" +
+            					ConfigFile.AttributesPathsImportance.get(i));
+            					
+            			importanceAttributesFileReader.get(i-numberofmodels+1).OpenFile(
+            					directory + 
+            					fmt(currZone.myAttributes.get(0).value) +
+            					"\\" +
+            					ConfigFile.AttributesPathsImportance.get(i));
+            			
+            			
+            				
+            		}
+            		else if(ConfigFile.TypeOfConditionals.get(i).equals("model"))
+            		{	
+            			/*	numberofmodels += numberofmodels;
+            			modelAttributesFileReader.get(i-numberofcounts+1).OpenFile(Utils.DATA_DIR + "\\"+ConfigFile.AttributesPaths.get(i));*/
+            			System.out.println("--functionnality not implemented");
+            		}
+            	}
+            }
+              
+         }
+        
         private void OpenFilesMain(int currType) throws IOException
         {
             if (currType == AgentType.Household)
@@ -708,16 +836,12 @@ public class World extends SimulationObject
             		{
             				numberofcounts += numberofcounts;
             			System.out.println(Utils.DATA_DIR + 
-            					"data\\" + 
-            					fmt(myAttributes.get(0).value) + // careful of the type that returns from the Double.toString : it had a ".0" to the values            					
-            					"\\" +
+            					"populationSynthesis\\distributions\\" +
             					ConfigFile.AttributesPaths.get(i));
             					
             			mainAttributesFileReader.get(i-numberofmodels+1).OpenFile(
             					Utils.DATA_DIR + 
-            					"\\data\\" + 
-            					fmt(myAttributes.get(0).value) +
-            					"\\" +
+            					"\\populationSynthesis\\distributions\\" +
             					ConfigFile.AttributesPaths.get(i));
             		}
             		else if(ConfigFile.TypeOfConditionals.get(i).equals("model"))
@@ -731,7 +855,49 @@ public class World extends SimulationObject
               
          }
             
-        
+        private void OpenFilesMain(int currType, String directory) throws IOException
+        {
+            if (currType == AgentType.Household)
+            {
+            	System.out.println("--functionnality not implemented");
+            	/*
+                censusPersonFileReader.OpenFile(
+                    Utils.DATA_DIR + "\\Household\\CensusNumOfPers.csv");
+                censusDwellFileReader.OpenFile(
+                    Utils.DATA_DIR + "\\Household\\CensusDwellingType.csv");
+                censusCarFileReader.OpenFile(
+                    Utils.DATA_DIR + "\\Household\\CensusNumOfCars.csv");
+
+                censusPersonFileReader.GetConditionalList();
+                censusDwellFileReader.GetConditionalList();
+                censusCarFileReader.GetConditionalList();*/
+            }
+            if (currType == AgentType.Person)
+            {
+            	int numberofmodels = 1;
+            	int numberofcounts = 1;
+            	for (int i=0; i<ConfigFile.AttributeDefinitions.size();i++)
+            	{	
+            		if (ConfigFile.TypeOfConditionals.get(i).equals("count"))
+            		{
+            				numberofcounts += numberofcounts;
+            			System.out.println(directory +
+            					ConfigFile.AttributesPaths.get(i));
+            					
+            			mainAttributesFileReader.get(i-numberofmodels+1).OpenFile(
+            					directory +
+            					ConfigFile.AttributesPaths.get(i));
+            		}
+            		else if(ConfigFile.TypeOfConditionals.get(i).equals("model"))
+            		{	
+            			/*	numberofmodels += numberofmodels;
+            			modelAttributesFileReader.get(i-numberofcounts+1).OpenFile(Utils.DATA_DIR + "\\"+ConfigFile.AttributesPaths.get(i));*/
+            			System.out.println("--functionnality not implemented");
+            		}
+            	}
+            }
+              
+         }
 
 
 /*        void LoadCensusData(SpatialZone currZone)
@@ -1201,9 +1367,10 @@ public class World extends SimulationObject
 
         public void LoadZones(int CurrType) throws IOException
         {
+        	String directory = Utils.DATA_DIR + "populationSynthesis\\temp\\";
         	 InputDataReader currReader = new InputDataReader();
-        	 System.out.println(Utils.DATA_DIR + ConfigFile.ZonalFile);
-             currReader.OpenFile(Utils.DATA_DIR + ConfigFile.ZonalFile);
+        	 System.out.println(directory + ConfigFile.ZonalFile);
+             currReader.OpenFile(directory + ConfigFile.ZonalFile);
              currReader.FillZonalData(myZonalCollection);
              currReader.CloseFile();
              System.out.println("--zonal collection filled");
@@ -2941,14 +3108,12 @@ public void printLocalMarginalFittingAnalysis(String metro, long startTime){
 	            
 	     }
 
-		public String[] CreatePersonPopulationPoolLocalLevelMultiThreadsBatch(String string, String pathToSeeds,
+		public String[] CreatePersonPopulationPoolLocalLevelMultiThreadsBatch( String pathToSeeds,
 				int numberOfCores) throws IOException {
 			// TODO Auto-generated method stub
 			
 			int agentsCreated = 1;
             int counter = 0;
-            
-          
             
             //
             // We warm the sampler once for all the spatial zones.

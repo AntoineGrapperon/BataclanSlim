@@ -5,6 +5,7 @@
 
 package Utils;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 /**
@@ -13,9 +14,11 @@ import java.io.IOException;
  */
 class FileManager
 {
+	public String myPath;
     //java doesn't need virtual
-    public void OpenFile(String fileName)
+    public void OpenFile(String fileName) throws FileNotFoundException, IOException
     {
+    	myPath = fileName;
 
     }
 
