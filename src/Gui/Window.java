@@ -63,18 +63,21 @@ public class Window extends JFrame implements ActionListener {
 	    container.setLayout(new BorderLayout());
 	    //container.add(content, BorderLayout.CENTER);
 	    
-	    
+	    paneButtons.buttonGeneral.myButton.addMouseListener(new HelpListenerButton());
 	    paneButtons.buttonPopulationSynthesis.myButton.addMouseListener(new HelpListenerButton());
 	    paneButtons.buttonShowMap.myButton.addMouseListener(new HelpListenerButton());
 	    paneButtons.buttonModelCalibration.myButton.addMouseListener(new HelpListenerButton());
 	    paneButtons.buttonDestinationInference.myButton.addMouseListener(new HelpListenerButton());
 	    paneButtons.buttonSocioDemoInference.myButton.addMouseListener(new HelpListenerButton());
 	    
+	    paneButtons.buttonGeneral.myButton.addActionListener(new ButtonListener());
 	    paneButtons.buttonPopulationSynthesis.myButton.addActionListener(new ButtonListener());
 	    paneButtons.buttonShowMap.myButton.addActionListener(new ButtonListener());
 	    paneButtons.buttonModelCalibration.myButton.addActionListener(new ButtonListener());
 	    paneButtons.buttonDestinationInference.myButton.addActionListener(new ButtonListener());
 	    paneButtons.buttonSocioDemoInference.myButton.addActionListener(new ButtonListener());
+	    
+	    content.paneGeneral.line3.myButton.addActionListener(new UpdateWorkingDirectory());
 	    
 	    content.panePopulationSynthesis.tabPreparePopulationSynthesis.line1.myText.addMouseListener(new HelpListenerText());
 	    content.panePopulationSynthesis.tabPreparePopulationSynthesis.line2.myText.addMouseListener(new HelpListenerText());
@@ -84,8 +87,6 @@ public class Window extends JFrame implements ActionListener {
 	    content.panePopulationSynthesis.tabPreparePopulationSynthesis.line5.myText.addMouseListener(new HelpListenerText());
 	    content.panePopulationSynthesis.tabPreparePopulationSynthesis.line6.myButton.addMouseListener(new HelpListenerButton());
 	    content.panePopulationSynthesis.tabPreparePopulationSynthesis.line6.myButton.addActionListener(new PrepareLocalPopulationSynthesisButton());
-	    
-	    
 	     
 	    content.panePopulationSynthesis.tabRunPopulationSynthesis.line1.myText.addMouseListener(new HelpListenerText());
 	    content.panePopulationSynthesis.tabRunPopulationSynthesis.line2.myText.addMouseListener(new HelpListenerText());
@@ -94,8 +95,10 @@ public class Window extends JFrame implements ActionListener {
 	    content.panePopulationSynthesis.tabRunPopulationSynthesis.line5.myComboBox.addMouseListener(new HelpListenerComboBox());
 	    content.panePopulationSynthesis.tabRunPopulationSynthesis.line6.myText.addMouseListener(new HelpListenerText());
 	    content.panePopulationSynthesis.tabRunPopulationSynthesis.line7.myText.addMouseListener(new HelpListenerText());
-	    content.panePopulationSynthesis.tabRunPopulationSynthesis.line8.myButton.addMouseListener(new HelpListenerButton());
-	    content.panePopulationSynthesis.tabRunPopulationSynthesis.line8.myButton.addActionListener(new RunPopulationSynthesisButton());
+	    content.panePopulationSynthesis.tabRunPopulationSynthesis.line8.myText.addMouseListener(new HelpListenerText());
+	    content.panePopulationSynthesis.tabRunPopulationSynthesis.line10.myText.addMouseListener(new HelpListenerText());
+	    content.panePopulationSynthesis.tabRunPopulationSynthesis.line11.myButton.addMouseListener(new HelpListenerButton());
+	    content.panePopulationSynthesis.tabRunPopulationSynthesis.line11.myButton.addActionListener(new RunPopulationSynthesisButton());
 	    
 	    content.paneModelCalibration.tabPrepareBiogemeCalibration.line1.myText.addMouseListener(new HelpListenerText());
 	    content.paneModelCalibration.tabPrepareBiogemeCalibration.line2.myText.addMouseListener(new HelpListenerText());
@@ -150,6 +153,137 @@ public class Window extends JFrame implements ActionListener {
 		}
 	}
 	
+	class UpdateWorkingDirectory implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			String newWD = content.paneGeneral.line2.myText.getText();
+			Utils.DATA_DIR = newWD;
+			System.out.println("--new project directory = " + Utils.DATA_DIR);
+		}
+		
+	}
+	
+	class PrepareCtrlFilePopulationSynthesis implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			try {
+				String censusData = content.panePopulationSynthesis.tabRunPopulationSynthesis.line1.myText.getText();
+				String nBtch = content.panePopulationSynthesis.tabRunPopulationSynthesis.line12.myText.getText();
+				int nBatch = Integer.parseInt(nBtch.trim());
+				
+				CensusPreparator census = new CensusPreparator(censusData);
+				census.writeZonalInputFile(nBatch);
+		    	census.writeCtrlFile(nBatch);
+		    	System.out.println("<html>-- local controler and local description file produced");
+		    	
+	    	} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+				System.out.println(e1.getMessage());
+			}
+		}
+		
+	}
+	
+	class RunPopulationSynthesisButton implements ActionListener{
+
+		public void actionPerformed(ActionEvent arg0) {
+			// TODO Auto-generated method stub
+			System.out.println("<html>--population synthesis is running");
+			try{
+				
+				String seedData = content.panePopulationSynthesis.tabRunPopulationSynthesis.line2.myText.getText();
+				String distributionsDirectory = content.panePopulationSynthesis.tabRunPopulationSynthesis.line3.myText.getText();
+				String nBtch = content.panePopulationSynthesis.tabRunPopulationSynthesis.line4.myText.getText();
+				int nBatch = Integer.parseInt(nBtch.trim());
+				int	nThreads = (int) content.panePopulationSynthesis.tabRunPopulationSynthesis.line5.myComboBox.getSelectedItem();
+				String nSkp = content.panePopulationSynthesis.tabRunPopulationSynthesis.line6.myText.getText();
+				int nSkips = Integer.parseInt(nSkp.trim());
+				String nWrm = content.panePopulationSynthesis.tabRunPopulationSynthesis.line7.myText.getText();
+				int nWarm = Integer.parseInt(nWrm.trim());
+				String outputStat = content.panePopulationSynthesis.tabRunPopulationSynthesis.line8.myText.getText();
+				String outputPop = content.panePopulationSynthesis.tabRunPopulationSynthesis.line10.myText.getText();
+				
+				Utils.SKIP_ITERATIONS = nSkips;
+				Utils.WARMUP_ITERATIONS = nWarm;
+				
+				
+				
+				OutputFileWritter localStatAnalysis = new OutputFileWritter();
+	            localStatAnalysis.OpenFile(outputStat);
+	            String headers =UtilsSM.zoneId + Utils.COLUMN_DELIMETER + Utils.population;
+	            for(int i = 0; i < ConfigFile.AttributeDefinitionsImportance.size(); i++){
+	    			headers = headers + Utils.COLUMN_DELIMETER + ConfigFile.AttributeDefinitionsImportance.get(i).category + "SRMSE"
+	    					 + Utils.COLUMN_DELIMETER + ConfigFile.AttributeDefinitionsImportance.get(i).category + "TAE_DA"
+	    							 + Utils.COLUMN_DELIMETER + ConfigFile.AttributeDefinitionsImportance.get(i).category + "%SAE_DA" ;
+	            }
+	            for(int i = 0; i < ConfigFile.AttributeDefinitionsImportance.size(); i++){
+	            	for(int j = 0 ; j < ConfigFile.AttributeDefinitionsImportance.get(i).value; j++){
+	            		headers = headers + Utils.COLUMN_DELIMETER  + ConfigFile.AttributeDefinitionsImportance.get(i).category + j + "TAE";
+	            	}
+	            }
+	            for(int i = 0; i < ConfigFile.AttributeDefinitionsImportance.size(); i++){
+	            	for(int j = 0 ; j < ConfigFile.AttributeDefinitionsImportance.get(i).value; j++){
+	            		headers = headers + Utils.COLUMN_DELIMETER  + ConfigFile.AttributeDefinitionsImportance.get(i).category + "SAE";
+	            	}
+	            }
+	            for(int i = 0; i < ConfigFile.AttributeDefinitionsImportance.size(); i++){
+	            	for(int j = 0 ; j < ConfigFile.AttributeDefinitionsImportance.get(i).value; j++){
+	            		headers = headers + Utils.COLUMN_DELIMETER  + ConfigFile.AttributeDefinitionsImportance.get(i).category + j + "Target";
+	            	}
+	            }
+	            for(int i = 0; i < ConfigFile.AttributeDefinitionsImportance.size(); i++){
+	            	for(int j = 0 ; j < ConfigFile.AttributeDefinitionsImportance.get(i).value; j++){
+	            		headers = headers + Utils.COLUMN_DELIMETER  + ConfigFile.AttributeDefinitionsImportance.get(i).category + j + "Result";
+	            	}
+	            }
+	            
+	            localStatAnalysis.myFileWritter.write(headers);
+	            
+	            // Initialize the population pool log
+	            OutputFileWritter population =  new OutputFileWritter();
+	        	population.OpenFile(outputPop);
+	        	headers = "agentId" + Utils.COLUMN_DELIMETER + UtilsSM.zoneId;
+	            for(int i = 0; i < ConfigFile.AttributeDefinitions.size(); i++){
+	    			headers = headers + Utils.COLUMN_DELIMETER + ConfigFile.AttributeDefinitions.get(i).category ;
+	            }
+	            population.myFileWritter.write(headers);
+	            
+	            World myWorld = new World(505);
+	            ConfigFile.resetConfigFile();
+	            myWorld = null;
+		    	
+	            //Create batches
+		    	for(int i = 0; i < nBatch; i++){
+		    		
+		    		
+		    		World currWorld = new World(505);
+		    		currWorld.Initialize(true, 1, i, distributionsDirectory);
+			    	System.out.println("--computation with: " + nThreads + " logical processors");
+			    	String[] answer = currWorld.CreatePersonPopulationPoolLocalLevelMultiThreadsBatch(seedData, nThreads);
+					currWorld = null;
+					//System.out.println(answer[1]);
+			    	localStatAnalysis.myFileWritter.write(answer[0]);
+		            population.myFileWritter.write(answer[1]);
+		            ConfigFile.resetConfigFile();
+		    	}
+
+	            localStatAnalysis.CloseFile();
+		    	population.CloseFile();
+			}
+			catch(NumberFormatException | IOException e){
+				System.out.println(e.getMessage());
+			} 
+			
+	    	System.out.println("<html>-- population synthesis done</html>");
+		}
+	}
+	
+
 	class RunSocioDemographicInference implements ActionListener{
 
 		@Override
@@ -322,95 +456,6 @@ public class Window extends JFrame implements ActionListener {
 		}
 	}
 	
-	class RunPopulationSynthesisButton implements ActionListener{
-
-		public void actionPerformed(ActionEvent arg0) {
-			// TODO Auto-generated method stub
-			System.out.println("<html>--population synthesis is running");
-			try{
-				String censusData = content.panePopulationSynthesis.tabRunPopulationSynthesis.line1.myText.getText();
-				String seedData = content.panePopulationSynthesis.tabRunPopulationSynthesis.line2.myText.getText();
-				String distributionsDirectory = content.panePopulationSynthesis.tabRunPopulationSynthesis.line3.myText.getText();
-				String nBtch = content.panePopulationSynthesis.tabRunPopulationSynthesis.line4.myText.getText();
-				int nBatch = Integer.parseInt(nBtch.trim());
-				int	nThreads = (int) content.panePopulationSynthesis.tabRunPopulationSynthesis.line5.myComboBox.getSelectedItem();
-				String outputStat = content.panePopulationSynthesis.tabRunPopulationSynthesis.line6.myText.getText();
-				String outputPop = content.panePopulationSynthesis.tabRunPopulationSynthesis.line7.myText.getText();
-				
-				CensusPreparator census = new CensusPreparator(censusData);
-		    	census.writeZonalInputFile(nBatch);	
-		    	census.writeCtrlFile(nBatch);
-		    	System.out.println("<html>-- local controler and local description file produced");
-				
-				OutputFileWritter localStatAnalysis = new OutputFileWritter();
-	            localStatAnalysis.OpenFile(outputStat);
-	            String headers =UtilsSM.zoneId + Utils.COLUMN_DELIMETER + Utils.population;
-	            for(int i = 0; i < ConfigFile.AttributeDefinitionsImportance.size(); i++){
-	    			headers = headers + Utils.COLUMN_DELIMETER + ConfigFile.AttributeDefinitionsImportance.get(i).category + "SRMSE"
-	    					 + Utils.COLUMN_DELIMETER + ConfigFile.AttributeDefinitionsImportance.get(i).category + "TAE_DA"
-	    							 + Utils.COLUMN_DELIMETER + ConfigFile.AttributeDefinitionsImportance.get(i).category + "%SAE_DA" ;
-	            }
-	            for(int i = 0; i < ConfigFile.AttributeDefinitionsImportance.size(); i++){
-	            	for(int j = 0 ; j < ConfigFile.AttributeDefinitionsImportance.get(i).value; j++){
-	            		headers = headers + Utils.COLUMN_DELIMETER  + ConfigFile.AttributeDefinitionsImportance.get(i).category + j + "TAE";
-	            	}
-	            }
-	            for(int i = 0; i < ConfigFile.AttributeDefinitionsImportance.size(); i++){
-	            	for(int j = 0 ; j < ConfigFile.AttributeDefinitionsImportance.get(i).value; j++){
-	            		headers = headers + Utils.COLUMN_DELIMETER  + ConfigFile.AttributeDefinitionsImportance.get(i).category + "SAE";
-	            	}
-	            }
-	            for(int i = 0; i < ConfigFile.AttributeDefinitionsImportance.size(); i++){
-	            	for(int j = 0 ; j < ConfigFile.AttributeDefinitionsImportance.get(i).value; j++){
-	            		headers = headers + Utils.COLUMN_DELIMETER  + ConfigFile.AttributeDefinitionsImportance.get(i).category + j + "Target";
-	            	}
-	            }
-	            for(int i = 0; i < ConfigFile.AttributeDefinitionsImportance.size(); i++){
-	            	for(int j = 0 ; j < ConfigFile.AttributeDefinitionsImportance.get(i).value; j++){
-	            		headers = headers + Utils.COLUMN_DELIMETER  + ConfigFile.AttributeDefinitionsImportance.get(i).category + j + "Result";
-	            	}
-	            }
-	            
-	            localStatAnalysis.myFileWritter.write(headers);
-	            
-	            // Initialize the population pool log
-	            OutputFileWritter population =  new OutputFileWritter();
-	        	population.OpenFile(outputPop);
-	        	headers = "agentId" + Utils.COLUMN_DELIMETER + UtilsSM.zoneId;
-	            for(int i = 0; i < ConfigFile.AttributeDefinitions.size(); i++){
-	    			headers = headers + Utils.COLUMN_DELIMETER + ConfigFile.AttributeDefinitions.get(i).category ;
-	            }
-	            population.myFileWritter.write(headers);
-	            
-	            World myWorld = new World(505);
-	            ConfigFile.resetConfigFile();
-	            myWorld = null;
-		    	
-	            //Create batches
-		    	for(int i = 0; i < nBatch; i++){
-		    		
-		    		
-		    		World currWorld = new World(505);
-		    		currWorld.Initialize(true, 1, i, distributionsDirectory);
-			    	System.out.println("--computation with: " + nThreads + " logical processors");
-			    	String[] answer = currWorld.CreatePersonPopulationPoolLocalLevelMultiThreadsBatch(seedData, nThreads);
-					currWorld = null;
-					//System.out.println(answer[1]);
-			    	localStatAnalysis.myFileWritter.write(answer[0]);
-		            population.myFileWritter.write(answer[1]);
-		            ConfigFile.resetConfigFile();
-		    	}
-
-	            localStatAnalysis.CloseFile();
-		    	population.CloseFile();
-			}
-			catch(NumberFormatException | IOException e){
-				System.out.println(e.getMessage());
-			} 
-			
-	    	System.out.println("<html>-- population synthesis done</html>");
-		}
-	}
 	
 	class HelpListenerButton implements MouseListener{
 		public void actionPerformed(MouseEvent arg0){}

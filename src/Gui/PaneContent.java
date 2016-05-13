@@ -21,7 +21,8 @@ import javax.swing.JTextField;
 public class PaneContent extends JPanel {
 
 	CardLayout cl = new CardLayout();
-	String[] listContent = {"population_synthesis","model_calibration", "destination_inference", "socio_demo_inference", "show_map"};
+	String[] listContent = {"general", "population_synthesis","model_calibration", "destination_inference", "socio_demo_inference", "show_map"};
+	PaneGeneral paneGeneral = new PaneGeneral();
 	PanePopulationSynthesis panePopulationSynthesis = new PanePopulationSynthesis();
 	PaneModelCalibration paneModelCalibration = new PaneModelCalibration();
 	PaneDestinationInference paneDestinationInference = new PaneDestinationInference();
@@ -30,11 +31,12 @@ public class PaneContent extends JPanel {
 	public PaneContent(){
 		
 	    this.setLayout(cl);
-	    this.add(panePopulationSynthesis, listContent[0]);
-	    this.add(paneModelCalibration, listContent[1]);
-	    this.add(paneDestinationInference, listContent[2]);
-	    this.add(paneSocioDemographicInference, listContent[3]);
-	    this.add(map, listContent[4]);
+	    this.add(paneGeneral,listContent[0]);
+	    this.add(panePopulationSynthesis, listContent[1]);
+	    this.add(paneModelCalibration, listContent[2]);
+	    this.add(paneDestinationInference, listContent[3]);
+	    this.add(paneSocioDemographicInference, listContent[4]);
+	    this.add(map, listContent[5]);
 	   
 	}
 }

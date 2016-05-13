@@ -66,18 +66,15 @@ public class TabPreparePopulationSynthesis extends JPanel {
 	    		"<html>.csv file -- Provide the path to aggregated data (census)<br>"
 	    		+ "please note that the column delimiter used is the semi colon - ; - because in the Canadian census, the coma - , - is being used in the headers",
 	    		"populationSynthesis\\data\\census2006GatineauOttawaDAlevel.csv");
-	    /*JPanel line6 = new JPanel();
-	    act2 = new Button("Draw local conditional distributions", "<html>Input: aggregated data (census counts over age and sex). <br>"
-	    		+ "Output: conditional distribution for each attributes available at local level (age and gender)<br>"
-	    		+ "--<br>"
-	    		+ "This function will create as many subfolders as there is local areas. Therefore it is recommended to dedicate a folder to this output."
-	    		);
-	    line6.add(act2);*/
+	
 	    line6 = new PromptButton("Draw local conditional distributions",
 	    		"<html>Input: aggregated data (census counts over age and sex). <br>"
 	    	    		+ "Output: conditional distribution for each attributes available at local level (age and gender)<br>"
 	    	    		+ "--<br>"
-	    	    		+ "This function will create as many subfolders as there is local areas. Therefore it is recommended to dedicate a folder to this output."
+	    	    		+ "This function will create as many subfolders as there is local areas. Therefore it is recommended to dedicate a folder to this output.<br>"
+	    	    		+ "--<br>"
+	    	    		+ "This function was coded to create local distribution of age * gender from Canadian census data. The user should code his own census preparation method"
+	    	    		+ "based on our example."
 	    	    		, d);
 	    
 

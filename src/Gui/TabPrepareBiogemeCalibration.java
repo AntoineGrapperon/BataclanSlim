@@ -69,7 +69,7 @@ public class TabPrepareBiogemeCalibration extends JPanel {
 		
 		JLabel prepareTravelSurvey = new JLabel("Format travel survey so choice index match the software dictionnary");
 		line5 = new PromptStringInformation("Path to the choice description file", 
-				"<html> .txt file -- this file describes choices attribute following this format: <br>"
+				"<html> .txt file -- this file describes choice attributes following this format: <br>"
 				+ "choice, number of discrete alternatives<br>"
 				+ "--<br>"
 				+ "For example: <br>"

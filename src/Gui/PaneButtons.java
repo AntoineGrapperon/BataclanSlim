@@ -25,6 +25,7 @@ import Controlers.PromptButton;
 public class PaneButtons extends JPanel {
 	Dimension d;
 	JPanel myContent = new JPanel();
+	PromptButton buttonGeneral;
 	PromptButton buttonPopulationSynthesis;
 	PromptButton buttonModelCalibration;
 	PromptButton buttonDestinationInference;
@@ -34,31 +35,36 @@ public class PaneButtons extends JPanel {
     
 	public PaneButtons(){
 		d = new Dimension(200, 50);
+		buttonGeneral = new PromptButton("General",
+				"<html> A few words of introduction and setting up the project",
+				d,
+				0);
 		buttonPopulationSynthesis = new PromptButton("Population Synthesis", 
 				"<html>Methods to prepare datasets for the population synthesis (creating both local and global conditionals) and methods to perform a MCMC based population synthesis, according to Gibbs Sampling method described in Farooq et al. (2013)</html>",
 				d,
-				0);
+				1);
 		buttonModelCalibration = new PromptButton("Model calibration", 
 				"<html> Methods to generate a control file for nested joint models for BisonBiogeme, to prepare the travel survey for the calibration/ </html> ",
 				d,
-				1);
+				2);
 		buttonDestinationInference = new PromptButton("Destination inference",
 				"<html> Methods to infer alighting bus stops and analyse the goodness of this methods applied to your data </html>",
 				d,
-				2);
+				3);
 		buttonSocioDemoInference = new PromptButton("Socio-demographic inference",
 				"<html> Methods to attach socio demographic attributes to smart cards based on the three following hypotheses:<br>"
 				+ "(A) people live near their daily most frequent bus stops<br>"
 				+ "(B) people socio-demographic attributes have a string influence on their mobility choices<br>"
 				+ "(C) the applied fare allow us to infer some socio-demographic information</html>",
 				d,
-				3);
+				4);
 		buttonShowMap = new PromptButton("Show map",
 	    		"this is to show the map",
 	    		d,
-	    		4);
+	    		5);
 		
 	    myContent.setLayout(new BoxLayout(myContent, BoxLayout.PAGE_AXIS));
+	    myContent.add(buttonGeneral);
 	    myContent.add(buttonPopulationSynthesis);
 	    myContent.add(buttonModelCalibration);
 	    myContent.add(buttonDestinationInference);

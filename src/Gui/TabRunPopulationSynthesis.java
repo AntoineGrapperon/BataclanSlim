@@ -26,13 +26,17 @@ public class TabRunPopulationSynthesis extends JPanel {
 
 
 	PromptStringInformation line1;
+	PromptStringInformation line12;
+	PromptButton line13;
 	PromptStringInformation line2;
 	PromptStringInformation line3;
 	PromptStringInformation line4;
 	PromptComboBox line5;
 	PromptStringInformation line6;
 	PromptStringInformation line7;
-	PromptButton line8;
+	PromptStringInformation line8;
+	PromptStringInformation line10;
+	PromptButton line11;
 	
 	public TabRunPopulationSynthesis(){
 		super();
@@ -41,6 +45,14 @@ public class TabRunPopulationSynthesis extends JPanel {
 		line1 = new PromptStringInformation("Path to census data", 
 				"<html>.csv file -- provide the path to census data",
 				"populationSynthesis\\data\\census2006GatineauOttawaDAlevel.csv");
+		
+		line12 = new PromptStringInformation("Number of batches", 
+				"<html>number -- if you have an important population, you may want to proceed the population synthesis by batch to avoid to reach RAM capability and the resulting crash");
+		
+		line13 = new PromptButton("Prepare control files",
+				"<html> prepare the agent attributes description files and creates control files for population synthesis",
+				d);
+		
 		line2 = new PromptStringInformation("Path to seeds" , 
 				"<html>.csv file -- provide a path to a disaggregated data source which will be used to take a good seed to initiate the MCMC random walk",
 				"populationSynthesis\\data\\pumf2006GatineauOttawa.csv");
@@ -61,15 +73,26 @@ public class TabRunPopulationSynthesis extends JPanel {
 		line5 = new PromptComboBox("Number of threads", 
 				"<html>Number -- it allows the software to work using multithreading. This is interesting to reduce computation time.",
 				threads);
+		
+		line6 = new PromptStringInformation("Skip criterion",
+				"<html> number  -- the skip criterion, in a Monte Carlo Markov Chain random walk, is the number of steps between two actual sampling of agents.<br>"
+				+ "The higher the skip criterion is, the more random is the walk. It has a logarithmique progression therefore to high of a number won't be useful.<br>"
+				+ "A big number of skips will increase the time of computation, while a small number of skip will result in correlated synthetic agents. <br>"
+				+ "We recommend using 20 skips for a agent with 8 attributes.");
+		
+		line7 = new PromptStringInformation("Warming up steps",
+				"<html> number -- the number  of steps to warm up the sampler. The sampler is initiated by taking a real seed from a disagreggate datasource. "
+				+ "In order to let the sampler distantiate itself from the initial seed, we draw a great number of agent that we will not sample.<br>"
+				+ "In our case study, we considered 50 000 ");
 
-		line6 = new PromptStringInformation("Output path for population synthesis statistical log", 
+		line8 = new PromptStringInformation("Output path for population synthesis statistical log", 
 				"<html>.csv file -- there will be a single statistical log for all zones, including TAE, SAE and SRMSE values as well as categories counts, to ease the population synthesis validation. ",
 				"outputs\\populationSynthesisStatistics.csv");
-		line7 = new PromptStringInformation("Output path for population synthesis agents", 
+		line10 = new PromptStringInformation("Output path for population synthesis agents", 
 				"<html>.csv file -- the path to the actual population pool of agent that you will be able to use.",
 				"outputs\\syntheticPopulation.csv");
 		
-		line8 = new PromptButton("Create synthetic population","<html>Input: <br>"
+		line11 = new PromptButton("Create synthetic population","<html>Input: <br>"
 	    		+ "Census data -- CSV file -- it is used to create total population count. In our methodology we discarded children under 11. <br>"
 	    		+ "Seed data -- CSV file -- it can be a disaggregated data source, it is used to initiate the Gibbs sampler in a reasonable space to speed up the random walk and make the output more reliable.<br>"
 	    		+ "Number of batches -- in order to avoid crash due to a lack of RAM, you can decide to batch your data and process it sequentially. <br>"
@@ -85,14 +108,18 @@ public class TabRunPopulationSynthesis extends JPanel {
 	    JPanel myContent = new JPanel();
 	    myContent.add(runPopSyn);
 	    myContent.add(line1);
+	    myContent.add(line12);
+	    myContent.add(line13);
 	    myContent.add(line2);
 	    myContent.add(line3);
 	    myContent.add(line4);
 	    myContent.add(line5);
-	    //prepareData.add(threadChoice);
 	    myContent.add(line6);
 	    myContent.add(line7);
+	    //prepareData.add(threadChoice);
 	    myContent.add(line8);
+	    myContent.add(line10);
+	    myContent.add(line11);
 	    
 	    myContent.setLayout(new BoxLayout(myContent, BoxLayout.PAGE_AXIS));
 	    

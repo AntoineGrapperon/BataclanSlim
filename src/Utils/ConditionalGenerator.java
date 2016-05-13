@@ -324,14 +324,11 @@ public class ConditionalGenerator
         	myDataReader.OpenFile(inputDataFile);
             currRow = myDataReader.GetNextRow();
             currRow = myDataReader.GetNextRow();
-            String pathToSource = null;;
-            if(UtilsTS.city.equals("Montreal")){
-            	pathToSource = Utils.DATA_DIR +"\\data\\"+ destPath + "\\" + ((ArrayList) myDimensionNames.get(i)).get(0) + ".txt";
-            }
-            else if (UtilsTS.city.equals("Gatineau")){
-            	pathToSource = destPath + "\\" + ((ArrayList) myDimensionNames.get(i)).get(0) + ".txt";
-            }
-        	myDataWriter.OpenFile(pathToSource);
+            String pathToConditionalDistribution = null;;
+            
+            pathToConditionalDistribution = destPath + "\\" + ((ArrayList) myDimensionNames.get(i)).get(0) + ".txt";
+            
+        	myDataWriter.OpenFile(pathToConditionalDistribution);
             myDataWriter.WriteToFile("Conditional,Count");
             CreateCategoryCombinations(i);
             System.out.println("--category combinations created");
@@ -358,38 +355,30 @@ public class ConditionalGenerator
     private void WriteNextConditionalOneCategoryAtATime(String currStr, int idx)
     {
         String[] currVal = currStr.split(Utils.COLUMN_DELIMETER);
-			
-        //for(int i = 0; i < currVal.length; i++)
-        //{
-            HashMap<String, Object> currDimColl = (HashMap<String, Object>) myCondCollection.get(((ArrayList)myDimensionNames.get(idx)).get(0));
-            String currCondNm = currVal[idx] + Utils.CATEGORY_DELIMITER;
-            for (int j = 0; j < currVal.length; j++)
+        HashMap<String, Object> currDimColl = (HashMap<String, Object>) myCondCollection.get(((ArrayList)myDimensionNames.get(idx)).get(0));
+        String currCondNm = currVal[idx] + Utils.CATEGORY_DELIMITER;
+        for (int j = 0; j < currVal.length; j++)
+        {
+            if (idx != j)
             {
-                if (idx != j)
-                {
-                    currCondNm = currCondNm + currVal[j] + Utils.CONDITIONAL_DELIMITER;
-                }
+                currCondNm = currCondNm + currVal[j] + Utils.CONDITIONAL_DELIMITER;
             }
-            currCondNm = currCondNm.substring(0, currCondNm.length() - 1);
-            //System.out.println(currCondNm);
-            //System.out.println(currDimColl);
-            if (currDimColl.containsKey(currCondNm))
-            {
-            	
-                LightKeyValPair mycurVal = (LightKeyValPair) currDimColl.get(currCondNm);
-                mycurVal.value++;
-                currDimColl.put(currCondNm, mycurVal);
-                //System.out.println(mycurVal.value);
-            }
-            else
-            {
-            	//System.out.println("no");
-                LightKeyValPair curPair = new LightKeyValPair();
-                curPair.value = 1;
-                curPair.category = currCondNm;
-                currDimColl.put(currCondNm, curPair);
-            }
-        //}
+        }
+        currCondNm = currCondNm.substring(0, currCondNm.length() - 1);
+        
+        if (currDimColl.containsKey(currCondNm))
+        {
+            LightKeyValPair mycurVal = (LightKeyValPair) currDimColl.get(currCondNm);
+            mycurVal.value++;
+            currDimColl.put(currCondNm, mycurVal);
+        }
+        else
+        {
+            LightKeyValPair curPair = new LightKeyValPair();
+            curPair.value = 1;
+            curPair.category = currCondNm;
+            currDimColl.put(currCondNm, curPair);
+        }
     }
     
     private void copy(String source, String dest){

@@ -69,22 +69,19 @@ public class CensusPreparator extends DataManager {
 			for(int i = 0;i < myData.get(UtilsTS.dauid).size();i++){
 				if((i>= currN * subsetSize && i < (currN+1)*subsetSize) || (i >= currN * subsetSize && currN == nBatch-1)){
 					String dauid = myData.get(UtilsTS.dauid).get(i);
-					int populationTarget = Integer.parseInt(myData.get(Utils.population + ", 2006").get(i)) - 
+					int populationTarget = Integer.parseInt(myData.get(Utils.population).get(i));
+					//In our case study, we considered only over 10 years old.
+					/*int populationTarget = Integer.parseInt(myData.get(Utils.population).get(i)) - 
 							Integer.parseInt(myData.get("Male, total / 0 to 4 years").get(i)) -
 							Integer.parseInt(myData.get("Female, total / 0 to 4 years").get(i)) -
 							Integer.parseInt(myData.get("Male, total / 5 to 9 years").get(i)) -
-							Integer.parseInt(myData.get("Female, total / 5 to 9 years").get(i)) ;
+							Integer.parseInt(myData.get("Female, total / 5 to 9 years").get(i)) ;*/
 					String pop = Integer.toString(populationTarget);
-					//String pop = myData.get(Utils.population + ", 2006").get(i);
 					writerZonalInputFile.append(dauid + ", " + pop + "\n");
 					count++;
 				}
 			}
-			/*for(int i = currN * subsetSize; i < Math.min(myData.get(UtilsTS.dauid).size(),(currN+1)* subsetSize); i++){
-				
-			}*/
 			writerZonalInputFile.close();
-			
 		}	
 		System.out.println("-- " + count + " zones where created out of " + myData.get(UtilsTS.dauid).size());
 	}
@@ -117,7 +114,7 @@ public class CensusPreparator extends DataManager {
 	
 	public void prepareDataColumnStorage() throws IOException{
 		//We had to use the semi column delimiter instead of the comma because there was comas in the data provided by Statistics Canada
-		//System.out.println("<html>-- start creating local distribution from file: " + myInputDataReader.myPath);
+		
 		Utils.COLUMN_DELIMETER = ";";
 		storeData(false);
 		Utils.COLUMN_DELIMETER = ",";
@@ -404,15 +401,12 @@ public class CensusPreparator extends DataManager {
 	public FileWriter createZonalWriter(int n){
 		try{
 			boolean b = false;
-			//File file = new File("..\\data\\" + daId);
 			String directory = Utils.DATA_DIR + "\\populationSynthesis\\temp\\";
 			File file = new File(directory );
 			if(!file.exists()){b=file.mkdirs();}
-			//if(!b){System.out.println("--directories were created");}
 			if(!b){}
 			
 			FileWriter writer = new FileWriter(directory +  "zonalFile_" + UtilsTS.city +"_auto"+n+".txt");
-			//FileWriter writer = new FileWriter("..\\data\\" + daId + "\\Census" + attributeName + ".csv");
 			writer.append("da_uid, total \n");
 			return writer;
 		}
@@ -425,15 +419,12 @@ public class CensusPreparator extends DataManager {
 	public FileWriter createCtrlFileWriter(int n)	{
 		try{
 			boolean b = false;
-			//File file = new File("..\\data\\" + daId);
 			String directory = Utils.DATA_DIR + "\\populationSynthesis\\temp\\";
 			File file = new File(directory);
 			if(!file.exists()){b=file.mkdirs();}
-			//if(!b){System.out.println("--directories were created");}
 			if(!b){}
 			
 			FileWriter writer = new FileWriter(directory + "config" + n +".txt");
-			//FileWriter writer = new FileWriter("..\\data\\" + daId + "\\Census" + attributeName + ".csv");
 			return writer;
 		}
 		catch(Exception e){	
@@ -471,13 +462,11 @@ public class CensusPreparator extends DataManager {
 
 	    	 for (int i=1; i<data.size(); i++)
 	    	 {
-	    		 //System.out.println(headers.size() + "  " + data.get(i).size() + "  " + data.get(i).get(data.get(i).size()-1));
-	    			for (int j=0; j<headers.size();j++)
+	    		 	for (int j=0; j<headers.size();j++)
 	    			{
 	    				myData.get(headers.get(j)).add(data.get(i).get(j));
 	    			}
 	    	 }
-	    	 //System.out.println("--census data was stored");
 		}
 		else{
 			 ArrayList<ArrayList<String>> data = new ArrayList<ArrayList<String>>();
@@ -490,8 +479,7 @@ public class CensusPreparator extends DataManager {
 
 	    	 for (int i=1; i<data.size(); i++)
 	    	 {
-	    		 //System.out.println(headers.size() + "  " + data.get(i).size() + "  " + data.get(i).get(data.get(i).size()-1));
-	    			for (int j=0; j<headers.size();j++)
+	    		 	for (int j=0; j<headers.size();j++)
 	    			{
 	    				myData.get(headers.get(j)).add(data.get(i).get(j));
 	    			}
