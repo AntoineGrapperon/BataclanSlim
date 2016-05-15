@@ -43,6 +43,11 @@ public class TravelSurveyPreparator {
 		myOutputFileWritter.OpenFile(temp[0] + "_prepared.csv");
 	}
 	
+	public void initialize(String path, String outputPath){
+		myInputDataReader.OpenFile(path);
+		myOutputFileWritter.OpenFile(outputPath);
+	}
+	
 	public TravelSurveyPreparator(String path){
 		initialize(path);	
 	}
@@ -50,7 +55,7 @@ public class TravelSurveyPreparator {
 	public void processData(int choiceSetSize) throws IOException{
 		storeData();
 		processSocioDemographics();
-		processMobility();
+		processNumberOfActivities();
 		System.out.println("--mobility processed");
 		processTourTypes();
 		System.out.println("--tour types processed");
@@ -68,7 +73,7 @@ public class TravelSurveyPreparator {
 		System.out.println("-- min and max distance for a trip processed");
 		processAlternatives(choiceSetSize);// maybe some work should be done to avoid to get alternatives irrelevant (like not taking PT, or for a different kind of occupation)
 		System.out.println("--alternative processed");
-		toBoolean(UtilsTS.pDebut, "T");
+		toBoolean(UtilsTS.pStart, UtilsTS.trueValue);
 		//addOnes("choice");
 		ArrayList temp = myData.remove(UtilsTS.groupHour);
 		myData.put(UtilsTS.firstDep, temp);
@@ -88,13 +93,13 @@ public class TravelSurveyPreparator {
 	public void processActivityDuration(){
 		myData.put("MAX_ACT_TIME", new ArrayList<Object>());
 		for(int i = 0; i < myData.get(UtilsTS.id).size();i++){
-			if(myData.get(UtilsTS.pDebut).get(i).equals("T")){
+			if(myData.get(UtilsTS.pStart).get(i).equals(UtilsTS.trueValue)){
 				double maxDuration = 0;
-				String hhId = (String)myData.get(UtilsTS.mNumero).get(i);
-				String persId = (String)myData.get(UtilsTS.pRang).get(i);
+				String hhId = (String)myData.get(UtilsTS.hhId).get(i);
+				String persId = (String)myData.get(UtilsTS.persId).get(i);
 				for(int j = i; j < myData.get(UtilsTS.id).size()-1; j++){
 					
-					if(hhId.equals((String)myData.get(UtilsTS.mNumero).get(j)) && persId.equals((String)myData.get(UtilsTS.pRang).get(j))){
+					if(hhId.equals((String)myData.get(UtilsTS.hhId).get(j)) && persId.equals((String)myData.get(UtilsTS.persId).get(j))){
 						double startTime = hourStrToDouble((String)myData.get(UtilsTS.groupHour).get(j));
 						double endTime = hourStrToDouble((String)myData.get(UtilsTS.groupHour).get(j+1));
 						double duration = endTime - startTime;
@@ -142,13 +147,13 @@ public class TravelSurveyPreparator {
 		myData.put(UtilsTS.minDist, new ArrayList<Object>());
 		myData.put(UtilsTS.maxDist, new ArrayList<Object>());
 		for(int i = 0; i < myData.get(UtilsTS.id).size();i++){
-			if(myData.get(UtilsTS.pDebut).get(i).equals("T")){
+			if(myData.get(UtilsTS.pStart).get(i).equals(UtilsTS.trueValue)){
 				double minDist = 1000;
 				double maxDist = 0;
-				String hhId = (String)myData.get(UtilsTS.mNumero).get(i);
-				String persId = (String)myData.get(UtilsTS.pRang).get(i);
+				String hhId = (String)myData.get(UtilsTS.hhId).get(i);
+				String persId = (String)myData.get(UtilsTS.persId).get(i);
 				for(int j = i; j < myData.get(UtilsTS.id).size(); j++){
-					if(hhId.equals((String)myData.get(UtilsTS.mNumero).get(j)) && persId.equals((String)myData.get(UtilsTS.pRang).get(j))){
+					if(hhId.equals((String)myData.get(UtilsTS.hhId).get(j)) && persId.equals((String)myData.get(UtilsTS.persId).get(j))){
 						if(
 								!myData.get(UtilsTS.xOrigin).get(j).equals("")&&
 								!myData.get(UtilsTS.xDest).get(j).equals("")&&
@@ -192,12 +197,12 @@ public class TravelSurveyPreparator {
 		myData.put("KIDS", new ArrayList<Object>());
 		for(int i = 0; i < myData.get(UtilsTS.id).size();i++){
 			
-			if(myData.get(UtilsTS.pDebut).get(i).equals("T")){
+			if(myData.get(UtilsTS.pStart).get(i).equals(UtilsTS.trueValue)){
 				int nKids = 0;
-				String hhId = (String)myData.get(UtilsTS.mNumero).get(i);
+				String hhId = (String)myData.get(UtilsTS.hhId).get(i);
 				for(int j = Math.max(0,i-150); j < Math.min(myData.get(UtilsTS.id).size(),i + 150); j++){
-					if(myData.get(UtilsTS.pDebut).get(j).equals("T")){
-						if(myData.get(UtilsTS.mNumero).get(j).equals(hhId)){
+					if(myData.get(UtilsTS.pStart).get(j).equals(UtilsTS.trueValue)){
+						if(myData.get(UtilsTS.hhId).get(j).equals(hhId)){
 							if(Integer.parseInt((String)myData.get(UtilsTS.age).get(j)) < 15 ){
 								nKids++;
 							}
@@ -230,9 +235,9 @@ public class TravelSurveyPreparator {
 		}
 		
 		for(int i = 0; i < myData.get(UtilsTS.id).size();i++){
-			if(myData.get(UtilsTS.pDebut).get(i).equals("T") ){
-				String hhId = (String)myData.get(UtilsTS.mNumero).get(i);
-				String persId = (String)myData.get(UtilsTS.pRang).get(i);
+			if(myData.get(UtilsTS.pStart).get(i).equals(UtilsTS.trueValue) ){
+				String hhId = (String)myData.get(UtilsTS.hhId).get(i);
+				String persId = (String)myData.get(UtilsTS.persId).get(i);
 				//String pStatut = (String)myData.get("P_STATUT").get(i);
 				Set<Integer> idClosests = findClosestAlternatives(
 						n, 
@@ -308,9 +313,9 @@ public class TravelSurveyPreparator {
 		
 		for(int j = 0; j < myData.get(UtilsTS.id).size(); j++){
 			if(
-					myData.get(UtilsTS.pDebut).get(j).equals("T") && 
-					!(((String)myData.get(UtilsTS.mNumero).get(j)).equals(hhId) && 
-					((String)myData.get(UtilsTS.pRang).get(j)).equals(persId))
+					myData.get(UtilsTS.pStart).get(j).equals(UtilsTS.trueValue) && 
+					!(((String)myData.get(UtilsTS.hhId).get(j)).equals(hhId) && 
+					((String)myData.get(UtilsTS.persId).get(j)).equals(persId))
 			){
 				int curX = Integer.parseInt((String)myData.get("M_DOMXCOOR").get(j));
 				int curY = Integer.parseInt((String)myData.get("M_DOMYCOOR").get(j));
@@ -354,12 +359,12 @@ public class TravelSurveyPreparator {
 		// TODO Auto-generated method stub
 		myData.put(UtilsTS.chainLength, new ArrayList<Object>());
 		for(int i = 0; i < myData.get(UtilsTS.id).size();i++){
-			if(myData.get(UtilsTS.pDebut).get(i).equals("T")){
+			if(myData.get(UtilsTS.pStart).get(i).equals(UtilsTS.trueValue)){
 				double distance = 0;
-				String hhId = (String)myData.get(UtilsTS.mNumero).get(i);
-				String persId = (String)myData.get(UtilsTS.pRang).get(i);
+				String hhId = (String)myData.get(UtilsTS.hhId).get(i);
+				String persId = (String)myData.get(UtilsTS.persId).get(i);
 				for(int j = i; j < myData.get(UtilsTS.id).size(); j++){
-					if(hhId.equals((String)myData.get(UtilsTS.mNumero).get(j)) && persId.equals((String)myData.get(UtilsTS.pRang).get(j))){
+					if(hhId.equals((String)myData.get(UtilsTS.hhId).get(j)) && persId.equals((String)myData.get(UtilsTS.persId).get(j))){
 						
 						if(
 								!myData.get(UtilsTS.xOrigin).get(j).equals("")&&
@@ -393,70 +398,43 @@ public class TravelSurveyPreparator {
 	public void processLastDepartureHour() {
 		// TODO Auto-generated method stub
 		myData.put(UtilsTS.lastDep, new ArrayList<Object>());
-		
-		if(UtilsTS.city.equals("Montreal")){
-			for(int i = 0; i < myData.get(UtilsTS.id).size();i++){
-				if(myData.get(UtilsTS.pDebut).get(i).equals("T")){
-					ArrayList<String> temp = new ArrayList<String>();
-					String hhId = (String)myData.get(UtilsTS.mNumero).get(i);
-					String persId = (String)myData.get(UtilsTS.pRang).get(i);
-					for(int j = i; j < myData.get(UtilsTS.id).size(); j++){
-						if(hhId.equals((String)myData.get(UtilsTS.mNumero).get(j)) && persId.equals((String)myData.get(UtilsTS.pRang).get(j))){
-							temp.add((String)myData.get(UtilsTS.groupHour).get(j));
-						}
-						else{
-							j+=400000;
-						}
-						
+
+		for(int i = 0; i < myData.get(UtilsTS.id).size();i++){
+			if(myData.get(UtilsTS.pStart).get(i).equals(UtilsTS.trueValue)){
+				ArrayList<String> temp = new ArrayList<String>();
+				String hhId = (String)myData.get(UtilsTS.hhId).get(i);
+				String persId = (String)myData.get(UtilsTS.persId).get(i);
+				for(int j = i; j < myData.get(UtilsTS.id).size(); j++){
+					if(hhId.equals((String)myData.get(UtilsTS.hhId).get(j)) && persId.equals((String)myData.get(UtilsTS.persId).get(j))){
+						temp.add((String)myData.get(UtilsTS.hour).get(j));
 					}
-					myData.get(UtilsTS.lastDep).add(temp.get(temp.size()-1));
-				}
-				else{
-					myData.get(UtilsTS.lastDep).add("10");
-				}
-			}
-		}
-		
-		else if(UtilsTS.city.equals("Gatineau")){
-			for(int i = 0; i < myData.get(UtilsTS.id).size();i++){
-				if(myData.get(UtilsTS.pDebut).get(i).equals("T")){
-					ArrayList<String> temp = new ArrayList<String>();
-					String hhId = (String)myData.get(UtilsTS.mNumero).get(i);
-					String persId = (String)myData.get(UtilsTS.pRang).get(i);
-					for(int j = i; j < myData.get(UtilsTS.id).size(); j++){
-						if(hhId.equals((String)myData.get(UtilsTS.mNumero).get(j)) && persId.equals((String)myData.get(UtilsTS.pRang).get(j))){
-							temp.add((String)myData.get(UtilsTS.hour).get(j));
-						}
-						else{
-							j+=400000;
-						}
-						
+					else{
+						j+=400000;
 					}
-					myData.get(UtilsTS.lastDep).add(temp.get(temp.size()-1));
 				}
-				else{
-					myData.get(UtilsTS.lastDep).add("10");
-				}
+				myData.get(UtilsTS.lastDep).add(temp.get(temp.size()-1));
 			}
-		}
-				
+			else{
+				myData.get(UtilsTS.lastDep).add("10");
+			}
+		}	
 	}
 
 	public void processModalClass() {
 		// TODO Auto-generated method stub
-		myData.put("MODAL_CLASS", new ArrayList());
+		//myData.put("MODAL_CLASS", new ArrayList());
 		myData.put(UtilsTS.fidelPt, new ArrayList());
 		myData.put(UtilsTS.fidelPtRange, new ArrayList());
 		for(int i = 0; i < myData.get(UtilsTS.id).size();i++){
-			if(myData.get(UtilsTS.pDebut).get(i).equals("T")){
+			if(myData.get(UtilsTS.pStart).get(i).equals(UtilsTS.trueValue)){
 				HashMap<String, Integer> counters = new HashMap<String, Integer>();
 				counters.put("nPT", 0);
 				counters.put("nPrivate", 0);
 				counters.put("nActive", 0);
-				String hhId = (String)myData.get(UtilsTS.mNumero).get(i);
-				String persId = (String)myData.get(UtilsTS.pRang).get(i);
+				String hhId = (String)myData.get(UtilsTS.hhId).get(i);
+				String persId = (String)myData.get(UtilsTS.persId).get(i);
 				for(int j = i; j < myData.get(UtilsTS.id).size(); j++){
-					if(hhId.equals((String)myData.get(UtilsTS.mNumero).get(j)) && persId.equals((String)myData.get(UtilsTS.pRang).get(j))){
+					if(hhId.equals((String)myData.get(UtilsTS.hhId).get(j)) && persId.equals((String)myData.get(UtilsTS.persId).get(j))){
 						setModalClass(counters,j);
 					}
 					else{
@@ -465,7 +443,6 @@ public class TravelSurveyPreparator {
 				}
 				
 				double ratio;
-				//System.out.println((counters.get("nPT")+counters.get("nPrivate")+counters.get("nActive")));
 				if(((double)(counters.get("nPT")+counters.get("nPrivate")+counters.get("nActive")))!=0){
 					ratio = (double)(counters.get("nPT"))/ ((double)(counters.get("nPT")+counters.get("nPrivate")+counters.get("nActive")));
 
@@ -474,22 +451,12 @@ public class TravelSurveyPreparator {
 					ratio = 0;
 				}
 				
-				//System.out.println(ratio);
 				if(Double.isNaN(ratio)){
 					myData.get(UtilsTS.fidelPt).add("0");
 				}
 				else{
 					myData.get(UtilsTS.fidelPt).add(Double.toString(ratio));
 				}
-				/*if(ratio==0){
-					myData.get(UtilsTS.fidelPtRange).add(0);
-				}
-				else if(ratio == 1){
-					myData.get(UtilsTS.fidelPtRange).add(10);
-				}
-				else{
-					myData.get(UtilsTS.fidelPtRange).add(Math.floor(ratio*10)+1);
-				}*/
 				
 				if(Double.isNaN(ratio)){
 					myData.get(UtilsTS.fidelPtRange).add("0");
@@ -497,15 +464,6 @@ public class TravelSurveyPreparator {
 				else if(ratio<=0.05){
 					myData.get(UtilsTS.fidelPtRange).add("0");
 				}
-				/*else if(ratio<=0.4){
-					myData.get(UtilsTS.fidelPtRange).add("1");
-				}
-				else if(ratio<=0.6){
-					myData.get(UtilsTS.fidelPtRange).add("2");
-				}
-				else if(ratio<=0.75){
-					myData.get(UtilsTS.fidelPtRange).add("3");
-				}*/
 				else if(ratio<=0.95){
 					myData.get(UtilsTS.fidelPtRange).add("1");
 				}
@@ -514,14 +472,12 @@ public class TravelSurveyPreparator {
 				}
 				else{
 					myData.get(UtilsTS.fidelPtRange).add("10");//this is the people who did not move
-					//System.out.println(ratio);
 				}
 			}
 			else{
 				myData.get(UtilsTS.fidelPt).add("0");
 				myData.get(UtilsTS.fidelPtRange).add("10");
 			}
-			//System.out.println("modal class " + myData.get("MODAL_CLASS").get(i) + " pt fidelity " + myData.get(UtilsTS.fidelPt).get(i));
 		}
 	}
 			
@@ -531,126 +487,63 @@ public class TravelSurveyPreparator {
 		modalClass.put("isPT", false);
 		modalClass.put("isPrivate", false);
 		modalClass.put("isActive", false);
-		
-		if(UtilsTS.city.equals("Montreal")){
-			processMode(modalClass, counters,"D_MODE1",i);
-			processMode(modalClass, counters,"D_MODE2",i);
-			processMode(modalClass, counters,"D_MODE3",i);
-			processMode(modalClass, counters,"D_MODE4",i);
-			processMode(modalClass, counters,"D_MODE5",i);
-			processMode(modalClass, counters,"D_MODE6",i);
-			processMode(modalClass, counters,"D_MODE7",i);
-			processMode(modalClass, counters,"D_MODE8",i);
-		}
-		else if(UtilsTS.city.equals("Gatineau")){
-			processMode(modalClass, counters,"MODE1",i);
-			processMode(modalClass, counters,"MODE2",i);
-			processMode(modalClass, counters,"MODE3",i);
-			processMode(modalClass, counters,"MODE4",i);
-			processMode(modalClass, counters,"MODE5",i);
-		}
-		
-		
-		if((boolean)modalClass.get("isPT")){
-			myData.get("MODAL_CLASS").add("PT");
-		}
-		else if((boolean)modalClass.get("isPrivate")){
-			myData.get("MODAL_CLASS").add("Private");
-		}
-		else{
-			myData.get("MODAL_CLASS").add("Active");
-		}
+
+		processMode(modalClass, counters,"MODE1",i);
+		processMode(modalClass, counters,"MODE2",i);
+		processMode(modalClass, counters,"MODE3",i);
+		processMode(modalClass, counters,"MODE4",i);
+		processMode(modalClass, counters,"MODE5",i);
 	}
 
 	private void processMode(HashMap<String, Object> modalClass, HashMap<String, Integer> counters, String mode, int i) {
 		// TODO Auto-generated method stub
-		if(UtilsTS.city.equals("Montreal")){
-			if(myData.get(mode).get(i).equals("1") || 
-					myData.get(mode).get(i).equals("2") || 
-					myData.get(mode).get(i).equals("11") ||
-					myData.get(mode).get(i).equals("12")
-					){
-				modalClass.put("isPrivate", true);
-				int nTemp = counters.get("nPrivate") + 1;
-				counters.put("nPrivate", nTemp);
-				}
-			else if(myData.get(mode).get(i).equals("3") || 
-					myData.get(mode).get(i).equals("4") || 
-					myData.get(mode).get(i).equals("5") ||
-					myData.get(mode).get(i).equals("6") ||
-					myData.get(mode).get(i).equals("7") || 
-					myData.get(mode).get(i).equals("8") || 
-					myData.get(mode).get(i).equals("9") ||
-					myData.get(mode).get(i).equals("10") || 
-					myData.get(mode).get(i).equals("15") || 
-					myData.get(mode).get(i).equals("16") ||
-					myData.get(mode).get(i).equals("17") 
-					){
-				modalClass.put("isPT", true);
-				int nTemp = counters.get("nPT") + 1;
-				counters.put("nPT", nTemp);
-				}
-			else if (myData.get(mode).get(i).equals("13") || 
-					myData.get(mode).get(i).equals("14") || 
-					myData.get(mode).get(i).equals("18") 
-					){
-				modalClass.put("isActive", true);
-				int nTemp = counters.get("nActive") + 1;
-				counters.put("nActive", nTemp);
+		
+		if(myData.get(mode).get(i).equals("1") || 
+				myData.get(mode).get(i).equals("2") || 
+				myData.get(mode).get(i).equals("9") || //taxi
+				myData.get(mode).get(i).equals("10") ||// transport for disabbled
+				myData.get(mode).get(i).equals("15") ||
+				myData.get(mode).get(i).equals("16") ||
+				myData.get(mode).get(i).equals("17")
+				){
+			modalClass.put("isPrivate", true);
+			int nTemp = counters.get("nPrivate") + 1;
+			counters.put("nPrivate", nTemp);
 			}
-		}
-		else if(UtilsTS.city.equals("Gatineau")){
-			if(myData.get(mode).get(i).equals("1") || 
-					myData.get(mode).get(i).equals("2") || 
-					myData.get(mode).get(i).equals("9") || //taxi
-					myData.get(mode).get(i).equals("10") ||// transport for disabbled
-					myData.get(mode).get(i).equals("15") ||
-					myData.get(mode).get(i).equals("16") ||
-					myData.get(mode).get(i).equals("17")
-					){
-				modalClass.put("isPrivate", true);
-				int nTemp = counters.get("nPrivate") + 1;
-				counters.put("nPrivate", nTemp);
-				}
-			else if(//myData.get(mode).get(i).equals("3") || 
-					myData.get(mode).get(i).equals("4") //|| 
-					/*myData.get(mode).get(i).equals("5") ||
-					myData.get(mode).get(i).equals("6") ||
-					myData.get(mode).get(i).equals("7") || 
-					myData.get(mode).get(i).equals("8") */
-					){
-				modalClass.put("isPT", true);
-				int nTemp = counters.get("nPT") + 1;
-				counters.put("nPT", nTemp);
-				}
-			else if (myData.get(mode).get(i).equals("11") || 
-					myData.get(mode).get(i).equals("12")	||
-					myData.get(mode).get(i).equals("5") ||
-					myData.get(mode).get(i).equals("6") ||
-					myData.get(mode).get(i).equals("7") || 
-					myData.get(mode).get(i).equals("3") || 
-					myData.get(mode).get(i).equals("8")
-					){
-				modalClass.put("isActive", true);
-				int nTemp = counters.get("nActive") + 1;
-				counters.put("nActive", nTemp);
+		else if(
+				myData.get(mode).get(i).equals("4") 
+				){
+			modalClass.put("isPT", true);
+			int nTemp = counters.get("nPT") + 1;
+			counters.put("nPT", nTemp);
 			}
+		else if (myData.get(mode).get(i).equals("11") || 
+				myData.get(mode).get(i).equals("12")	||
+				myData.get(mode).get(i).equals("5") ||
+				myData.get(mode).get(i).equals("6") ||
+				myData.get(mode).get(i).equals("7") || 
+				myData.get(mode).get(i).equals("3") || 
+				myData.get(mode).get(i).equals("8")
+				){
+			modalClass.put("isActive", true);
+			int nTemp = counters.get("nActive") + 1;
+			counters.put("nActive", nTemp);
 		}
 	}
 
-	public void processMobility(){
+	public void processNumberOfActivities(){
 		myData.put(UtilsTS.nAct, new ArrayList());
 		for(int i = 0; i < myData.get(UtilsTS.id).size();i++){
-			if(myData.get(UtilsTS.pDebut).get(i).equals("T")){
+			if(myData.get(UtilsTS.pStart).get(i).equals(UtilsTS.trueValue)){
 				int nActivities =0; 
 				
-				String hhId = (String)myData.get(UtilsTS.mNumero).get(i);
-				String persId = (String)myData.get(UtilsTS.pRang).get(i);
+				String hhId = (String)myData.get(UtilsTS.hhId).get(i);
+				String persId = (String)myData.get(UtilsTS.persId).get(i);
 				for(int j = i; j < myData.get(UtilsTS.id).size()-1; j++){
-					if(((String)myData.get(UtilsTS.pDebut).get(j+1)).equals("T")){
+					if(((String)myData.get(UtilsTS.pStart).get(j+1)).equals(UtilsTS.trueValue)){
 					}
-					else if(hhId.equals((String)myData.get(UtilsTS.mNumero).get(j)) && persId.equals((String)myData.get(UtilsTS.pRang).get(j))){
-						if(getActivityType((String)myData.get(UtilsTS.dMotif).get(j)).equals("H")){
+					else if(hhId.equals((String)myData.get(UtilsTS.hhId).get(j)) && persId.equals((String)myData.get(UtilsTS.persId).get(j))){
+						if(myData.get(UtilsTS.backHomeTrip).get(j).equals(UtilsTS.trueValue)){
 						}
 						else{
 							nActivities = nActivities + 1;
@@ -674,9 +567,9 @@ public class TravelSurveyPreparator {
 	public void processTourTypes(){
 		myData.put(UtilsTS.tourType, new ArrayList());
 		for(int i = 0; i < myData.get(UtilsTS.id).size();i++){
-			if(myData.get(UtilsTS.pDebut).get(i).equals("T")){
-				String hhId = (String)myData.get(UtilsTS.mNumero).get(i);
-				String persId = (String)myData.get(UtilsTS.pRang).get(i);
+			if(myData.get(UtilsTS.pStart).get(i).equals(UtilsTS.trueValue)){
+				String hhId = (String)myData.get(UtilsTS.hhId).get(i);
+				String persId = (String)myData.get(UtilsTS.persId).get(i);
 				int nH = 1;
 				int nC = 0;
 				int nU = 0;
@@ -689,20 +582,20 @@ public class TravelSurveyPreparator {
 				else{
 					for(int j = i; j < myData.get(UtilsTS.id).size(); j++){
 						
-						if(hhId.equals((String)myData.get(UtilsTS.mNumero).get(j)) && persId.equals((String)myData.get(UtilsTS.pRang).get(j))){
-							if(getActivityType((String)myData.get(UtilsTS.dMotif).get(j)).equals("H")){
+						if(hhId.equals((String)myData.get(UtilsTS.hhId).get(j)) && persId.equals((String)myData.get(UtilsTS.persId).get(j))){
+							if(getActivityType((String)myData.get(UtilsTS.backHomeTrip).get(j)).equals("H")){
 								nH++;
 							}
-							else if(getActivityType((String)myData.get(UtilsTS.dMotif).get(j)).equals("C")){
+							else if(getActivityType((String)myData.get(UtilsTS.backHomeTrip).get(j)).equals("C")){
 								nC++;
 							}
-							else if(getActivityType((String)myData.get(UtilsTS.dMotif).get(j)).equals("U")){
+							else if(getActivityType((String)myData.get(UtilsTS.backHomeTrip).get(j)).equals("U")){
 								nU++;
 							}
-							else if(getActivityType((String)myData.get(UtilsTS.dMotif).get(j)).equals("W")){
+							else if(getActivityType((String)myData.get(UtilsTS.backHomeTrip).get(j)).equals("W")){
 								nW++;
 							}
-							else if(getActivityType((String)myData.get(UtilsTS.dMotif).get(j)).equals("S")){
+							else if(getActivityType((String)myData.get(UtilsTS.backHomeTrip).get(j)).equals("S")){
 								nS++;
 							}
 							//tourType = tourType + getActivityType((String)myData.get(UtilsTS.dMotif).get(j));
@@ -713,7 +606,6 @@ public class TravelSurveyPreparator {
 					}
 				}
 				tourType = getTourType(nH, nW, nS, nC,  nU);
-				//System.out.println(tourType);
 				myData.get(UtilsTS.tourType).add(tourType);
 			}
 			else{
@@ -735,42 +627,6 @@ public class TravelSurveyPreparator {
 			return 4;//index for "HCH"		
 		else if(nW == 0 && nS==0 && nC==0 && nU >=1)
 			return 5;//index for "HUH"
-		/*if(nH == 1 && nC == 0 && nU == 0 && nW == 0 && nS == 0)
-			return 1; // index for : "H"
-		else if(nH == 2 && nW == 1 && nS == 0 && nC == 0 && nU == 0)
-			return 10; //index for "HWH"
-		else if(nH == 2 && nW == 0 && nS == 1 && nC == 0 && nU == 0)
-			return 5;// index for "HSH";
-		else if(nH == 2 && nW == 0 && nS == 0 && nC == 1 && nU == 0)
-			return 4;//index for "HCH"		
-		else if(nH == 2 && nW == 0 && nS == 0 && nC == 0 && nU == 1)
-			return 9;//index for "HUH"
-		else if( nW >= 1 && nS == 0 && nW + nC + nU > 1)
-			return 6; // index for "W+"
-		else if( nW == 0 && nS >= 1 && nS + nC + nU > 1)
-			return 8; // index for "S+"
-		else if( nW == 0 && nS == 0 && nC>= 1 && nC + nU > 1)
-			return 7; // index for "C+"		
-		else if( nW == 0 && nS == 0 && nC == 0 && nU >= 1)
-			return 2; // index for "U+"
-		/*else if(nH >= 2 && nW >= 1 && nS+nW+nC+nU >= 2 && nS != 0)
-			return "WS";
-		else if(nH >= 2 && nW >= 1 && nS+nW+nC+nU >= 2 && nS == 0 && nC != 0)
-			return "WC";
-		else if(nH >= 2 && nW >= 1 && nS+nW+nC+nU >= 2 && nS == 0 && nC == 0 && nU != 0)
-			return "WU";
-		else if(nH >= 2 && nS >= 1 && nS+nW+nC+nU >= 2 && nW == 0 && nC != 0)
-			return "SC";
-		else if(nH >= 2 && nS >= 1 && nS+nW+nC+nU >= 2 && nW == 0 && nC == 0 && nU != 0)
-			return "SU";
-		else if(nH >= 2 && nC >= 1 && nS+nW+nC+nU >= 2 && nW == 0 && nS == 0)
-			return "CU";
-		else if (nW == 0 && nS == 0 && nC == 0 && nU !=0)
-			return "U";
-		else if (nW != 0 && nS == 0 && nC == 0 && nU ==0)
-			return "W";
-		else if (nW == 0 && nS != 0 && nC == 0 && nU ==0)
-			return "S";*/
 		else
 			return 3; // index for "other";
 	}
@@ -787,44 +643,22 @@ public class TravelSurveyPreparator {
 	}
 	
 	public String getActivityType(String act){
-		if(UtilsTS.city.equals("Montreal")){
-			if(act.equals("1") || act.equals("2")){
-				return "W";// work activity
-			}
-			else if(act.equals("4")){
-				return "S"; // study activity
-			}
-			else if(act.equals("9")||act.equals("10")){
-				return "C";// other possibly constraint activity
-			}
-			else if(act.equals("11")){
-				return "H";
-			}
-			else{
-				return "U"; // other activity are assumed to be unconstrained
-			}
+		
+		if(act.equals("1") || act.equals("2")|| act.equals("3")){
+			return "W";// work activity
 		}
-		else if(UtilsTS.city.equals("Gatineau")){
-			if(act.equals("1") || act.equals("2")|| act.equals("3")){
-				return "W";// work activity
-			}
-			else if(act.equals("4")){
-				return "S"; // study activity
-			}
-			else if(act.equals("12")||act.equals("13")){
-				return "C";// other possibly constraint activity
-			}
-			else if(act.equals("14")){
-				return "H";
-			}
-			else{
-				return "U"; // other activity are assumed to be unconstrained
-			}
+		else if(act.equals("4")){
+			return "S"; // study activity
+		}
+		else if(act.equals("12")||act.equals("13")){
+			return "C";// other possibly constraint activity
+		}
+		else if(act.equals("14")){
+			return "H";
 		}
 		else{
-			return "--there is no dictionnary for activity type for the current city: " + UtilsTS.city;
+			return "U"; // other activity are assumed to be unconstrained
 		}
-		
 	}
 	
 	public void storeData() throws IOException
@@ -841,10 +675,16 @@ public class TravelSurveyPreparator {
     	 {
     			for (int j=0; j<data.get(i).size();j++)
     			{
-    				myData.get(headers.get(j)).add(data.get(i).get(j));
+    				try{
+    					myData.get(headers.get(j)).add(data.get(i).get(j));
+    				}catch(IndexOutOfBoundsException e){
+    					System.out.println("column : " + j + " " + headers.get(j));
+        				System.out.println("column : " + j + " " + data.get(i).get(j));
+    				}
+    				
+    				
     			}
     	 }
-    	 System.out.println("--travel survey data was successfully stored");
     }
 	
 	public ArrayList<ArrayList> getData() throws IOException
@@ -858,7 +698,7 @@ public class TravelSurveyPreparator {
     		{
     			data.add(new ArrayList());
     			scanner = new Scanner(line);
-    			scanner.useDelimiter(",");
+    			scanner.useDelimiter(Utils.COLUMN_DELIMETER);
 
     				while (scanner.hasNext())
     				{
@@ -897,17 +737,12 @@ public class TravelSurveyPreparator {
 		while(it.hasNext()){
 			String head = it.next();
 			headers+= head + Utils.COLUMN_DELIMETER;
-			int ipere =myData.get(UtilsTS.id).size();
-			int att = myData.get(UtilsTS.id).size();
-			if(ipere != att){
-				System.out.println("ipere size: " + ipere + " attribute size " + head + " " + att);
-			}
 		}
 		headers = headers.substring(0, headers.length()-1);
 		myOutputFileWritter.WriteToFile(headers);
 		
 		for(int i=0; i < myData.get(UtilsTS.id).size(); i++){
-			if(myData.get(UtilsTS.pDebut).get(i).equals("1") &&
+			if(myData.get(UtilsTS.pStart).get(i).equals("1") &&
 					!myData.get(UtilsTS.alternative).get(i).equals("-1")){
 				String line = new String();
 				Iterator<String> it2 = toPrint.iterator();
@@ -934,24 +769,21 @@ public class TravelSurveyPreparator {
 		headers.add(UtilsTS.id);
 		headers.add("X");
 		headers.add("Y");
-		headers.add(UtilsTS.mNumero);
-		headers.add(UtilsTS.domSdr);
-		headers.add(UtilsTS.domAd);
+		headers.add(UtilsTS.hhId);
+		headers.add(UtilsTS.pStart);
+		headers.add(UtilsTS.persId);
+		
 		headers.add(UtilsTS.cars);
 		headers.add(UtilsTS.pers);
 		headers.add(UtilsTS.kids);
-		headers.add(UtilsTS.pDebut);
-		headers.add(UtilsTS.pRang);
+		
 		headers.add(UtilsTS.sex);
 		headers.add(UtilsTS.ageGroup);
-		headers.add(UtilsTS.licence);
 		headers.add(UtilsTS.weigth);
-		headers.add(UtilsTS.motor);
 		
 		headers.add(UtilsTS.pStatut);
 		headers.add(UtilsTS.firstDep + "Short");//FIRST departure
 		headers.add(UtilsTS.lastDep + "Short");
-		headers.add(UtilsTS.fidelPt);
 		headers.add(UtilsTS.fidelPtRange);
 		headers.add(UtilsTS.nAct);
 		headers.add(UtilsTS.nest);
@@ -959,37 +791,13 @@ public class TravelSurveyPreparator {
 		headers.add(UtilsTS.accessToPt);
 		headers.add(UtilsTS.end);
 		
-		/*headers.add(UtilsTS.firstDep);//FIRST departure
-		headers.add(UtilsTS.lastDep);
-		headers.add(UtilsTS.chainLength);
-		headers.add(UtilsTS.maxActTime);
-		headers.add(UtilsTS.minDist);
-		headers.add(UtilsTS.maxDist);
-		headers.add(UtilsTS.fidelPt);
-		headers.add(UtilsTS.tourType);*/
 		headers.add(UtilsTS.alternative);
 		headers.add(UtilsTS.choice);
 		headers.add(UtilsTS.stoUser);
 		for(int i = 0; i < choiceSetSize; i++){
-			/*headers.add(UtilsTS.pStatut+Integer.toString(i));
-			headers.add(UtilsTS.firstDep + "Short" +Integer.toString(i));
-			headers.add(UtilsTS.lastDep + "Short" +Integer.toString(i));
-			headers.add(UtilsTS.fidelPtRange+Integer.toString(i));
-			headers.add(UtilsTS.nAct+Integer.toString(i));
-			/*headers.add(UtilsTS.chainLength+Integer.toString(i));
-			headers.add(UtilsTS.maxActTime+Integer.toString(i));
-			headers.add(UtilsTS.minDist+Integer.toString(i));
-			headers.add(UtilsTS.maxDist+Integer.toString(i));
-			headers.add(UtilsTS.fidelPt+Integer.toString(i));
-			headers.add(UtilsTS.tourType+Integer.toString(i));*/
 			headers.add(UtilsTS.alternative+Integer.toString(i));
 		}
-		/*headers.add(UtilsTS.sim + UtilsTS.nAct);
-		headers.add(UtilsTS.sim + UtilsTS.fidelPtRange);
-		headers.add(UtilsTS.sim + UtilsTS.firstDep);
-		headers.add(UtilsTS.sim + UtilsTS.lastDep);*/
-		
-		
+
 		try {
 			printColumns(headers);
 		} catch (IOException e) {
@@ -1043,41 +851,25 @@ public class TravelSurveyPreparator {
 	public void processDataMultiThreads(int numberOfCores, int nAlternatives, BiogemeControlFileGenerator ctrlGen/*String pathControleFile, String pathOutput, String pathHypothesis*/) throws IOException
     {
 		String workingDir = System.getProperty("user.dir");
-    	//BiogemeControlFileGenerator biogemeGenerator = new BiogemeControlFileGenerator(workingDir + "\\ctrl\\ctrlForBiogemeGenerator.txt", workingDir + "\\ctrl\\biogeme_input_prepared.mod");
-    	//biogemeGenerator.generateBiogemeControlFile();	
-		
-		/*biogemeGenerator.generateBiogemeControlFile();
-    	biogemeGenerator.initialize(pathControleFile, pathOutput, pathHypothesis);*/
 		biogemeGenerator = ctrlGen;
-    	
-    	
+
 		storeData();
-		
-		System.out.println("--data stored");
-		processMobility();
+		System.out.println("--data stored");		
+		//All prepraration methods should be designed for your specific data set.
+
+		processNumberOfActivities();
 		System.out.println("--mobility processed");
-		processTourTypes();
-		System.out.println("--tour types processed");
 		processModalClass();
 		System.out.println("--modal class and fidelity to public transit processed");
 		processLastDepartureHour();
 		System.out.println("--last departure hours processed ");
-		processAverageTourLength();
-		System.out.println("--average tour length processed");
-		processNumberOfKids();
-		System.out.println("--number of kids in household processed");
-		processActivityDuration();
-		System.out.println("--max activity duration computed");
-		processMinMaxTourLength();
-		System.out.println("-- min and max distance for a trip processed");
-		processMotorRate();
-		System.out.println("--motorazation rate computed");
 
 		processSTOuser();
 		processNest();
 		processStartWithSTO();
 		processLastWithSTO();
 		
+		//The travel survey data and the other data sets should be prepared such as attributes categories matches with each other.
 		processSocioDemographic();
 		System.out.println("--socio demographic category were processed");
 		
@@ -1090,9 +882,7 @@ public class TravelSurveyPreparator {
 		
 		processChoiceIndex();
 		System.out.println("--choice index processed");
-		
-		//processChoice(dictionnary, biogemeGenerator.order);
-		
+
 	    ArrayList<Object> subSamples = createSubSamples(numberOfCores);
 	    System.out.println("--data batched and ready for multithreading");
 	    //create and run multiple threads
@@ -1127,7 +917,7 @@ public class TravelSurveyPreparator {
     	}
     	
     	System.out.println("--alternatives processed");
-		toBoolean(UtilsTS.pDebut, "T");
+		//toBoolean(UtilsTS.pStart, UtilsTS.trueValue);
 		selectAndPrint(nAlternatives);
 		cores.shutdown();
     }
@@ -1137,11 +927,11 @@ public class TravelSurveyPreparator {
 		ArrayList<Object> ends = new ArrayList<Object>();
 		for(int i = 0; i < myData.get(UtilsTS.id).size();i++){
 			String end = new String();
-			if(myData.get(UtilsTS.pDebut).get(i).equals("T")){
-				String hhId = (String)myData.get(UtilsTS.mNumero).get(i);
-				String persId = (String)myData.get(UtilsTS.pRang).get(i);
+			if(myData.get(UtilsTS.pStart).get(i).equals(UtilsTS.trueValue)){
+				String hhId = (String)myData.get(UtilsTS.hhId).get(i);
+				String persId = (String)myData.get(UtilsTS.persId).get(i);
 				for(int j = i; j < myData.get(UtilsTS.id).size(); j++){
-					if(hhId.equals((String)myData.get(UtilsTS.mNumero).get(j)) && persId.equals((String)myData.get(UtilsTS.pRang).get(j))){
+					if(hhId.equals((String)myData.get(UtilsTS.hhId).get(j)) && persId.equals((String)myData.get(UtilsTS.persId).get(j))){
 						String mode1 = (String)myData.get(UtilsTS.mode1).get(j);
 						String mode2 = (String)myData.get(UtilsTS.mode2).get(j);
 						String mode3 = (String)myData.get(UtilsTS.mode3).get(j);
@@ -1172,7 +962,7 @@ public class TravelSurveyPreparator {
 		ArrayList<Object> startWithSto = new ArrayList<Object>();
 		for(int i = 0; i < myData.get(UtilsTS.id).size(); i++){
 			String start;
-			if(myData.get(UtilsTS.pDebut).get(i).equals("T")){
+			if(myData.get(UtilsTS.pStart).get(i).equals(UtilsTS.trueValue)){
 				start = (String) myData.get(UtilsTS.mode1).get(i);
 				if(start.equals("4")){
 					start = "1";
@@ -1194,11 +984,11 @@ public class TravelSurveyPreparator {
 		ArrayList<Object> stoUser = new ArrayList<Object>();
 		for(int i = 0; i < myData.get(UtilsTS.id).size(); i++){
 			boolean isSTOuser = false;
-			if(myData.get(UtilsTS.pDebut).get(i).equals("T")){
-				String hhId = (String)myData.get(UtilsTS.mNumero).get(i);
-				String persId = (String)myData.get(UtilsTS.pRang).get(i);
+			if(myData.get(UtilsTS.pStart).get(i).equals(UtilsTS.trueValue)){
+				String hhId = (String)myData.get(UtilsTS.hhId).get(i);
+				String persId = (String)myData.get(UtilsTS.persId).get(i);
 				for(int j = i; j < myData.get(UtilsTS.id).size(); j++){
-					if(hhId.equals((String)myData.get(UtilsTS.mNumero).get(j)) && persId.equals((String)myData.get(UtilsTS.pRang).get(j))){
+					if(hhId.equals((String)myData.get(UtilsTS.hhId).get(j)) && persId.equals((String)myData.get(UtilsTS.persId).get(j))){
 						String mode1 = ((String) myData.get(UtilsTS.mode1).get(j)).trim();
 						String mode2 = ((String) myData.get(UtilsTS.mode2).get(j)).trim();
 						String mode3 = ((String) myData.get(UtilsTS.mode3).get(j)).trim();
@@ -1233,16 +1023,16 @@ public class TravelSurveyPreparator {
 		ArrayList<Object> nests = new ArrayList<Object>();
 		for(int i = 0; i < myData.get(UtilsTS.id).size(); i++){
 			String nest;
-			if(myData.get(UtilsTS.pDebut).get(i).equals("T")){
+			if(myData.get(UtilsTS.pStart).get(i).equals(UtilsTS.trueValue)){
 				int stoCount = 0;
 				int ptCount = 0;
 				int carDriverCount = 0;
 				int carPassCount = 0;
 				int activeModeCount = 0;
-				String hhId = (String)myData.get(UtilsTS.mNumero).get(i);
-				String persId = (String)myData.get(UtilsTS.pRang).get(i);
+				String hhId = (String)myData.get(UtilsTS.hhId).get(i);
+				String persId = (String)myData.get(UtilsTS.persId).get(i);
 				for(int j = i; j < myData.get(UtilsTS.id).size(); j++){
-					if(hhId.equals((String)myData.get(UtilsTS.mNumero).get(j)) && persId.equals((String)myData.get(UtilsTS.pRang).get(j))){
+					if(hhId.equals((String)myData.get(UtilsTS.hhId).get(j)) && persId.equals((String)myData.get(UtilsTS.persId).get(j))){
 						String mode1 = ((String) myData.get(UtilsTS.mode1).get(j)).trim();
 						String mode2 = ((String) myData.get(UtilsTS.mode2).get(j)).trim();
 						String mode3 = ((String) myData.get(UtilsTS.mode3).get(j)).trim();
@@ -1389,7 +1179,7 @@ public class TravelSurveyPreparator {
 		myData.put(UtilsTS.choice, new ArrayList<Object>());
 		
 		for(int i = 0; i < myData.get(UtilsTS.id).size(); i++){
-			if(myData.get(UtilsTS.pDebut).get(i).equals("T")){
+			if(myData.get(UtilsTS.pStart).get(i).equals(UtilsTS.trueValue)){
 				String altFirstDep = (String)myData.get(UtilsTS.firstDep + "Short").get(i);
 				String altLastDep = (String)myData.get(UtilsTS.lastDep + "Short").get(i);
 				String fidelPTRange = (String)myData.get(UtilsTS.fidelPtRange).get(i);
@@ -1465,24 +1255,13 @@ public class TravelSurveyPreparator {
 	
 		public void processAlternatives( ){
 			for(int i = 0; i < n; i++){
-				currData.put(UtilsTS.chainLength+Integer.toString(i), new ArrayList<Object>());
-				currData.put(UtilsTS.firstDep + "Short" +Integer.toString(i), new ArrayList<Object>());
-				currData.put(UtilsTS.lastDep + "Short"+ Integer.toString(i), new ArrayList<Object>());
-				currData.put(UtilsTS.minDist+Integer.toString(i), new ArrayList<Object>());
-				currData.put(UtilsTS.maxDist+Integer.toString(i), new ArrayList<Object>());
-				currData.put(UtilsTS.maxActTime+Integer.toString(i), new ArrayList<Object>());
-				currData.put(UtilsTS.fidelPt+Integer.toString(i), new ArrayList<Object>());
-				currData.put(UtilsTS.fidelPtRange+Integer.toString(i), new ArrayList<Object>());
-				currData.put(UtilsTS.nAct+Integer.toString(i), new ArrayList<Object>());
-				currData.put(UtilsTS.tourType+Integer.toString(i), new ArrayList<Object>());
-				currData.put(UtilsTS.pStatut+Integer.toString(i), new ArrayList<Object>());
 				currData.put(UtilsTS.alternative+Integer.toString(i), new ArrayList<Object>());
 			}
 			
 			for(int i = 0; i < currData.get(UtilsTS.id).size();i++){
-				if(currData.get(UtilsTS.pDebut).get(i).equals("T") ){
-					String hhId = (String)currData.get(UtilsTS.mNumero).get(i);
-					String persId = (String)currData.get(UtilsTS.pRang).get(i);
+				if(currData.get(UtilsTS.pStart).get(i).equals(UtilsTS.trueValue) ){
+					String hhId = (String)currData.get(UtilsTS.hhId).get(i);
+					String persId = (String)currData.get(UtilsTS.persId).get(i);
 					//String pStatut = (String)currData.get(UtilsTS.pStatut).get(i);
 					Set<Integer> idClosests = findClosestAlternatives(
 							n, 
@@ -1505,17 +1284,6 @@ public class TravelSurveyPreparator {
 		private void addAlternatives() {
 			// TODO Auto-generated method stub
 			for(int i = 0; i < n; i++){
-				currData.get(UtilsTS.chainLength+Integer.toString(i)).add("0");
-				currData.get(UtilsTS.firstDep + "Short"+ Integer.toString(i)).add("0");
-				currData.get(UtilsTS.lastDep + "Short" +Integer.toString(i)).add("0");
-				currData.get(UtilsTS.maxActTime+Integer.toString(i)).add("0");
-				currData.get(UtilsTS.minDist+Integer.toString(i)).add("0");
-				currData.get(UtilsTS.maxDist+Integer.toString(i)).add("0");
-				currData.get(UtilsTS.fidelPt+Integer.toString(i)).add("0");
-				currData.get(UtilsTS.fidelPtRange+Integer.toString(i)).add("0");
-				currData.get(UtilsTS.nAct+Integer.toString(i)).add("0");
-				currData.get(UtilsTS.tourType+Integer.toString(i)).add(0);
-				currData.get(UtilsTS.pStatut+Integer.toString(i)).add("0");
 				currData.get(UtilsTS.alternative+Integer.toString(i)).add("0");
 			}
 		}
@@ -1529,70 +1297,11 @@ public class TravelSurveyPreparator {
 				while(currIpere != Integer.parseInt((String)currData.get(UtilsTS.id).get(j))){//IPERE is a unique identifier for each record in the travel survey of Montreal
 					j++;
 				}
-				Double altDist = (Double)currData.get(UtilsTS.chainLength).get(j);
-				String altFirstDep = (String)currData.get(UtilsTS.firstDep + "Short").get(j);
-				String altLastDep = (String)currData.get(UtilsTS.lastDep + "Short").get(j);
-				String maxActTime = (String)currData.get(UtilsTS.maxActTime).get(j);
-				Double minDist = (Double)currData.get(UtilsTS.minDist).get(j);
-				Double maxDist = (Double)currData.get(UtilsTS.maxDist).get(j);
-				String fidelPT = (String)currData.get(UtilsTS.fidelPt).get(j);
-				String fidelPTRange = (String)currData.get(UtilsTS.fidelPtRange).get(j);
-				Integer nActivities = (Integer)currData.get(UtilsTS.nAct).get(j);
-				Integer tourType = (Integer)currData.get(UtilsTS.tourType).get(j);
-				String pStatut = (String)currData.get(UtilsTS.pStatut).get(j);
+			
 				String alternative = (String)currData.get(UtilsTS.alternative).get(j);
-				
-				
-				currData.get(UtilsTS.firstDep + "Short" +Integer.toString(i)).add(altFirstDep);
-				currData.get(UtilsTS.lastDep + "Short" +Integer.toString(i)).add(altLastDep);
-				currData.get(UtilsTS.chainLength+Integer.toString(i)).add(altDist);
-				currData.get(UtilsTS.maxActTime+Integer.toString(i)).add(maxActTime);
-				currData.get(UtilsTS.minDist+Integer.toString(i)).add(minDist);
-				currData.get(UtilsTS.maxDist+Integer.toString(i)).add(maxDist);
-				currData.get(UtilsTS.fidelPt+Integer.toString(i)).add(fidelPT);
-				currData.get(UtilsTS.fidelPtRange+Integer.toString(i)).add(fidelPTRange);
-				currData.get(UtilsTS.nAct+Integer.toString(i)).add(nActivities);
-				currData.get(UtilsTS.tourType+Integer.toString(i)).add(tourType);
-				currData.get(UtilsTS.pStatut+Integer.toString(i)).add(pStatut);
 				currData.get(UtilsTS.alternative+Integer.toString(i)).add(alternative);
 			}
 		}
-		
-		
-		
-		
-	
-		/*private Set<Integer> findClosestAlternatives(int n, int x, int y, String hhId, String persId) {
-			// TODO Auto-generated method stub
-			HashMap<Integer,Integer> closeAlternatives = new HashMap<Integer, Integer>(); // structure : the key is formed by IPERE (from OD survey), the value is the distance
-			
-			for(int j = 0; j < currData.get(UtilsTS.id).size(); j++){
-				if(
-						currData.get(UtilsTS.pDebut).get(j).equals("T") && 
-						!(((String)currData.get(UtilsTS.mNumero).get(j)).equals(hhId) && 
-						((String)currData.get(UtilsTS.pRang).get(j)).equals(persId))
-				){
-					int curX = Integer.parseInt((String)currData.get(UtilsTS.mtmX).get(j));
-					int curY = Integer.parseInt((String)currData.get(UtilsTS.mtmY).get(j));
-					int curIpere = Integer.parseInt((String)currData.get(UtilsTS.id).get(j));
-					int curDist = (int)(Math.pow((x-curX), 2) + Math.pow((y-curY), 2)); 
-					
-					if(closeAlternatives.size() < n){
-						closeAlternatives.put(curIpere, curDist);
-					}
-					else{
-						int[] removeId = getFarthestAltenative(closeAlternatives);
-						if(curDist< removeId[1]){
-							closeAlternatives.remove(removeId[0]);
-							closeAlternatives.put(curIpere, curDist);
-						}
-					}				
-				}
-				else{	
-				}	
-			}
-			return closeAlternatives.keySet();
-		}*/
 		
 		
 
@@ -1602,9 +1311,9 @@ public class TravelSurveyPreparator {
 			
 			for(int j = 0; j < currData.get(UtilsTS.id).size(); j++){
 				if(
-						currData.get(UtilsTS.pDebut).get(j).equals("T") && 
-						!(((String)currData.get(UtilsTS.mNumero).get(j)).equals(hhId) && 
-						((String)currData.get(UtilsTS.pRang).get(j)).equals(persId))
+						currData.get(UtilsTS.pStart).get(j).equals(UtilsTS.trueValue) && 
+						!(((String)currData.get(UtilsTS.hhId).get(j)).equals(hhId) && 
+						((String)currData.get(UtilsTS.persId).get(j)).equals(persId))
 				){
 					double curX = Double.parseDouble((String)currData.get(UtilsTS.mtmX).get(j));
 					double curY = Double.parseDouble((String)currData.get(UtilsTS.mtmY).get(j));
@@ -1668,25 +1377,14 @@ public class TravelSurveyPreparator {
 	
 	public void lastDepartureHour3categories(){
 		myData.put(UtilsTS.lastDep + "Short", new ArrayList());
-		
-		if(UtilsTS.city.equals("Montreal")){
-			for(int i = 0; i < myData.get(UtilsTS.id).size(); i++){
-				String temp = (String) myData.get(UtilsTS.lastDep).get(i);
-				if(temp.equals("6")||temp.equals("7")){myData.get(UtilsTS.lastDep+ "Short").add("2");} //leaving later then peak hour
-				else if (temp.equals("5")){myData.get(UtilsTS.lastDep+ "Short").add("1");} // leaving during peak hour (3h30-6h30pm)
-				else if (temp.equals("10")){myData.get(UtilsTS.lastDep+ "Short").add("10");}
-				else {myData.get(UtilsTS.lastDep + "Short").add("0");} 
-			}
-		}
-		else if(UtilsTS.city.equals("Gatineau")){
-			for(int i = 0; i < myData.get(UtilsTS.id).size(); i++){
-				int hour = Integer.parseInt((String)myData.get(UtilsTS.lastDep).get(i));
-				if(hour<1530){myData.get(UtilsTS.lastDep+ "Short").add("0");}
-				else if(hour < 1830){myData.get(UtilsTS.lastDep+ "Short").add("1");}
-				else if (hour >=1830){myData.get(UtilsTS.lastDep+ "Short").add("2");}
-				else{myData.get(UtilsTS.lastDep + "Short").add("10");}
-			}	
-		}
+
+		for(int i = 0; i < myData.get(UtilsTS.id).size(); i++){
+			int hour = Integer.parseInt((String)myData.get(UtilsTS.lastDep).get(i));
+			if(hour<1530){myData.get(UtilsTS.lastDep+ "Short").add("0");}
+			else if(hour < 1830){myData.get(UtilsTS.lastDep+ "Short").add("1");}
+			else if (hour >=1830){myData.get(UtilsTS.lastDep+ "Short").add("2");}
+			else{myData.get(UtilsTS.lastDep + "Short").add("10");}
+		}	
 	}
 
 	
@@ -1717,211 +1415,6 @@ public class TravelSurveyPreparator {
 				i+=1000;
 			}
 		}
-		//System.out.println(utilities);
-		//System.out.println(cumulativeProbabilities);
-		//System.out.println("choice : " + index + " rand value  " + randVal);
 		return index;
-	}
-
-	public void processDummies() {
-		// TODO Auto-generated method stub
-		myData.put(UtilsTS.dummyInactiveWomen, new ArrayList<Object>());
-		myData.put(UtilsTS.dummyInactiveMen, new ArrayList<Object>());
-		myData.put(UtilsTS.dummyActiveMen , new ArrayList<Object>());
-		myData.put(UtilsTS.dummyStudent, new ArrayList<Object>());
-		myData.put(UtilsTS.dummyWorker, new ArrayList<Object>());
-		myData.put(UtilsTS.dummyTempWorker, new ArrayList<Object>());
-		myData.put(UtilsTS.dummyRetire, new ArrayList<Object>());
-		myData.put(UtilsTS.mother34, new ArrayList<Object>());
-		myData.put(UtilsTS.dummyFemale, new ArrayList<Object>());
-		myData.put(UtilsTS.dummyMale, new ArrayList<Object>());
-		myData.put(UtilsTS.dummyYoung, new ArrayList<Object>());
-		myData.put(UtilsTS.dummyUnder15, new ArrayList<Object>());
-		myData.put(UtilsTS.dummyUnder19, new ArrayList<Object>());
-		myData.put(UtilsTS.dummyPTuser, new ArrayList<Object>());
-		myData.put(UtilsTS.dummyPartialPT, new ArrayList<Object>());
-		myData.put(UtilsTS.dummyFullPT, new ArrayList<Object>());
-		myData.put(UtilsTS.dummyInactive, new ArrayList<Object>());
-		myData.put(UtilsTS.dummyKids, new ArrayList<Object>());
-		myData.put(UtilsTS.dummyKids01, new ArrayList<Object>());
-		myData.put(UtilsTS.dummyKids2, new ArrayList<Object>());
-		
-		for(int i = 0; i < myData.get(UtilsTS.id).size(); i++){
-			//inactivewoman
-			if(myData.get(UtilsTS.sex).get(i).equals("2") &&
-					(myData.get(UtilsTS.pStatut).get(i).equals("4")||
-					myData.get(UtilsTS.pStatut).get(i).equals("7"))){
-				myData.get(UtilsTS.dummyInactiveWomen).add(1);
-			}
-			else{
-				myData.get(UtilsTS.dummyInactiveWomen).add(0);
-			}
-			//inactive men
-			if(myData.get(UtilsTS.sex).get(i).equals("1") &&
-					(myData.get(UtilsTS.pStatut).get(i).equals("4")||
-					myData.get(UtilsTS.pStatut).get(i).equals("7"))){
-				myData.get(UtilsTS.dummyInactiveMen).add(1);
-			}
-			else{
-				myData.get(UtilsTS.dummyInactiveMen).add(0);
-			}
-			//activemen
-			if(myData.get(UtilsTS.sex).get(i).equals("1") &&
-					(myData.get(UtilsTS.pStatut).get(i).equals("1")||
-					myData.get(UtilsTS.pStatut).get(i).equals("2"))){
-				myData.get(UtilsTS.dummyActiveMen).add(1);
-			}
-			else{
-				myData.get(UtilsTS.dummyActiveMen).add(0);
-			}
-			//Student
-			if(myData.get(UtilsTS.pStatut).get(i).equals("3")){
-				myData.get(UtilsTS.dummyStudent).add(1);
-			}
-			else{
-				myData.get(UtilsTS.dummyStudent).add(0);
-			}
-			//worker
-			if(myData.get(UtilsTS.pStatut).get(i).equals("1")){
-				myData.get(UtilsTS.dummyWorker).add(1);
-			}
-			else{
-				myData.get(UtilsTS.dummyWorker).add(0);
-			}
-			//tempWorker
-			if(myData.get(UtilsTS.pStatut).get(i).equals("2")){
-				myData.get(UtilsTS.dummyTempWorker).add(1);
-			}
-			else{
-				myData.get(UtilsTS.dummyTempWorker).add(0);
-			}
-			//retire
-			if(myData.get(UtilsTS.pStatut).get(i).equals("4")){
-				myData.get(UtilsTS.dummyRetire).add(1);
-			}
-			else{
-				myData.get(UtilsTS.dummyRetire).add(0);
-			}
-			//male
-			if(myData.get(UtilsTS.sex).get(i).equals("1")){
-				myData.get(UtilsTS.dummyMale).add(1);
-			}
-			else{
-				myData.get(UtilsTS.dummyMale).add(0);
-			}
-			//female
-			if(myData.get(UtilsTS.sex).get(i).equals("2")){
-				myData.get(UtilsTS.dummyFemale).add(1);
-			}
-			else{
-				myData.get(UtilsTS.dummyFemale).add(0);
-			}
-			//mother34
-			int nKids = (int) myData.get(UtilsTS.kids).get(i);
-			if(myData.get(UtilsTS.sex).get(i).equals("2")&&
-					nKids>=3){
-				myData.get(UtilsTS.mother34).add(nKids);
-			}
-			else{
-				myData.get(UtilsTS.mother34).add(0);
-			}
-			//young
-			if(Integer.parseInt((String)myData.get(UtilsTS.ageGroup).get(i))<=6){
-				myData.get(UtilsTS.dummyYoung).add(1);
-			}
-			else{
-				myData.get(UtilsTS.dummyYoung).add(0);
-			}
-			//under15
-			if(Integer.parseInt((String)myData.get(UtilsTS.ageGroup).get(i))<=3){
-				myData.get(UtilsTS.dummyUnder15).add(1);
-			}
-			else{
-				myData.get(UtilsTS.dummyUnder15).add(0);
-			}
-			//under19
-			if(Integer.parseInt((String)myData.get(UtilsTS.ageGroup).get(i))<=4){
-				myData.get(UtilsTS.dummyUnder19).add(1);
-			}
-			else{
-				myData.get(UtilsTS.dummyUnder19).add(0);
-			}
-			//userPT
-			if(myData.get(UtilsTS.fidelPtRange).get(i).equals("1") ||myData.get(UtilsTS.fidelPtRange).get(i).equals("2")){
-				myData.get(UtilsTS.dummyPTuser).add(1);
-			}
-			else{
-				myData.get(UtilsTS.dummyPTuser).add(0);
-			}
-			//partial PT
-			if(myData.get(UtilsTS.fidelPtRange).get(i).equals("1")){
-				myData.get(UtilsTS.dummyPartialPT).add(1);
-			}
-			else{
-				myData.get(UtilsTS.dummyPartialPT).add(0);
-			}
-			//full PT
-			if(myData.get(UtilsTS.fidelPtRange).get(i).equals("2")){
-				myData.get(UtilsTS.dummyFullPT).add(1);
-			}
-			else{
-				myData.get(UtilsTS.dummyFullPT).add(0);
-			}
-			//inactive
-			if((myData.get(UtilsTS.pStatut).get(i).equals("4")||
-					myData.get(UtilsTS.pStatut).get(i).equals("7"))){
-				myData.get(UtilsTS.dummyInactive).add(1);
-			}
-			else{
-				myData.get(UtilsTS.dummyInactive).add(0);
-			}
-			//kids
-			if(nKids >= 1){
-				myData.get(UtilsTS.dummyKids).add(1);
-			}
-			else{
-				myData.get(UtilsTS.dummyKids).add(0);
-			}
-			//dummyKids01
-			if(nKids <=1){
-				myData.get(UtilsTS.dummyKids01).add(1);
-			}
-			else{
-				myData.get(UtilsTS.dummyKids01).add(0);
-			}
-			///dummyKids02
-			if(nKids >=2){
-				myData.get(UtilsTS.dummyKids2).add(1);
-			}
-			else{
-				myData.get(UtilsTS.dummyKids2).add(0);
-			}
-		}
-	}
-	
-	@Deprecated
-	public void processChoice(HashMap<String, Integer> dictionnary, ArrayList<String> order){
-		myData.put(UtilsTS.choice, new ArrayList<Object>());
-		
-		for(int i = 0; i < myData.get(UtilsTS.id).size()-1; i++){
-			String ref = new String();
-			
-			if((int)myData.get(UtilsTS.nAct).get(i) == 0){
-				ref = UtilsTS.stayedHome;
-			}
-			else if(myData.get(UtilsTS.fidelPtRange).get(i).equals("0")||myData.get(UtilsTS.fidelPtRange).get(i).equals("10")){
-				ref = UtilsTS.noPT;
-			}
-			else{
-				Iterator<String> it = order.iterator();
-				while(it.hasNext()){
-					String curr = it.next();
-					ref+=myData.get(curr).get(i);
-				}
-			}
-			String choice = Integer.toString(dictionnary.get(ref));
-			myData.get(UtilsTS.choice).add(choice);
-			
-		}
 	}
 }

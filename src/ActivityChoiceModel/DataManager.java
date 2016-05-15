@@ -139,7 +139,7 @@ public class DataManager {
 		myOutputFileWriter.WriteToFile(headers);
 		
 		for(int i=0; i < myData.get(UtilsTS.id).size()-1; i++){
-			if(myData.get(UtilsTS.pDebut).get(i).equals("1")){
+			if(myData.get(UtilsTS.pStart).get(i).equals("1")){
 				String line = new String();
 				Iterator<String> it2 = toPrint.iterator();
 				while(it2.hasNext()){

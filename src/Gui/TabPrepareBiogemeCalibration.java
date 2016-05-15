@@ -31,7 +31,8 @@ public class TabPrepareBiogemeCalibration extends JPanel {
 	PromptStringInformation line7;
 	PromptComboBox line8;
 	PromptStringInformation line9;
-	PromptButton line10;
+	PromptStringInformation line10;
+	PromptButton line11;
 
 	public TabPrepareBiogemeCalibration(Dimension d){
 		super();
@@ -47,7 +48,7 @@ public class TabPrepareBiogemeCalibration extends JPanel {
 				"LAST_DEPShort, 3<br>" + 
 				"N_ACT, 4<br>" + 
 				"NEST, 5</html>",
-				"biogemeCalibration\\ctrl\\choiceDescription.txt");
+				"modelCalibration\\ctrl\\choiceDescription.txt");
 		line2 = new PromptStringInformation("Path to hypothesis description file",
 				"<html> .txt file -- the file describes hypothesis following this format:<br>"
 				+ "DOWNTOWN, accessIndicator = 1, NEST = 2 - 3, dummy <br>"
@@ -57,7 +58,7 @@ public class TabPrepareBiogemeCalibration extends JPanel {
 				+ "NEST: is the affected choice<br>"
 				+ "=2-3: are the affected categories (2 and 3)<br>"
 				+ "dummy: is the type of variable (choose: dummy, agent, alternative",
-				"biogemeCalibration\\ctrl\\hypothesis.txt");
+				"modelCalibration\\ctrl\\hypothesis.txt");
 		line3 = new PromptStringInformation("Output path to save the BisonBiogeme control file", 
 				"<html>Path to save a BisonBiogeme control file matching choice description and hypothesis. <br>"
 				+ "Beware that if you make hand changes in this control file, those changes won't be considered in later use in the Bataclan framework.</html>",
@@ -78,7 +79,7 @@ public class TabPrepareBiogemeCalibration extends JPanel {
 				"LAST_DEPShort, 3<br>" + 
 				"N_ACT, 4<br>" + 
 				"NEST, 5</html>",
-				"biogemeCalibration\\ctrl\\choiceDescription.txt");
+				"modelCalibration\\ctrl\\choiceDescription.txt");
 		line6 = new PromptStringInformation("Path to hypothesis description file",
 				"<html> .txt file -- the file describes hypothesis following this format:<br>"
 				+ "DOWNTOWN, accessIndicator = 1, NEST = 2 - 3, dummy <br>"
@@ -88,12 +89,12 @@ public class TabPrepareBiogemeCalibration extends JPanel {
 				+ "NEST: is the affected choice<br>"
 				+ "=2-3: are the affected categories (2 and 3)<br>"
 				+ "dummy: is the type of variable (choose: dummy, agent, alternative",
-				"biogemeCalibration\\ctrl\\hypothesis.txt");
+				"modelCalibration\\ctrl\\hypothesis.txt");
 		
 		line7 = new PromptStringInformation("Path to the travel survey", 
 				"<html>.csv file -- path to the travel survey to prepare: each sample will be labeled with the corresponding choice.<br>"
 				+ "It is recommended that the user write down his own function to prepare the travel survey, because each travel survey has its own specificities. </html>",
-				"biogemeCalibration\\data\\travelSurvey.csv");
+				"modelCalibration\\data\\travelSurvey.csv");
 		
 		ArrayList<Integer> threads =  new ArrayList<Integer>();
 		for(int i = 1; i <= Runtime.getRuntime().availableProcessors()-1; i++){threads.add(i);}
@@ -106,8 +107,11 @@ public class TabPrepareBiogemeCalibration extends JPanel {
 				"<html>number -- the N trip chain spatially based the closest to the living location of the agent are sampled as the choice set<br>"
 				+ "when simulating the trip chain choice, you will have the choice between accessing the whole choice universe or only accessing trip chain types that occured in the neighborhood");
 		
+		line10 = new PromptStringInformation("Output path",
+				"<html>path -- the path to save the prepared travel survey",
+				"outputs\\travelSurvey_prepared.csv");
 		
-		line10 = new PromptButton("Prepare the travel survey for BisonBiogeme",
+		line11 = new PromptButton("Prepare the travel survey for BisonBiogeme",
 				"<html>Generate a BisonBiogeme control file matching choice description and hypothesis. <br>"
 				+ "Beware that if you make hand changes in this control file, those changes won't be considered in later use in the Bataclan framework.</html>",
 				d);
@@ -125,6 +129,7 @@ public class TabPrepareBiogemeCalibration extends JPanel {
 		myContent.add(line8);
 		myContent.add(line9);
 		myContent.add(line10);
+		myContent.add(line11);
 		
 		myContent.setLayout(new BoxLayout(myContent, BoxLayout.PAGE_AXIS));
 		    

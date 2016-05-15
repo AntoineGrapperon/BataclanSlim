@@ -85,54 +85,22 @@ public class BiogemeChoice {
 	
 	public String getConstantName(){
 		return getConstantName(choiceCombination);
-		/*String constantName = new String();
-		
-		if(choiceCombination.get(UtilsTS.nAct) == 0 || choiceCombination.get(UtilsTS.fidelPtRange)==0){
-			constantName = UtilsSM.noPt;
-		}
-		/*if(choiceCombination.get(UtilsTS.nAct) == 0){
-			constantName = "C_HOME";
-		}
-		else if(choiceCombination.get(UtilsTS.nAct)!= 0 && choiceCombination.get(UtilsTS.fidelPtRange)==0){
-			constantName = "C_NOT_PT_RIDER";
-		}*/
-		/*else if(choiceCombination.get(UtilsTS.nAct)!=0 && choiceCombination.get(UtilsTS.fidelPtRange)!=0){
-			/*constantName = "C";
-			for(String key: choiceCombination.keySet()){
-				constantName+= "_"+choiceCombination.get(key);
-			}*/
-		/*	constantName = "C_"+choiceCombination.get(UtilsTS.fidelPtRange) +
-					"_" + choiceCombination.get(UtilsTS.firstDep+"Short") +
-					"_" + choiceCombination.get(UtilsTS.nAct) +
-					"_" + choiceCombination.get(UtilsTS.lastDep+"Short");
-		}
-		return constantName;*/
 	}
 	
 	public static String getConstantName(HashMap<String, Integer> combination){
 		String constantName = new String();
-		if(combination.get(UtilsTS.nest) == 0){
-			constantName = "C_" + UtilsTS.carDriver;
+		
+		String nestDimensionName = BiogemeControlFileGenerator.getNestDimension();
+		ArrayList<Integer> aggregatedNests = BiogemeControlFileGenerator.choiceDimensions.get(nestDimensionName).aggregated;
+		if(aggregatedNests.contains(combination.get(nestDimensionName))){
+			constantName = "C_"+combination.get(nestDimensionName);
 		}
-		else if(combination.get(UtilsTS.nest) == 1){
-			constantName = "C_" + UtilsTS.carPassenger;
-		}
-		else if(combination.get(UtilsTS.nest) == 2 &&
-				combination.get(UtilsTS.nAct)!=0 &&
-				combination.get(UtilsTS.fidelPtRange)!=0){
-			constantName = "C_"+combination.get(UtilsTS.fidelPtRange) +
-					"_" + combination.get(UtilsTS.firstDep+"Short") +
-					"_" + combination.get(UtilsTS.nAct) +
-					"_" + combination.get(UtilsTS.lastDep+"Short");
-		}
-		else if(combination.get(UtilsTS.nest) == 3){
-			constantName = "C_" + UtilsTS.ptUserNoSto;
-		}
-		else if(combination.get(UtilsTS.nest) == 4){
-			constantName = "C_" + UtilsTS.activeMode;
-		}
-		else{ //last case is active mode and we added all 'bad record of the other cases
-			constantName = "-1";
+		
+		else{
+			 constantName = "C";
+			for(String s: BiogemeControlFileGenerator.dimensionOrder){
+				constantName += "_" + combination.get(s);
+			}
 		}
 		return constantName;
 	}
@@ -143,7 +111,9 @@ public class BiogemeChoice {
 	
 	public static String getNestName(HashMap<String, Integer> combination){
 		String constantName = new String();
-		if(combination.get(UtilsTS.nest) == 0){
+		String nestDimensionName = BiogemeControlFileGenerator.getNestDimension();
+		constantName = Integer.toString(combination.get(nestDimensionName));
+		/*if(combination.get(UtilsTS.nest) == 0){
 			constantName = UtilsTS.carDriver;
 		}
 		else if(combination.get(UtilsTS.nest) == 1){
@@ -158,7 +128,7 @@ public class BiogemeChoice {
 		}
 		else{ //last case is active mode and we added all 'bad record of the other cases
 			constantName = UtilsTS.activeMode;
-		}
+		}*/
 		return constantName;
 	}
 	

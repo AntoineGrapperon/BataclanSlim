@@ -110,8 +110,9 @@ public class Window extends JFrame implements ActionListener {
 	    content.paneModelCalibration.tabPrepareBiogemeCalibration.line7.myText.addMouseListener(new HelpListenerText());
 	    content.paneModelCalibration.tabPrepareBiogemeCalibration.line8.myComboBox.addMouseListener(new HelpListenerComboBox());
 	    content.paneModelCalibration.tabPrepareBiogemeCalibration.line9.myText.addMouseListener(new HelpListenerText());
-	    content.paneModelCalibration.tabPrepareBiogemeCalibration.line10.myButton.addMouseListener(new HelpListenerButton());
-	    content.paneModelCalibration.tabPrepareBiogemeCalibration.line10.myButton.addActionListener(new FormatTravelSurvey());
+	    content.paneModelCalibration.tabPrepareBiogemeCalibration.line10.myText.addMouseListener(new HelpListenerText());
+	    content.paneModelCalibration.tabPrepareBiogemeCalibration.line11.myButton.addMouseListener(new HelpListenerButton());
+	    content.paneModelCalibration.tabPrepareBiogemeCalibration.line11.myButton.addActionListener(new FormatTravelSurvey());
 	    
 	    content.paneModelCalibration.tabRunModelValidation.line1.myText.addMouseListener(new HelpListenerText());
 	    content.paneModelCalibration.tabRunModelValidation.line2.myText.addMouseListener(new HelpListenerText());
@@ -383,14 +384,16 @@ public class Window extends JFrame implements ActionListener {
 				int nThreads = (int) content.paneModelCalibration.tabPrepareBiogemeCalibration.line8.myComboBox.getSelectedItem();
 				String nAlt = content.paneModelCalibration.tabPrepareBiogemeCalibration.line9.myText.getText();
 				int nAlternatives = Integer.parseInt(nAlt.trim());
+				String output = content.paneModelCalibration.tabPrepareBiogemeCalibration.line10.myText.getText();
 				
 				BiogemeControlFileGenerator myCtrlGenerator = new BiogemeControlFileGenerator();
 				TravelSurveyPreparator odGatineau = new TravelSurveyPreparator();
 	    		myCtrlGenerator.initialize(choiceDescription, hypothesis);
-	    		odGatineau.initialize(pathToTravelSurvey);
+	    		odGatineau.initialize(pathToTravelSurvey,output);
 		    	
 		    	System.out.println("--computation with: " + nThreads + " logical processors");
 		    	odGatineau.processDataMultiThreads(nThreads, nAlternatives, myCtrlGenerator);
+		    	System.out.println("--data was prepared");
 		    	
 			} catch (IOException | NumberFormatException e1) {
 				// TODO Auto-generated catch block
