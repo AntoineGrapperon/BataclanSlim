@@ -11,7 +11,7 @@ import java.util.Random;
 
 import Smartcard.PublicTransitSystem;
 import Smartcard.Smartcard;
-import Smartcard.Station;
+import Smartcard.GTFSStop;
 import Smartcard.UtilsSM;
 import Utils.RandomNumberGen;
 import Utils.Utils;

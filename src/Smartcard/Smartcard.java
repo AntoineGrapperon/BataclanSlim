@@ -20,7 +20,7 @@ import Utils.Utils;
 public class Smartcard extends BiogemeChoice{
 
 	double cardId;
-	int stationId;
+	String stationId;
 	//public int choiceId;
 	protected HashMap<String, ArrayList<String>> myData = new HashMap<String, ArrayList<String>>();
 	public int columnId;
@@ -199,10 +199,10 @@ public class Smartcard extends BiogemeChoice{
 				int stationId = Integer.parseInt(myData.get(UtilsSM.stationId).get(i));
 				int nextStationId = Integer.parseInt(myData.get(UtilsSM.nextStationId).get(i));
 				if(nextStationId != 0){
-					Station station = PublicTransitSystem.myStations.get(stationId);
-					Station nextStation = PublicTransitSystem.myStations.get(nextStationId);
-					station.getDistance(nextStation);
-					if(station.getDistance(nextStation)>distanceThreshold){
+					GTFSStop gTFSStop = PublicTransitSystem.myStops.get(stationId);
+					GTFSStop nextStation = PublicTransitSystem.myStops.get(nextStationId);
+					gTFSStop.getDistance(nextStation);
+					if(gTFSStop.getDistance(nextStation)>distanceThreshold){
 						counterNonPt ++;
 						counterTripLegs ++;
 					}
@@ -246,7 +246,7 @@ public class Smartcard extends BiogemeChoice{
 				freq = stationFrequencies.get(key);
 			}
 		}
-		stationId = Integer.parseInt(myStationId);
+		stationId = myStationId;
 	}
 
 	private ArrayList<Object> getAverageFirstDepTime() {
@@ -424,14 +424,14 @@ public class Smartcard extends BiogemeChoice{
 		
 		if(nAct <= 1){
 			if(depTime < 720 ){
-				stationId = Integer.parseInt(station);
+				stationId = station;
 			}
 			else{
-				stationId = Integer.parseInt(getMostFrequentLastStation());
+				stationId = getMostFrequentLastStation();
 			}
 		}
 		else{
-			stationId = Integer.parseInt(station);
+			stationId = station;
 		}
 		
 	}
@@ -449,5 +449,84 @@ public class Smartcard extends BiogemeChoice{
 			}
 		}
 		return myData.size()/dayCount;
+	}
+
+	public void inferDestinations() {
+		// TODO Auto-generated method stub
+		ArrayList<String> myDates = getDates();
+		for(String curDate: myDates){
+			inferDestination(curDate);
+		}
+	}
+
+	private void inferDestination(String curDate) {
+		// TODO Auto-generated method stub
+		ArrayList<HashMap<String, String>> dailyData = getOrderedDailyTransaction(curDate);
+		for(int i = 0; i < dailyData.size();i++){
+			HashMap<String,String> curTapIn = dailyData.get(i);
+			GTFSStop alightingStop;
+			
+			//Treat regular case: when there is a following record the same day
+			if(i != dailyData.size()-1){
+				HashMap<String, String> nextTapIn = dailyData.get(i+1);
+				double distMin = Double.POSITIVE_INFINITY;
+				
+				
+				String curDirectionId = curTapIn.get(UtilsSM.directionId);
+				GTFSRoute curRoute = PublicTransitSystem.myRoutes.get(curTapIn.get(UtilsSM.routeId));
+				GTFSStop curStop = PublicTransitSystem.myStops.get(curTapIn.get(UtilsSM.stopId));
+				GTFSStop nextStop = PublicTransitSystem.myStops.get(nextTapIn.get(UtilsSM.stopId));
+				ArrayList<GTFSStop> curVanishingRoute = curRoute.getVanishingRoute(curStop, curDirectionId);
+				for(GTFSStop s:curVanishingRoute){
+					double dist = s.getDistance(nextStop);
+					if(dist < distMin){
+						distMin = dist;
+						alightingStop = s;
+					}
+				}
+			}
+			else if()
+		}
+		
+	}
+
+	private ArrayList<HashMap<String, String>> getOrderedDailyTransaction(String curDate) {
+		// TODO Auto-generated method stub
+		HashMap<Integer, HashMap<String, String>> tempData = new HashMap<Integer, HashMap<String, String>>();
+		ArrayList<HashMap<String,String>> dailyData = new ArrayList<HashMap<String,String>>();
+		
+		for(int i = 0; i < myData.get(UtilsSM.date).size();i++){
+			if(curDate.equals(myData.get(UtilsSM.date).get(i))){
+				int curTime = Integer.parseInt(myData.get(UtilsSM.time).get(i));
+				HashMap<String,String> curData = new HashMap<String,String>();
+				for(String str: myData.keySet()){
+					curData.put(str, myData.get(str).get(i));
+				}
+				tempData.put(curTime, curData);
+			}
+		}
+		ArrayList<Integer> sortedTimes = new ArrayList<Integer>();
+		for(int i: tempData.keySet()){
+			sortedTimes.add(i);
+		}
+		sortedTimes.sort(null);
+		
+		for(int i: sortedTimes){
+			HashMap<String,String> curData = tempData.get(i);
+			dailyData.add(curData);
+		}
+		return dailyData;
+	}
+
+	private ArrayList<String> getDates() {
+		// TODO Auto-generated method stub
+		ArrayList<String> dates = new ArrayList<String>();
+		for(int i = 0; i < myData.get(UtilsSM.date).size();i++){
+			String curDate = myData.get(UtilsSM.date).get(i);
+			if(!dates.contains(curDate)){
+				dates.add(curDate);
+			}
+		}
+		return dates;
 	}
 }

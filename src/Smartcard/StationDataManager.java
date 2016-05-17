@@ -12,15 +12,16 @@ import ActivityChoiceModel.DataManager;
  * @author Antoine
  *
  */
+@Deprecated
 public class StationDataManager extends DataManager{
 
-	HashMap<Integer, Station> myStations = new HashMap<Integer,Station>();
+	HashMap<String, GTFSStop> myStations = new HashMap<String,GTFSStop>();
 	
 	public StationDataManager(){
 		
 	}
 	
-	public HashMap<Integer, Station> prepareStations(String pathToStationsData) throws IOException{
+	public HashMap<String, GTFSStop> prepareStations(String pathToStationsData) throws IOException{
 		initialize(pathToStationsData);
 		createStations();
 		return myStations;
@@ -29,10 +30,10 @@ public class StationDataManager extends DataManager{
 	private void createStations() {
 		// TODO Auto-generated method stub
 		for(int i = 0; i < myData.get(UtilsST.stationId).size(); i++){
-			Station newS = new Station();
-			newS.myId = (int)Double.parseDouble(myData.get(UtilsST.stationId).get(i));
-			newS.x = Double.parseDouble(myData.get(UtilsST.x).get(i));
-			newS.y = Double.parseDouble(myData.get(UtilsST.y).get(i));
+			GTFSStop newS = new GTFSStop();
+			newS.myId = myData.get(UtilsST.stationId).get(i);
+			newS.lat = Double.parseDouble(myData.get(UtilsST.x).get(i));
+			newS.lon = Double.parseDouble(myData.get(UtilsST.y).get(i));
 			myStations.put(newS.myId, newS);
 		}
 	}

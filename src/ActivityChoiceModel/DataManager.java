@@ -33,6 +33,10 @@ public class DataManager {
 		myInputDataReader.CloseFile();
 	}
 	
+	public HashMap<String, ArrayList<String>> getMyData(){
+		return myData;
+	}
+	
 	public void createOuputFile(){
 		String[] temp;
 		temp=path.split(".csv");
@@ -64,46 +68,22 @@ public class DataManager {
     	Scanner scanner = null;
     	ArrayList<ArrayList<String>> data = new ArrayList<ArrayList<String>>();
 
-    		int i=0;
-    		while((line=myInputDataReader.myFileReader.readLine())!= null)
-    		{
-    			data.add(new ArrayList<String>());
-    			scanner = new Scanner(line);
-    			scanner.useDelimiter(Utils.COLUMN_DELIMETER);
+    	myInputDataReader.myFileReader.mark(0);
+		int i=0;
+		while((line=myInputDataReader.myFileReader.readLine())!= null)
+		{
+			data.add(new ArrayList<String>());
+			scanner = new Scanner(line);
+			scanner.useDelimiter(Utils.COLUMN_DELIMETER);
 
-    				while (scanner.hasNext())
-    				{
-    					String dat = scanner.next();
-    					data.get(i).add(dat);
-    				}
-    				i++;
-    		}
-    	return data;
-    }
-	
-	public ArrayList<ArrayList<String>> getData(int n) throws IOException
-    {
-    	String line=null;
-    	Scanner scanner = null;
-    	ArrayList<ArrayList<String>> data = new ArrayList<ArrayList<String>>();
-
-    		int i=0;
-    		while((line=myInputDataReader.myFileReader.readLine())!= null)
-    		{
-    			data.add(new ArrayList<String>());
-    			scanner = new Scanner(line);
-    			scanner.useDelimiter(",");
-
-    				while (scanner.hasNext())
-    				{
-    					String dat = scanner.next();
-    					data.get(i).add(dat);
-    				}
-    				i++;
-    				if(i>n){
-    					break;
-    				}
-    		}
+				while (scanner.hasNext())
+				{
+					String dat = scanner.next();
+					data.get(i).add(dat);
+				}
+				i++;
+		}
+    		
     	return data;
     }
 	

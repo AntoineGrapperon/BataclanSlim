@@ -26,11 +26,28 @@ public class SmartcardDataManager extends DataManager{
 		myCtrlFileGenerator = biogemeGenerator;
 	}
 	
-	public ArrayList<Smartcard> prepareSmartcards(String smartcardData) throws IOException{
+	
+
+	public void prepareSmartcards(String smartcardData) throws IOException{
 		initialize(smartcardData);
 		System.out.println("--smartcard manager initialized");
 		createSmartcards();
 		System.out.println("--smartcard created");
+	}
+	
+	public void inferDestinations(){
+		for(Smartcard sm: mySmartcards){
+			sm.inferDestinations();
+		}
+	}
+	
+	/////NEW WAY
+	
+	public ArrayList<Smartcard> enrichWithTripChainChoice(String smartcardData) throws IOException{
+		/*initialize(smartcardData);
+		System.out.println("--smartcard manager initialized");
+		createSmartcards();
+		System.out.println("--smartcard created");*/
 		identifyMostFrequentStation();
 		System.out.println("--assign bus station");
 		identifyFare();
@@ -62,25 +79,6 @@ public class SmartcardDataManager extends DataManager{
 		for(Smartcard sm: mySmartcards){
 			int fare = Integer.parseInt(sm.myData.get(UtilsSM.fare).get(0));
 			sm.fare = fare;
-			/*if(fare == 1 ||
-					fare==2||
-					fare==3||
-					fare==9||
-					fare==10||
-					fare==15||
-					fare==16||
-					fare==17||
-					fare==42||
-					fare==43){
-				sm.fare = 0;
-			}
-			else if(fare ==8 ||
-					fare == 18){
-				sm.fare = 2;
-			}
-			else{
-				sm.fare = 1;
-			}*/
 		}
 	}
 
@@ -112,7 +110,6 @@ public class SmartcardDataManager extends DataManager{
 			currSm.tagLastTransaction();
 			//currSm.identifyMostFrequentStation();
 			currSm.identifyLivingStation();
-			
 		}
 	}
 
@@ -138,10 +135,6 @@ public class SmartcardDataManager extends DataManager{
 		double id = Double.parseDouble(myData.get(UtilsSM.cardId).get(i));
 		for(Smartcard currS : mySmartcards){
 			if(currS.cardId == id){
-				/*if(currS.cardId == 3.064000104E9){
-					System.out.println("coucou");
-				}*/
-
 				return currS;
 			}
 		}

@@ -57,6 +57,16 @@ public class UtilsSM {
 	public static String fare = "paidFare";
 	
 	
+	/*#######################################GTFS dictionnary######################################*/
+	public static String tripId = "trip_id";
+	public static String routeId = "route_id";
+	public static String stopId = "stop_id";
+	public static String lat = "stop_lat";
+	public static String lon = "stop_lon";
+	public static String directionId = "direction_id";
+	public static String stopSequence = "stop_sequence";
+	
+	
 	public UtilsSM(){
 		/*dictionnary.put(UtilsTS.ageGroup, "age");
 		dictionnary.put(UtilsTS.sex, "sex");

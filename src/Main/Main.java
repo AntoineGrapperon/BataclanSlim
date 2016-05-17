@@ -3,6 +3,7 @@ package Main;
 
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -26,6 +27,17 @@ import SimulationObjects.World;
 import Smartcard.PublicTransitSystem;
 import Smartcard.UtilsSM;
 import Smartcard.UtilsST;
+
+import org.geotools.data.FileDataStore;
+import org.geotools.data.FileDataStoreFinder;
+import org.geotools.data.simple.SimpleFeatureSource;
+import org.geotools.map.FeatureLayer;
+import org.geotools.map.Layer;
+import org.geotools.map.MapContent;
+import org.geotools.styling.SLD;
+import org.geotools.styling.Style;
+import org.geotools.swing.JMapFrame;
+import org.geotools.swing.data.JFileDataStoreChooser;
 
 import java.util.*;
 
@@ -72,6 +84,46 @@ public class Main {
 		System.out.println("Current working directory : " + workingDir);
 	   
 		Utils.DATA_DIR =  System.getProperty("user.dir") + "\\example\\";
+		
+		
+		
+		//////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////
+		/*File file = JFileDataStoreChooser.showOpenFile("shp", null);
+        if (file == null) {
+            return;
+        }
+
+        FileDataStore store;
+		try {
+			store = FileDataStoreFinder.getDataStore(file);
+			SimpleFeatureSource featureSource = store.getFeatureSource();
+			MapContent map = new MapContent();
+	        map.setTitle("Quickstart");
+	        
+	        Style style = SLD.createSimpleStyle(featureSource.getSchema());
+	        Layer layer = new FeatureLayer(featureSource, style);
+	        map.addLayer(layer);
+	        JMapFrame.showMap(map);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+
+        // Create a map content and add our shapefile to it
+        
+
+        // Now display the map
+         * 
+         */
+        
+		
+//////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////
+		
+		
+		
     	
 	    Window gui = new Window();
 	    //PublicTransitSystem myPublicTransitSystem = new PublicTransitSystem();

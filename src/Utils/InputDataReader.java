@@ -129,7 +129,6 @@ public ArrayList<String> StoreLineByLine() throws IOException
             return "";
         }
 
-        // For 1 values for all zones (conditionals as rows)
         public void FillCollection2(DiscreteCondDistribution currColl) throws IOException
         {
             String strTok = myFileReader.readLine();
@@ -148,16 +147,8 @@ public ArrayList<String> StoreLineByLine() throws IOException
                         else{
                         	condName = strToken[0].substring(j + 1,
                         			strToken[0].length()); 
-                        	/*if(condName.contains("--")){
-                        		System.out.println("--wrong key format : " + condName);
-                        	}*/
                         }
-                        
-                        /*string[] strToken = strTok.Split(',');
-                        //int j =  strToken[0].IndexOf(
-                        //        Utils.Constants.CATEGORY_DELIMITER);
-                        string catName = strTok.Substring(0,1);
-                        string condName = strTok.Substring(2, strTok.LastIndexOf(',')-2);*/
+
 
                         currColl.AddValue(catName, condName,
                                 Double.parseDouble(strToken[1]));
@@ -178,30 +169,16 @@ public ArrayList<String> StoreLineByLine() throws IOException
                 		int j = strToken[0].indexOf(
                                 Utils.CATEGORY_DELIMITER);
                         String catName = strToken[0].substring(0, j);
-                        //System.out.println(catName);
-                        //[AG] in the case where there is only 1 attribute, the substring is trying to extract a non existing portion of sentence, I  added a if/else structure to fix that
                         String condName;
                         if(strToken[0].substring(j+1).length() == 1){condName = strToken[0].substring(j);}
                         else{
                         	condName = strToken[0].substring(j + 1,
                         			strToken[0].length()); 
-                        	/*if(condName.contains("--")){
-                        		System.out.println("--wrong key format : " + condName);
-                        	}*/
                         }
-                        
-                        /*string[] strToken = strTok.Split(',');
-                        //int j =  strToken[0].IndexOf(
-                        //        Utils.Constants.CATEGORY_DELIMITER);
-                        string catName = strTok.Substring(0,1);
-                        string condName = strTok.Substring(2, strTok.LastIndexOf(',')-2);*/
 
                         currColl.AddValue(catName, condName,
                                 Double.parseDouble(strToken[1]));
                         currTarget.CumulValue(catName,Double.parseDouble(strToken[1]));
-                        //System.out.println(catName + "  " +strToken[1]);
-                        //System.out.println(currTarget.GetDimensionName());
-                        
                 	}
                 }
                 
