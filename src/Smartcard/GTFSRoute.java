@@ -14,8 +14,8 @@ import java.util.HashMap;
 public class GTFSRoute {
 	String myId;
 	ArrayList<GTFSTrip> myTripsId = new ArrayList<GTFSTrip>();
-	ArrayList<GTFSStop> myStopsDirection0 = new ArrayList<GTFSStop>();
-	ArrayList<GTFSStop> myStopsDirection1 = new ArrayList<GTFSStop>();
+	/*ArrayList<GTFSStop> myStopsDirection0 = new ArrayList<GTFSStop>();
+	ArrayList<GTFSStop> myStopsDirection1 = new ArrayList<GTFSStop>();*/
 	
 	/**
 	 * This HashMap is structured as follow: the key indicates the direction (usually 0 or 1). The value is another HashMap<Integer, GTFSStop>, 
@@ -34,8 +34,13 @@ public class GTFSRoute {
 				sequenceId.add(i);
 			}
 			sequenceId.sort(null);
+			
+			int curStopSeqId = getSequenceId(curStop);
+			
 			for(int i: sequenceId){
-				vanishingRoute.add(curDirection.get(i));
+				if(i > curStopSeqId){
+					vanishingRoute.add(curDirection.get(i));
+				}
 			}
 		}
 		else{
@@ -45,6 +50,7 @@ public class GTFSRoute {
 		
 	}
 	
+	/*
 	public double getDistance(GTFSStop origin, GTFSStop nextOrigin){
 			double distance = 1000000;
 			double xA = nextOrigin.x;
@@ -72,7 +78,7 @@ public class GTFSRoute {
 			}
 		}
 		return "NULL";
-	}
+	}*/
 	
 	public boolean contains(GTFSStop curStop){
 		for(String dir: myDirections.keySet()){
@@ -82,8 +88,19 @@ public class GTFSRoute {
 				}
 			}
 		}
-		System.out.println("--there was probably a problem in function Line.contains");
 		return false;
+	}
+	
+	public int getSequenceId(GTFSStop curStop){
+		for(String dir: myDirections.keySet()){
+			for(int seq: myDirections.get(dir).keySet()){
+				if(myDirections.get(dir).get(seq).isEqual(curStop)){
+					return seq;
+				}
+			}
+		}
+		System.out.println("--there was probably a problem in function Line.contains");
+		return -1;
 	}
 
 }

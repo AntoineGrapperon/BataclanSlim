@@ -4,6 +4,7 @@
 package Smartcard;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -22,7 +23,11 @@ public class SmartcardDataManager extends DataManager{
 	BiogemeControlFileGenerator myCtrlFileGenerator = new BiogemeControlFileGenerator();
 	ArrayList<Smartcard> mySmartcards = new ArrayList<Smartcard>();
 	
-	SmartcardDataManager( BiogemeControlFileGenerator biogemeGenerator){
+	public SmartcardDataManager(){
+		
+	}
+	
+	public SmartcardDataManager( BiogemeControlFileGenerator biogemeGenerator){
 		myCtrlFileGenerator = biogemeGenerator;
 	}
 	
@@ -35,7 +40,7 @@ public class SmartcardDataManager extends DataManager{
 		System.out.println("--smartcard created");
 	}
 	
-	public void inferDestinations(){
+	public void inferDestinations() throws ParseException{
 		for(Smartcard sm: mySmartcards){
 			sm.inferDestinations();
 		}

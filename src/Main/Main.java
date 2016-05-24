@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.text.ParseException;
 import java.util.Hashtable;
 
 import javax.swing.JFrame;
@@ -25,6 +26,8 @@ import SRMSE.JointDistributionTravelSurvey;
 import SRMSE.SRMSE;
 import SimulationObjects.World;
 import Smartcard.PublicTransitSystem;
+import Smartcard.SmartcardDataManager;
+import Smartcard.StationDataManager;
 import Smartcard.UtilsSM;
 import Smartcard.UtilsST;
 
@@ -125,12 +128,30 @@ public class Main {
 		
 		
     	
-	    Window gui = new Window();
+	   // Window gui = new Window();
 	    //PublicTransitSystem myPublicTransitSystem = new PublicTransitSystem();
 		
 		
 	    
-	  //  try {
+	    try {
+		
+			//###############################################################################
+	    	//Infer smartcard destinations
+	    	//###############################################################################
+	    	PublicTransitSystem myPublicTransitSystem = new PublicTransitSystem();
+	    	
+	    	String pathGTFSTrips = "D:\\Recherche\\CharlieWorkspace\\BataclanSlim\\example\\destinationInference\\GTFS\\trips.txt";
+	    	String pathGTFSStops = "D:\\Recherche\\CharlieWorkspace\\BataclanSlim\\example\\destinationInference\\GTFS\\stops.txt";
+	    	String pathGTFSStopTimes = "D:\\Recherche\\CharlieWorkspace\\BataclanSlim\\example\\destinationInference\\GTFS\\stop_times.txt";
+	    	String pathGTFSRoutes = "D:\\Recherche\\CharlieWorkspace\\BataclanSlim\\example\\destinationInference\\GTFS\\routes.txt";
+	    	myPublicTransitSystem.initializePTsystem(pathGTFSTrips, pathGTFSStops, pathGTFSStopTimes, pathGTFSRoutes);
+	    	System.out.println("-- public transportation system loaded");
+	    	
+	    	String pathSmartcards = "D:\\Recherche\\CharlieWorkspace\\BataclanSlim\\example\\destinationInference\\smartcardSlim.csv";
+	    	SmartcardDataManager mySmartcardManager = new SmartcardDataManager();
+	    	mySmartcardManager.prepareSmartcards(pathSmartcards);
+	    	mySmartcardManager.inferDestinations();
+	    	System.out.println("--destination infered");
 	    	
 	    	
 	    	//###############################################################################
@@ -280,7 +301,7 @@ public class Main {
 			mySimulator.initialize(Utils.DATA_DIR + "biogeme\\dataZones2.csv");
 			mySimulator.importBiogemeModel(pathToModel);
 			mySimulator.importNest(pathToModel);
-			mySimulator.applyModelOnTravelSurveyPopulation(Utils.DATA_DIR + "Outputs\\simuleOD2704.csv",1, true);
+			mySimulator.applyModelOnTravelSurveyPopulation(Utils.DATA_DIR + "Outputs\\simuleOD2704.csv",1, true);*/
 			
 			//############################################################################################
 	    	//Load Smartcard data and process them to label with a choice id
@@ -393,14 +414,14 @@ public class Main {
 	    	
 	    	
 	    	
-	    /*	
+	    
 		
 	    }
-		catch (IOException e) {
+		catch (IOException | ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			
-		}*/
+		}
 	    
 	    long endTime = System.currentTimeMillis();
 		

@@ -18,11 +18,17 @@ import ActivityChoiceModel.UtilsTS;
 
 public class UtilsSM {
 	public static final double INFINIT = 10000;
-	public static String cardId = "numCarte";
-	public static String date = "dateComp";
+	public static final double WALKING_DISTANCE_THRESHOLD = 1000; //in meters
+	public static String destinationInferenceCase = "InferenceCase";
+	public static final String DATE_FORMAT = "dd/MM/yyyy";
+	
+	public static String alightingStop = "alighting_stop";
+	public static String index = "index";
+	public static String cardId = "card_id";
+	public static String date = "date";
 	public static String firstTrans = "dailyFirstTransaction";
 	public static String lastTrans = "dailyLastTransaction";
-	public static String time = "heureComp";
+	public static String time = "validation_time";
 	public static String isNotFirst = "F";
 	public static String isNotLast = "F";
 	public static String isFirst = "T";
@@ -65,6 +71,19 @@ public class UtilsSM {
 	public static String lon = "stop_lon";
 	public static String directionId = "direction_id";
 	public static String stopSequence = "stop_sequence";
+	
+	
+	/*#######################################Dest inference dictionnary######################################*/
+	public static String REGULAR = "1";// estimated using the next trip of the day
+	public static String TOO_FAR = "2";
+	public static String NOT_INFERRED = "10";
+	public static String LAST_DAILY_BUCKLED = "3"; // last trip of the day estimated using a buckle on the first trip of the day
+	public static String LAST_NEXT_DAY_BUCKLED = "4";// last trip of the day, estimated by buckling the trip chain on the next day
+	public static String NOT_DONE = "-1";
+	public static String SINGLE = "5"; //could not be estimated because it is not linked and no similar trips were made
+	public static String HISTORY = "6";//was estimated using historical data
+	public static String DATA_CORRUPTED_STOP_DONT_EXIST = "7";
+	
 	
 	
 	public UtilsSM(){

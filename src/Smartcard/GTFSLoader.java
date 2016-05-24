@@ -67,6 +67,7 @@ public class GTFSLoader {
 		for(int i = 0; i < tempReader.getMyData().get(UtilsSM.routeId).size();i++){
 			GTFSRoute curRoute = new GTFSRoute();
 			curRoute.myId = tempReader.getMyData().get(UtilsSM.routeId).get(i);
+			routes.put(curRoute.myId, curRoute);
 		}
 		return routes;
 	}
@@ -78,6 +79,7 @@ public class GTFSLoader {
 		
 		DataManager tempReader = new DataManager();
 		tempReader.initialize(pathGTFSStopTimes);
+		int count = 0;
 		
 		for(int i = 0; i < tempReader.getMyData().get(UtilsSM.tripId).size();i++){
 			String curTripId = tempReader.getMyData().get(UtilsSM.tripId).get(i);
@@ -85,21 +87,31 @@ public class GTFSLoader {
 			Integer curStopSequence = Integer.parseInt(tempReader.getMyData().get(UtilsSM.stopSequence).get(i));
 			GTFSStop curStop = myStops.get(curStopId);
 			GTFSTrip curTrip = myTrips.get(curTripId);
+			
+			//Each trip is constituted.
+			curTrip.myDirection.put(curStopSequence, curStop);
+			
+		}
+		
+		//For each route, we choose the trip with the most stops attached as the base. We assume that trips with fewer stops are only pieces of the biggest trip.
+		for(GTFSTrip curTrip: myTrips.values()){
 			GTFSRoute curRoute = myRoutes.get(curTrip.myRouteId);
 			
 			if(!curRoute.myDirections.containsKey(curTrip.myDirectionId)){
-				curRoute.myDirections.put(curTrip.myDirectionId, new HashMap<Integer,GTFSStop>());
-			}
-			HashMap<Integer,GTFSStop> curDirection = curRoute.myDirections.get(curTrip.myDirectionId);
-			if(curDirection.containsKey(curStopSequence)){
-				if(!curDirection.get(curStopSequence).myId.equals(curStop.myId)){
-					System.out.println("--two different bus stops were affected to the same time sequence");
-				}
+				curRoute.myDirections.put(curTrip.myDirectionId, curTrip.myDirection);
 			}
 			else{
-				curDirection.put(curStopSequence, curStop);
+				int nOld = curRoute.myDirections.get(curTrip.myDirectionId).size();
+				int nNew = curTrip.myDirection.size();
+				if(nNew > nOld){
+					curRoute.myDirections.put(curTrip.myDirectionId, curTrip.myDirection);
+				}
 			}
+			
 		}
+		
 		return myRoutes;
 	}
+
+	
 }
