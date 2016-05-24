@@ -83,6 +83,7 @@ public class UtilsSM {
 	public static String SINGLE = "5"; //could not be estimated because it is not linked and no similar trips were made
 	public static String HISTORY = "6";//was estimated using historical data
 	public static String DATA_CORRUPTED_STOP_DONT_EXIST = "7";
+	public static String SINGLE_NO_HISTORY = "8";
 	
 	
 	

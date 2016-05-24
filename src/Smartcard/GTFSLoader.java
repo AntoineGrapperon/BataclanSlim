@@ -84,7 +84,7 @@ public class GTFSLoader {
 		for(int i = 0; i < tempReader.getMyData().get(UtilsSM.tripId).size();i++){
 			String curTripId = tempReader.getMyData().get(UtilsSM.tripId).get(i);
 			String curStopId = tempReader.getMyData().get(UtilsSM.stopId).get(i);
-			Integer curStopSequence = Integer.parseInt(tempReader.getMyData().get(UtilsSM.stopSequence).get(i));
+			int curStopSequence = Integer.parseInt(tempReader.getMyData().get(UtilsSM.stopSequence).get(i));
 			GTFSStop curStop = myStops.get(curStopId);
 			GTFSTrip curTrip = myTrips.get(curTripId);
 			
@@ -107,7 +107,6 @@ public class GTFSLoader {
 					curRoute.myDirections.put(curTrip.myDirectionId, curTrip.myDirection);
 				}
 			}
-			
 		}
 		
 		return myRoutes;

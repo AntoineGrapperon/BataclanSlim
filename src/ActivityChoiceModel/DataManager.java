@@ -50,6 +50,7 @@ public class DataManager {
     	 
     	 ArrayList<String> headers = data.get(0);
     	 for(int i =0; i < headers.size(); i++){
+    		 //System.out.println(headers.get(i));
     		 myData.put(headers.get(i), new ArrayList<String>());
     	 }
 
@@ -68,7 +69,6 @@ public class DataManager {
     	Scanner scanner = null;
     	ArrayList<ArrayList<String>> data = new ArrayList<ArrayList<String>>();
 
-    	myInputDataReader.myFileReader.mark(0);
 		int i=0;
 		while((line=myInputDataReader.myFileReader.readLine())!= null)
 		{

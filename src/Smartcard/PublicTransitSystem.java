@@ -34,7 +34,7 @@ public class PublicTransitSystem {
 	static DefaultGeographicCRS myCRS = DefaultGeographicCRS.WGS84;
 	public static GeodeticCalculator gc = new GeodeticCalculator(myCRS);
 	
-	public static HashMap<String, GTFSStop> myStops = new HashMap<String, GTFSStop>();
+	static HashMap<String, GTFSStop> myStops = new HashMap<String, GTFSStop>();
 	public static HashMap<String, GTFSTrip> myTrips = new HashMap<String, GTFSTrip>();
 	public static HashMap<String, GTFSRoute> myRoutes = new HashMap<String, GTFSRoute>();
 	
@@ -59,7 +59,15 @@ public class PublicTransitSystem {
 	public PublicTransitSystem(){
 		
 	}
-	
+	/**
+	 * Load useful GTFS components such as the trips table, the stops table, the route table and the stop_times table.
+	 * Be aware that all GTFS text file should be encoded in UTF-8.
+	 * @param pathGTFSTrips
+	 * @param pathGTFSStops
+	 * @param pathGTFSStopTimes
+	 * @param pathGTFSRoutes
+	 * @throws IOException
+	 */
 	public void initializePTsystem(
 			String pathGTFSTrips,
 			String pathGTFSStops,

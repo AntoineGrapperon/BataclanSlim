@@ -65,11 +65,4 @@ public class GTFSStop {
 		}
 		return localPopulation;
 	}
-	
-	public boolean isEqual(GTFSStop curStop){
-		if(this.myId.equals(curStop.myId)){
-			return true;
-		}
-		return false;
-	}
 }

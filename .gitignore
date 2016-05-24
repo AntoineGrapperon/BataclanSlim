@@ -46,3 +46,9 @@ Network Trash Folder
 Temporary Items
 .apdisk
 example/association/data/smartcard.csv
+example/destinationInference/GTFSold/agency.txt
+example/destinationInference/GTFSold/calendar.txt
+example/destinationInference/GTFSold/calendar_dates.txt
+example/destinationInference/GTFSold/shapes.txt
+example/destinationInference/GTFSold/routes.txt
+example/destinationInference/GTFSold/stops.txt

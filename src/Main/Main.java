@@ -8,7 +8,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.text.ParseException;
-import java.util.Hashtable;
 
 import javax.swing.JFrame;
 
@@ -25,6 +24,7 @@ import Gui.Window;
 import SRMSE.JointDistributionTravelSurvey;
 import SRMSE.SRMSE;
 import SimulationObjects.World;
+import Smartcard.GTFSRoute;
 import Smartcard.PublicTransitSystem;
 import Smartcard.SmartcardDataManager;
 import Smartcard.StationDataManager;
@@ -146,6 +146,8 @@ public class Main {
 	    	String pathGTFSRoutes = "D:\\Recherche\\CharlieWorkspace\\BataclanSlim\\example\\destinationInference\\GTFS\\routes.txt";
 	    	myPublicTransitSystem.initializePTsystem(pathGTFSTrips, pathGTFSStops, pathGTFSStopTimes, pathGTFSRoutes);
 	    	System.out.println("-- public transportation system loaded");
+	    	
+	    	HashMap<String, GTFSRoute> cur = PublicTransitSystem.myRoutes;
 	    	
 	    	String pathSmartcards = "D:\\Recherche\\CharlieWorkspace\\BataclanSlim\\example\\destinationInference\\smartcardSlim.csv";
 	    	SmartcardDataManager mySmartcardManager = new SmartcardDataManager();

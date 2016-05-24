@@ -12,7 +12,7 @@ import java.util.HashMap;
  *
  */
 public class GTFSRoute {
-	String myId;
+	public String myId;
 	ArrayList<GTFSTrip> myTripsId = new ArrayList<GTFSTrip>();
 	/*ArrayList<GTFSStop> myStopsDirection0 = new ArrayList<GTFSStop>();
 	ArrayList<GTFSStop> myStopsDirection1 = new ArrayList<GTFSStop>();*/
@@ -21,7 +21,7 @@ public class GTFSRoute {
 	 * This HashMap is structured as follow: the key indicates the direction (usually 0 or 1). The value is another HashMap<Integer, GTFSStop>, 
 	 * the integer key is the stop sequence of the stop while the GTFS stop points to the stop.
 	 */
-	HashMap<String,HashMap<Integer,GTFSStop>> myDirections = new HashMap<String,HashMap<Integer,GTFSStop>>();
+	public HashMap<String,HashMap<Integer,GTFSStop>> myDirections = new HashMap<String,HashMap<Integer,GTFSStop>>();
 	
 	
 	public ArrayList<GTFSStop> getVanishingRoute(GTFSStop curStop, String curDirectionId){
@@ -46,6 +46,7 @@ public class GTFSRoute {
 		else{
 			System.out.println("--the transaction data is corrupted: stop " + curStop.myId + " doesn't exist on route " + this.myId);
 		}
+		
 		return vanishingRoute;
 		
 	}
@@ -83,7 +84,8 @@ public class GTFSRoute {
 	public boolean contains(GTFSStop curStop){
 		for(String dir: myDirections.keySet()){
 			for(int seq: myDirections.get(dir).keySet()){
-				if(myDirections.get(dir).get(seq).isEqual(curStop)){
+				String tempId = myDirections.get(dir).get(seq).myId;
+				if(tempId.equals(curStop.myId)){
 					return true;
 				}
 			}
@@ -94,7 +96,8 @@ public class GTFSRoute {
 	public int getSequenceId(GTFSStop curStop){
 		for(String dir: myDirections.keySet()){
 			for(int seq: myDirections.get(dir).keySet()){
-				if(myDirections.get(dir).get(seq).isEqual(curStop)){
+				String tempId = myDirections.get(dir).get(seq).myId;
+				if(tempId.equals(curStop.myId)){
 					return seq;
 				}
 			}

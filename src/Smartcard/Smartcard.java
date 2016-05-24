@@ -497,23 +497,30 @@ public class Smartcard extends BiogemeChoice{
 		// TODO Auto-generated method stub
 		for(int i = 0; i < myData.size(); i++){
 			if(myData.get(UtilsSM.alightingStop).get(i).equals(UtilsSM.NOT_DONE)){
-				String curDate = myData.get(UtilsSM.date).get(i);
-				int j = getMostSimilarTrip(curDate, i);
+				
+				int j = getMostSimilarTrip(i);
 				if(j == -1 || j == i){
 					myData.get(UtilsSM.destinationInferenceCase).set(i, UtilsSM.SINGLE);
 					myData.get(UtilsSM.alightingStop).set(i, UtilsSM.NOT_DONE);
 				}
 				else{
 					GTFSStop curStop = PublicTransitSystem.myStops.get(myData.get(UtilsSM.stopId).get(i));
+					//System.out.println(myData.get(UtilsSM.alightingStop).get(j));
 					GTFSStop potentialAlighting = PublicTransitSystem.myStops.get(myData.get(UtilsSM.alightingStop).get(j));
-					double dist = curStop.getDistance(potentialAlighting);
-					if(dist <= UtilsSM.WALKING_DISTANCE_THRESHOLD){
-						myData.get(UtilsSM.destinationInferenceCase).set(i, UtilsSM.HISTORY);
-						String alightingStopId = myData.get(UtilsSM.alightingStop).get(j);
-						myData.get(UtilsSM.alightingStop).set(i, alightingStopId);
+					if(!potentialAlighting.equals(null)){
+						double dist = curStop.getDistance(potentialAlighting);
+						if(dist <= UtilsSM.WALKING_DISTANCE_THRESHOLD){
+							myData.get(UtilsSM.destinationInferenceCase).set(i, UtilsSM.HISTORY);
+							String alightingStopId = myData.get(UtilsSM.alightingStop).get(j);
+							myData.get(UtilsSM.alightingStop).set(i, alightingStopId);
+						}
+						else{
+							myData.get(UtilsSM.destinationInferenceCase).set(i, UtilsSM.TOO_FAR);
+							myData.get(UtilsSM.alightingStop).set(i, UtilsSM.NOT_DONE);
+						}
 					}
 					else{
-						myData.get(UtilsSM.destinationInferenceCase).set(i, UtilsSM.TOO_FAR);
+						myData.get(UtilsSM.destinationInferenceCase).set(i, UtilsSM.SINGLE_NO_HISTORY);
 						myData.get(UtilsSM.alightingStop).set(i, UtilsSM.NOT_DONE);
 					}
 				}
@@ -523,20 +530,31 @@ public class Smartcard extends BiogemeChoice{
 		
 	}
 	
-	private int getMostSimilarTrip(String date, int currIndex) throws ParseException {
+
+	/**
+	 * Find the record available in the current month that took place on the same route, in the same direction,
+	 * within the shortest time window and for which a destination could be inferred.
+	 * @param curIndex indicates the index of the data we are processing.
+	 * @return the index of the smartcard transaction which is the most similar to the smart card transaction being processed, and which has an inferred destination.
+	 * @throws ParseException
+	 * 
+	 */
+	
+	private int getMostSimilarTrip(int curIndex) throws ParseException {
 		// TODO Auto-generated method stub
+		
 		double deltaTime = Double.POSITIVE_INFINITY;
 		int index = -1;
 		
-		
+		String curDate = myData.get(UtilsSM.date).get(curIndex);
 		SimpleDateFormat sdf = new SimpleDateFormat(UtilsSM.DATE_FORMAT);
-		Date d = sdf.parse(date);
+		Date d = sdf.parse(curDate);
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(d);
 		int curMonth = calendar.get(Calendar.MONTH);
-		String curRoute = myData.get(UtilsSM.routeId).get(currIndex);
-		String curDirection = myData.get(UtilsSM.directionId).get(currIndex);
-		int curTime = Integer.parseInt(myData.get(UtilsSM.time).get(currIndex));
+		String curRoute = myData.get(UtilsSM.routeId).get(curIndex);
+		String curDirection = myData.get(UtilsSM.directionId).get(curIndex);
+		int curTime = Integer.parseInt(myData.get(UtilsSM.time).get(curIndex));
 		
 		
 		for(int i = 0; i < myData.size(); i++){
@@ -546,12 +564,14 @@ public class Smartcard extends BiogemeChoice{
 			String tempRoute = myData.get(UtilsSM.routeId).get(i);
 			String tempDirection = myData.get(UtilsSM.directionId).get(i);
 			int tempTime = Integer.parseInt(myData.get(UtilsSM.time).get(i));
+			String tempAlighting = myData.get(UtilsSM.alightingStop).get(i);
 			
 			if(
-					i!= currIndex && 
+					i!= curIndex && 
 					curMonth == tempMonth &&
 					curRoute.equals(tempRoute) &&
-					curDirection.equals(tempDirection)
+					curDirection.equals(tempDirection) &&
+					!tempAlighting.equals(UtilsSM.NOT_DONE)
 					){
 				if(Math.abs(curTime-tempTime) < deltaTime){
 					deltaTime = Math.abs(curTime-tempTime);
@@ -576,7 +596,6 @@ public class Smartcard extends BiogemeChoice{
 			}
 			else{
 				GTFSStop curStop = PublicTransitSystem.myStops.get(curTapIn.get(UtilsSM.stopId));
-				System.out.println(curStop.myId);
 				ArrayList<GTFSStop> curVanishingRoute = curRoute.getVanishingRoute(curStop, curDirectionId);
 				
 				//Treat regular case: when there is a following record the same day
