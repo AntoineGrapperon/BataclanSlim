@@ -495,7 +495,7 @@ public class Smartcard extends BiogemeChoice{
 
 	private void inferSingleTripDestination() throws ParseException {
 		// TODO Auto-generated method stub
-		for(int i = 0; i < myData.size(); i++){
+		for(int i = 0; i < myData.get(myData.keySet().iterator().next()).size(); i++){
 			if(myData.get(UtilsSM.alightingStop).get(i).equals(UtilsSM.NOT_DONE)){
 				
 				int j = getMostSimilarTrip(i);
@@ -556,8 +556,9 @@ public class Smartcard extends BiogemeChoice{
 		String curDirection = myData.get(UtilsSM.directionId).get(curIndex);
 		int curTime = Integer.parseInt(myData.get(UtilsSM.time).get(curIndex));
 		
+
 		
-		for(int i = 0; i < myData.size(); i++){
+		for(int i = 0; i < myData.get(UtilsSM.date).size(); i++){
 			String tempDate = myData.get(UtilsSM.date).get(i);
 			calendar.setTime(sdf.parse(tempDate));
 			int tempMonth = calendar.get(Calendar.MONTH);

@@ -52,3 +52,7 @@ example/destinationInference/GTFSold/calendar_dates.txt
 example/destinationInference/GTFSold/shapes.txt
 example/destinationInference/GTFSold/routes.txt
 example/destinationInference/GTFSold/stops.txt
+example/destinationInference/GTFSold/stop_times.txt
+example/destinationInference/GTFSold/trips.txt
+example/destinationInference/smartcardSlimOld.csv
+example/destinationInference/GTFSold/STO-donnees_ouvertes_Conditions_utilisation_FINAL_pourZIP.pdf

@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.geotools.referencing.GeodeticCalculator;
+import org.geotools.referencing.crs.DefaultGeographicCRS;
+
 import ActivityChoiceModel.BiogemeAgent;
 
 /**
@@ -26,8 +29,8 @@ public class GTFSStop {
 	
 	public double getDistance(GTFSStop s) {
 		// TODO Auto-generated method stub
-		PublicTransitSystem.gc.setDestinationGeographicPoint(this.lon, this.lat);
 		PublicTransitSystem.gc.setStartingGeographicPoint(s.lon, s.lat);
+		PublicTransitSystem.gc.setDestinationGeographicPoint(this.lon, this.lat);
 		return PublicTransitSystem.gc.getOrthodromicDistance();
 	}
 
