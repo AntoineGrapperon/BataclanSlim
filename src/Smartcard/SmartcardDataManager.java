@@ -40,6 +40,9 @@ public class SmartcardDataManager extends DataManager{
 		System.out.println("--smartcard created");
 	}
 	
+	//Note that we are working at the route level to infer destination.
+	//HOwever, with a bit more work we could infer destination at bus trip level, it would allow us to 
+	//condsider for scheduled arrival time at the station has seen in the GTFS.
 	public void inferDestinations() throws ParseException{
 		for(Smartcard sm: mySmartcards){
 			sm.inferDestinations();
