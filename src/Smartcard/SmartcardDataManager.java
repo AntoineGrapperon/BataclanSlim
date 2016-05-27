@@ -162,6 +162,7 @@ public class SmartcardDataManager extends DataManager {
 		String curBoardingStopId = myData.get(UtilsSM.boardingStopId).get(i);
 		String curBoardingRouteId = myData.get(UtilsSM.boardingRouteId).get(i);
 		String curDirectionId = myData.get(UtilsSM.boardingDirectionId).get(i);
+		int curId = Integer.parseInt(myData.get(UtilsSM.smartcardTripId).get(i));
 		
 		GTFSStop curBoardingStop =  PublicTransitSystem.myStops.get(curBoardingStopId);
 		GTFSRoute curBoardingRoute = PublicTransitSystem.myRoutes.get(curBoardingRouteId);
@@ -174,6 +175,7 @@ public class SmartcardDataManager extends DataManager {
 			trip.alightingInferrenceCase = UtilsSM.DATA_CORRUPTED_ROUTE_DONT_EXIST;
 		}
 		else{
+			trip.myID = curId;
 			trip.boardingStop = curBoardingStop;
 			trip.boardingRoute = curBoardingRoute;
 			trip.boardingDirection = curDirectionId;

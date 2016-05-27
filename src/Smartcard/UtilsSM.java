@@ -19,8 +19,9 @@ import ActivityChoiceModel.UtilsTS;
 public class UtilsSM {
 	public static final double INFINIT = 10000;
 	public static final double WALKING_DISTANCE_THRESHOLD = 1000; //in meters
-	public static String destinationInferenceCase = "InferenceCase";
+	
 	public static final String DATE_FORMAT = "dd/MM/yyyy 'at' HHmm";
+	
 	
 	
 	
@@ -76,17 +77,18 @@ public class UtilsSM {
 	
 	
 	/*#######################################Dest inference dictionnary######################################*/
-	public static int REGULAR = 1;// estimated using the next trip of the day
+	public static int REGULAR = 11;// estimated using the next trip of the day
 	public static int TOO_FAR = 2;
 	public static int NOT_INFERRED = 10;
-	public static String LAST_DAILY_BUCKLED = "3"; // last trip of the day estimated using a buckle on the first trip of the day
-	public static String LAST_NEXT_DAY_BUCKLED = "4";// last trip of the day, estimated by buckling the trip chain on the next day
-	public static String NOT_DONE = "-1";
-	public static String SINGLE = "5"; //could not be estimated because it is not linked and no similar trips were made
-	public static String HISTORY = "6";//was estimated using historical data
+	public static int LAST_DAILY_BUCKLED = 3; // last trip of the day estimated using a buckle on the first trip of the day
+	public static int LAST_NEXT_DAY_BUCKLED = 4;// last trip of the day, estimated by buckling the trip chain on the next day
+	public static int NOT_DONE = -1;
+	public static int SINGLE = 5; //could not be estimated because it is not linked and no similar trips were made
+	public static int HISTORY = 6;//was estimated using historical data
 	public static int DATA_CORRUPTED_STOP_DONT_EXIST = 7;
 	public static int DATA_CORRUPTED_ROUTE_DONT_EXIST = 9;
-	public static String SINGLE_NO_HISTORY = "8";
+	public static int SINGLE_NO_HISTORY = 8;
+	public static ArrayList<Integer> notInferredCases = new ArrayList<Integer>();
 	
 	/*#######################################Smartcard data dictionnary######################################*/
 	public static String boardingStopId = "boarding_stop";
@@ -94,12 +96,16 @@ public class UtilsSM {
 	public static String boardingDirectionId = "direction_id";
 	public static String boardingDate = "date";
 	public static String boardingTime = "time";
+	public static String destinationInferenceCase = "InferenceCase";
+	public static String smartcardTripId = "transaction_id";
 	
 	
 	
 	
 	
 	public UtilsSM(){
+		notInferredCases.add(TOO_FAR);
+		
 		/*dictionnary.put(UtilsTS.ageGroup, "age");
 		dictionnary.put(UtilsTS.sex, "sex");
 		dictionnary.put(UtilsTS.mStat, "mStat");

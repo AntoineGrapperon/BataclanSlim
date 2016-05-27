@@ -464,31 +464,18 @@ public class Smartcard extends BiogemeChoice {
 			ArrayList<SmartcardTrip> dailyData = getOrderedDailyTransaction(curDate);
 			inferRegularTripDestinations(dailyData);
 			inferLastTripDestinations(dailyData);
-			storeInferedDestinations(dailyData);
 		}
 		inferSingleTripDestination();
 	}
 
-	private void storeInferedDestinations(ArrayList<HashMap<String, String>> dailyData) {
-		// TODO Auto-generated method stub
-		for (HashMap<String, String> curRecord : dailyData) {
-			int index = Integer.parseInt(curRecord.get(UtilsSM.index));
-			String alightingStop = curRecord.get(UtilsSM.alightingStop);
-			String inferenceCase = curRecord.get(UtilsSM.destinationInferenceCase);
-			myData.get(UtilsSM.alightingStop).set(index, alightingStop);
-			myData.get(UtilsSM.destinationInferenceCase).set(index, inferenceCase);
-		}
-	}
-
 	private void inferSingleTripDestination() throws ParseException {
 		// TODO Auto-generated method stub
-		for (int i = 0; i < myData.get(myData.keySet().iterator().next()).size(); i++) {
-			if (myData.get(UtilsSM.alightingStop).get(i).equals(UtilsSM.NOT_DONE)) {
+		for (SmartcardTrip smtp : myTrips) {
+			if (UtilsSM.notInferredCases.contains(smtp.alightingInferrenceCase)) {
 
-				int j = getMostSimilarTrip(i);
-				if (j == -1 || j == i) {
-					myData.get(UtilsSM.destinationInferenceCase).set(i, UtilsSM.SINGLE);
-					myData.get(UtilsSM.alightingStop).set(i, UtilsSM.NOT_DONE);
+				SmartcardTrip similarTrip = getMostSimilarTrip(smtp);
+				if (similarTrip == null) {
+					smtp.alightingInferrenceCase = UtilsSM.SINGLE;
 				} else {
 					GTFSStop curStop = PublicTransitSystem.myStops.get(myData.get(UtilsSM.stopId).get(i));
 					// System.out.println(myData.get(UtilsSM.alightingStop).get(j));
@@ -528,40 +515,25 @@ public class Smartcard extends BiogemeChoice {
 	 * 
 	 */
 
-	private int getMostSimilarTrip(int curIndex) throws ParseException {
+	private SmartcardTrip getMostSimilarTrip(SmartcardTrip trip) throws ParseException {
 		// TODO Auto-generated method stub
 
 		double deltaTime = Double.POSITIVE_INFINITY;
-		int index = -1;
+		SmartcardTrip mostSimilarTrip = null;
 
-		String curDate = myData.get(UtilsSM.date).get(curIndex);
-		SimpleDateFormat sdf = new SimpleDateFormat(UtilsSM.DATE_FORMAT);
-		Date d = sdf.parse(curDate);
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(d);
-		int curMonth = calendar.get(Calendar.MONTH);
-		String curRoute = myData.get(UtilsSM.routeId).get(curIndex);
-		String curDirection = myData.get(UtilsSM.directionId).get(curIndex);
-		int curTime = Integer.parseInt(myData.get(UtilsSM.time).get(curIndex));
-
-		for (int i = 0; i < myData.get(UtilsSM.date).size(); i++) {
-			String tempDate = myData.get(UtilsSM.date).get(i);
-			calendar.setTime(sdf.parse(tempDate));
-			int tempMonth = calendar.get(Calendar.MONTH);
-			String tempRoute = myData.get(UtilsSM.routeId).get(i);
-			String tempDirection = myData.get(UtilsSM.directionId).get(i);
-			int tempTime = Integer.parseInt(myData.get(UtilsSM.time).get(i));
-			String tempAlighting = myData.get(UtilsSM.alightingStop).get(i);
-
-			if (i != curIndex && curMonth == tempMonth && curRoute.equals(tempRoute)
-					&& curDirection.equals(tempDirection) && !tempAlighting.equals(UtilsSM.NOT_DONE)) {
-				if (Math.abs(curTime - tempTime) < deltaTime) {
-					deltaTime = Math.abs(curTime - tempTime);
-					index = i;
+		for (SmartcardTrip smtp: myTrips) {
+			if (smtp.myID != trip.myID && 
+					smtp.boardingDate.getMonthOfYear() == trip.boardingDate.getMonthOfYear() && 
+					smtp.boardingRoute.myId.equals(trip.boardingRoute.myId) && 
+					smtp.boardingDirection.equals(trip.boardingDirection) && 
+					!(smtp.alightingStop!=null)) {
+				if (Math.abs(smtp.boardingDate.getMinuteOfDay() - trip.boardingDate.getMinuteOfDay()) < deltaTime) {
+					deltaTime = Math.abs(smtp.boardingDate.getMinuteOfDay() - trip.boardingDate.getMinuteOfDay());
+					mostSimilarTrip = smtp;
 				}
 			}
 		}
-		return index;
+		return mostSimilarTrip;
 	}
 
 	private void inferRegularTripDestinations(ArrayList<SmartcardTrip> dailyData) {
@@ -598,50 +570,48 @@ public class Smartcard extends BiogemeChoice {
 		}
 	}
 
-	private void inferLastTripDestinations(ArrayList<HashMap<String, String>> dailyData) throws ParseException {
+	private void inferLastTripDestinations(ArrayList<SmartcardTrip> dailyData) throws ParseException {
 		// TODO Auto-generated method stub
 		if (dailyData.size() != 1) {
-			HashMap<String, String> curTapIn = dailyData.get(dailyData.size() - 1);
-			GTFSStop alightingStop;
+			SmartcardTrip curSmartcardTrip = dailyData.get(dailyData.size() - 1);
+			GTFSStop alightingStop = null;
 
-			String curDirectionId = curTapIn.get(UtilsSM.directionId);
-			GTFSRoute curRoute = PublicTransitSystem.myRoutes.get(curTapIn.get(UtilsSM.routeId));
-
-			if (!PublicTransitSystem.myStops.containsKey(curTapIn.get(UtilsSM.stopId))) {
-				curTapIn.put(UtilsSM.destinationInferenceCase, UtilsSM.DATA_CORRUPTED_STOP_DONT_EXIST);
+			if (!PublicTransitSystem.myStops.containsKey(curSmartcardTrip.boardingStop.myId)) {
+				curSmartcardTrip.alightingInferrenceCase = UtilsSM.DATA_CORRUPTED_STOP_DONT_EXIST;
 			} else {
-				GTFSStop curStop = PublicTransitSystem.myStops.get(curTapIn.get(UtilsSM.stopId));
-				ArrayList<GTFSStop> curVanishingRoute = curRoute.getVanishingRoute(curStop, curDirectionId);
+				GTFSStop curStop = PublicTransitSystem.myStops.get(curSmartcardTrip.boardingStop.myId);
+				ArrayList<GTFSStop> curVanishingRoute = curSmartcardTrip.boardingRoute.getVanishingRoute(curSmartcardTrip.boardingStop, curSmartcardTrip.boardingDirection);
 
-				HashMap<String, String> nextTapIn = dailyData.get(0);
+				
+				SmartcardTrip firstDailySmartcardTrip = dailyData.get(0);
 				double distMin = Double.POSITIVE_INFINITY;
-				GTFSStop nextStop = PublicTransitSystem.myStops.get(nextTapIn.get(UtilsSM.stopId));
+				GTFSStop nextStop = firstDailySmartcardTrip.boardingStop;
 				alightingStop = getClosestStop(nextStop, curVanishingRoute);
 
 				if (alightingStop != null) {
 					distMin = alightingStop.getDistance(nextStop);
 					if (distMin <= UtilsSM.WALKING_DISTANCE_THRESHOLD) {
-						curTapIn.put(UtilsSM.destinationInferenceCase, UtilsSM.LAST_DAILY_BUCKLED);
-						curTapIn.put(UtilsSM.alightingStop, alightingStop.myId);
+						curSmartcardTrip.alightingInferrenceCase = UtilsSM.LAST_DAILY_BUCKLED;
+						curSmartcardTrip.alightingStop = alightingStop;
 					} else {
-						nextTapIn = getNextDayFirstTapIn(curTapIn.get(UtilsSM.date));
+						firstDailySmartcardTrip = getNextDayFirstTapIn(curSmartcardTrip);
 						distMin = Double.POSITIVE_INFINITY;
-						nextStop = PublicTransitSystem.myStops.get(nextTapIn.get(UtilsSM.stopId));
+						nextStop = firstDailySmartcardTrip.boardingStop;
 						alightingStop = getClosestStop(nextStop, curVanishingRoute);
 						if (alightingStop != null) {
 							distMin = alightingStop.getDistance(nextStop);
 							if (distMin <= UtilsSM.WALKING_DISTANCE_THRESHOLD) {
-								curTapIn.put(UtilsSM.destinationInferenceCase, UtilsSM.LAST_NEXT_DAY_BUCKLED);
-								curTapIn.put(UtilsSM.alightingStop, alightingStop.myId);
+								curSmartcardTrip.alightingInferrenceCase = UtilsSM.LAST_NEXT_DAY_BUCKLED;
+								curSmartcardTrip.alightingStop = alightingStop;
 							} else {
-								curTapIn.put(UtilsSM.destinationInferenceCase, UtilsSM.TOO_FAR);
+								curSmartcardTrip.alightingInferrenceCase = UtilsSM.TOO_FAR;
 							}
 						} else {
-							curTapIn.put(UtilsSM.destinationInferenceCase, UtilsSM.NOT_INFERRED);
+							curSmartcardTrip.alightingInferrenceCase = UtilsSM.NOT_INFERRED;
 						}
 					}
 				} else {
-					curTapIn.put(UtilsSM.destinationInferenceCase, UtilsSM.NOT_INFERRED);
+					curSmartcardTrip.alightingInferrenceCase = UtilsSM.NOT_INFERRED;
 				}
 			}
 		}
@@ -655,19 +625,12 @@ public class Smartcard extends BiogemeChoice {
 	 * dailyData.get(i+1); }
 	 */
 
-	private HashMap<String, String> getNextDayFirstTapIn(String curDate) throws ParseException {
+	private SmartcardTrip getNextDayFirstTapIn(SmartcardTrip smtp) throws ParseException {
 		// TODO Auto-generated method stub
-		SimpleDateFormat sdf = new SimpleDateFormat(UtilsSM.DATE_FORMAT);
-		Date d = sdf.parse(curDate);
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(d);
-		calendar.add(Calendar.DAY_OF_YEAR, 1);
-		String nextDate = sdf.format(calendar.getTime());
-		ArrayList<HashMap<String, String>> nextDayData = getOrderedDailyTransaction(nextDate);
+		ArrayList<SmartcardTrip> nextDayData = getOrderedDailyTransaction(smtp.boardingDate.plusDays(1));
 		if (nextDayData.size() != 0) {
 			return nextDayData.get(0);
 		}
-
 		return null;
 	}
 
