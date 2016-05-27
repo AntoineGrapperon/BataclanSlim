@@ -88,17 +88,17 @@ public class Main {
 		//////////////////////////////////////////////////////////////////
 		//////////////////////////////////////////////////////////////////
 
-		 Window gui = new Window();
+		//Window gui = new Window();
 		// PublicTransitSystem myPublicTransitSystem = new
 		// PublicTransitSystem();
 
-		//try {
+		try {
 
 
 			// ###############################################################################
 			// Infer smartcard destinations
 			// ###############################################################################
-			/*PublicTransitSystem myPublicTransitSystem = new PublicTransitSystem();
+			PublicTransitSystem myPublicTransitSystem = new PublicTransitSystem();
 
 			String pathGTFSTrips = "D:\\Recherche\\CharlieWorkspace\\BataclanSlim\\example\\destinationInference\\GTFS\\trips.txt";
 			String pathGTFSStops = "D:\\Recherche\\CharlieWorkspace\\BataclanSlim\\example\\destinationInference\\GTFS\\stops.txt";
@@ -114,6 +114,8 @@ public class Main {
 			mySmartcardManager.prepareSmartcards(pathSmartcards);
 			mySmartcardManager.inferDestinations();
 			System.out.println("--destination infered");
+			String pathOutput = "D:\\Recherche\\CharlieWorkspace\\BataclanSlim\\example\\outputs\\smartcards_with_destinations.csv";
+			mySmartcardManager.printSmartcards(pathOutput);
 
 			// ###############################################################################
 			// Create conditional distributions at the metro level from
@@ -440,11 +442,11 @@ public class Main {
 			 * zonalData,destPath);
 			 */
 
-		/*} catch (IOException | ParseException e) {
+		} catch (IOException | ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 
-		}*/
+		}
 
 		long endTime = System.currentTimeMillis();
 

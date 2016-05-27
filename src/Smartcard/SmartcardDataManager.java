@@ -11,8 +11,12 @@ import java.util.Date;
 
 import org.joda.time.DateTime;
 
+import ActivityChoiceModel.BiogemeAgent;
 import ActivityChoiceModel.BiogemeControlFileGenerator;
 import ActivityChoiceModel.DataManager;
+import ActivityChoiceModel.UtilsTS;
+import Utils.OutputFileWritter;
+import Utils.Utils;
 
 /**
  * @author Antoine
@@ -180,7 +184,7 @@ public class SmartcardDataManager extends DataManager {
 			trip.boardingRoute = curBoardingRoute;
 			trip.boardingDirection = curDirectionId;
 
-			String curDate = myData.get(UtilsSM.boardingTime).get(i);
+			String curDate = myData.get(UtilsSM.boardingDate).get(i);
 			String curTime = myData.get(UtilsSM.boardingTime).get(i);
 			String curDateTime = curDate + " at " + curTime;
 			Date d = sdf.parse(curDateTime);
@@ -246,5 +250,50 @@ public class SmartcardDataManager extends DataManager {
 		for (String key : myData.keySet()) {
 			sm.myData.put(key, new ArrayList<String>());
 		}
+	}
+
+	public void printSmartcards(String path) throws IOException {
+		// TODO Auto-generated method stub
+		OutputFileWritter write = new OutputFileWritter();
+		write.OpenFile(path);
+		SmartcardTrip tempSmTp = mySmartcards.get(0).myTrips.get(0);
+		String header = new String();
+		for(String key: tempSmTp.myData.keySet()){
+			header+= key + Utils.COLUMN_DELIMETER ;
+		}
+		header += UtilsSM.boardingLat
+				+Utils.COLUMN_DELIMETER + UtilsSM.boardingLong
+				+Utils.COLUMN_DELIMETER + UtilsSM.alightingStop
+				+Utils.COLUMN_DELIMETER + UtilsSM.destinationInferenceCase
+				+Utils.COLUMN_DELIMETER + UtilsSM.alightingLat
+				+Utils.COLUMN_DELIMETER + UtilsSM.alightingLong;
+		write.WriteToFile(header);
+		
+		for(Smartcard sm: mySmartcards){
+			for(SmartcardTrip smTp: sm.myTrips){
+				String newLine = new String();
+				for(String key: smTp.myData.keySet()){
+					newLine+= smTp.myData.get(key) + Utils.COLUMN_DELIMETER;
+				}
+				if(smTp.alightingStop == null){
+					newLine += smTp.boardingStop.lat
+							+ Utils.COLUMN_DELIMETER + smTp.boardingStop.lon
+							+ Utils.COLUMN_DELIMETER
+							+ Utils.COLUMN_DELIMETER 
+							+ Utils.COLUMN_DELIMETER
+							+ Utils.COLUMN_DELIMETER ;
+				}
+				else{
+					newLine += smTp.boardingStop.lat
+							+ Utils.COLUMN_DELIMETER + smTp.boardingStop.lon
+							+ Utils.COLUMN_DELIMETER + smTp.alightingStop.myId
+							+ Utils.COLUMN_DELIMETER + smTp.alightingInferrenceCase
+							+ Utils.COLUMN_DELIMETER + smTp.alightingStop.lat
+							+ Utils.COLUMN_DELIMETER + smTp.alightingStop.lon;
+				}
+				write.WriteToFile(newLine);
+			}
+		}
+		write.CloseFile();
 	}
 }

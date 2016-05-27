@@ -477,28 +477,11 @@ public class Smartcard extends BiogemeChoice {
 				if (similarTrip == null) {
 					smtp.alightingInferrenceCase = UtilsSM.SINGLE;
 				} else {
-					GTFSStop curStop = PublicTransitSystem.myStops.get(myData.get(UtilsSM.stopId).get(i));
-					// System.out.println(myData.get(UtilsSM.alightingStop).get(j));
-					GTFSStop potentialAlighting = PublicTransitSystem.myStops
-							.get(myData.get(UtilsSM.alightingStop).get(j));
-					if (!potentialAlighting.equals(null)) {
-						double dist = curStop.getDistance(potentialAlighting);
-						if (dist <= UtilsSM.WALKING_DISTANCE_THRESHOLD) {
-							myData.get(UtilsSM.destinationInferenceCase).set(i, UtilsSM.HISTORY);
-							String alightingStopId = myData.get(UtilsSM.alightingStop).get(j);
-							myData.get(UtilsSM.alightingStop).set(i, alightingStopId);
-						} else {
-							myData.get(UtilsSM.destinationInferenceCase).set(i, UtilsSM.TOO_FAR);
-							myData.get(UtilsSM.alightingStop).set(i, UtilsSM.NOT_DONE);
-						}
-					} else {
-						myData.get(UtilsSM.destinationInferenceCase).set(i, UtilsSM.SINGLE_NO_HISTORY);
-						myData.get(UtilsSM.alightingStop).set(i, UtilsSM.NOT_DONE);
-					}
+					smtp.alightingStop = similarTrip.alightingStop;
+					smtp.alightingInferrenceCase = UtilsSM.HISTORY;
 				}
 			}
 		}
-
 	}
 
 	/**
@@ -667,9 +650,15 @@ public class Smartcard extends BiogemeChoice {
 		ArrayList<DateTime> dates = new ArrayList<DateTime>();
 		for (int i = 0; i < myTrips.size(); i++) {
 			DateTime curDate = myTrips.get(i).boardingDate;
-			for(DateTime d: dates){
-				if(isSameDay(d,curDate)){
-					dates.add(curDate);
+			if(dates.isEmpty()){
+				dates.add(curDate);
+			}
+			else{
+				for(int j = 0; j < dates.size(); j++){
+					DateTime d = dates.get(j);
+					if(!isSameDay(d,curDate)){
+						dates.add(curDate);
+					}
 				}
 			}
 		}

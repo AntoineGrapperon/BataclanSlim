@@ -25,6 +25,7 @@ public class UtilsSM {
 	
 	
 	
+	
 	public static String alightingStop = "alighting_stop";
 	public static String index = "index";
 	public static String cardId = "card_id";
@@ -91,16 +92,17 @@ public class UtilsSM {
 	public static ArrayList<Integer> notInferredCases = new ArrayList<Integer>();
 	
 	/*#######################################Smartcard data dictionnary######################################*/
-	public static String boardingStopId = "boarding_stop";
+	public static String boardingStopId = "stop_id";
 	public static String boardingRouteId = "route_id";
 	public static String boardingDirectionId = "direction_id";
 	public static String boardingDate = "date";
-	public static String boardingTime = "time";
+	public static String boardingTime = "transaction_time";
 	public static String destinationInferenceCase = "InferenceCase";
-	public static String smartcardTripId = "transaction_id";
-	
-	
-	
+	public static String smartcardTripId = "id";
+	public static String alightingLat = "alighting_lat";
+	public static String alightingLong = "alighting_long";
+	public static String boardingLat = "boarding_lat";
+	public static String boardingLong = "boarding_long";
 	
 	
 	public UtilsSM(){

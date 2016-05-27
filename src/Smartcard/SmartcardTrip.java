@@ -44,5 +44,4 @@ public class SmartcardTrip implements Comparable<SmartcardTrip>{
 		return boardingDate.compareTo(o.boardingDate);
 	}
 
-
 }
