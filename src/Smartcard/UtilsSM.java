@@ -83,7 +83,7 @@ public class UtilsSM {
 	public static int NOT_INFERRED = 10;
 	public static int LAST_DAILY_BUCKLED = 3; // last trip of the day estimated using a buckle on the first trip of the day
 	public static int LAST_NEXT_DAY_BUCKLED = 4;// last trip of the day, estimated by buckling the trip chain on the next day
-	public static int NOT_DONE = -1;
+	public static int NOT_DONE = 0;
 	public static int SINGLE = 5; //could not be estimated because it is not linked and no similar trips were made
 	public static int HISTORY = 6;//was estimated using historical data
 	public static int DATA_CORRUPTED_STOP_DONT_EXIST = 7;
@@ -107,6 +107,7 @@ public class UtilsSM {
 	
 	public UtilsSM(){
 		notInferredCases.add(TOO_FAR);
+		notInferredCases.add(NOT_DONE);
 		
 		/*dictionnary.put(UtilsTS.ageGroup, "age");
 		dictionnary.put(UtilsTS.sex, "sex");

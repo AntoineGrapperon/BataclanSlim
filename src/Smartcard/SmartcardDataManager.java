@@ -279,7 +279,7 @@ public class SmartcardDataManager extends DataManager {
 					newLine += smTp.boardingStop.lat
 							+ Utils.COLUMN_DELIMETER + smTp.boardingStop.lon
 							+ Utils.COLUMN_DELIMETER
-							+ Utils.COLUMN_DELIMETER 
+							+ Utils.COLUMN_DELIMETER + smTp.alightingInferrenceCase	
 							+ Utils.COLUMN_DELIMETER
 							+ Utils.COLUMN_DELIMETER ;
 				}
