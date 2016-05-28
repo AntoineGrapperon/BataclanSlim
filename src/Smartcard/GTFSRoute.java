@@ -14,8 +14,6 @@ import java.util.HashMap;
 public class GTFSRoute {
 	public String myId;
 	ArrayList<GTFSTrip> myTripsId = new ArrayList<GTFSTrip>();
-	/*ArrayList<GTFSStop> myStopsDirection0 = new ArrayList<GTFSStop>();
-	ArrayList<GTFSStop> myStopsDirection1 = new ArrayList<GTFSStop>();*/
 	
 	/**
 	 * This HashMap is structured as follow: the key indicates the direction (usually 0 or 1). The value is another HashMap<Integer, GTFSStop>, 

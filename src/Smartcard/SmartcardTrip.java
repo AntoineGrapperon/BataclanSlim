@@ -22,15 +22,13 @@ import org.joda.time.ReadableInstant;
  */
 public class SmartcardTrip implements Comparable<SmartcardTrip>{
 
-	int myID;
+	int myId;
 	GTFSStop boardingStop;
 	GTFSRoute boardingRoute;
 	String boardingDirection;
 	DateTime boardingDate;
 	GTFSStop alightingStop = null;
 	int alightingInferrenceCase;
-	
-	
 
 	HashMap<String, String> myData = new HashMap<String, String>();
 

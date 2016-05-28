@@ -79,17 +79,16 @@ public class UtilsSM {
 	
 	/*#######################################Dest inference dictionnary######################################*/
 	public static int REGULAR = 11;// estimated using the next trip of the day
-	public static int TOO_FAR = 2;
-	public static int NOT_INFERRED = 10;
-	public static int LAST_DAILY_BUCKLED = 3; // last trip of the day estimated using a buckle on the first trip of the day
-	public static int LAST_NEXT_DAY_BUCKLED = 4;// last trip of the day, estimated by buckling the trip chain on the next day
-	public static int NOT_DONE = 0;
-	public static int SINGLE = 5; //could not be estimated because it is not linked and no similar trips were made
-	public static int HISTORY = 6;//was estimated using historical data
-	public static int DATA_CORRUPTED_STOP_DONT_EXIST = 7;
-	public static int DATA_CORRUPTED_ROUTE_DONT_EXIST = 9;
-	public static int SINGLE_NO_HISTORY = 8;
-	public static ArrayList<Integer> notInferredCases = new ArrayList<Integer>();
+	public static int LAST_DAY_BUCKLED = 12; // last trip of the day estimated using a buckle on the first trip of the day
+	public static int LAST_NEXT_DAY_BUCKLED = 13;// last trip of the day, estimated by buckling the trip chain on the next day
+	public static int HISTORY = 14;//was estimated using historical data
+	public static int UNLINKED = 30; //could not be estimated because it is not linked and no similar trips were made
+	public static int STOP_DONT_EXISTS = 41;
+	public static int ROUTE_DONT_EXISTS = 42;
+	public static int BOARDING_STOP_DONT_BELONG_TO_ROUTE = 43;
+	public static int BOARDED_ON_LAST_STATION = 44;
+	public static ArrayList<Integer> inconsistentData = new ArrayList<Integer>();
+	
 	
 	/*#######################################Smartcard data dictionnary######################################*/
 	public static String boardingStopId = "stop_id";
@@ -105,9 +104,14 @@ public class UtilsSM {
 	public static String boardingLong = "boarding_long";
 	
 	
+	
+	
+	
 	public UtilsSM(){
-		notInferredCases.add(TOO_FAR);
-		notInferredCases.add(NOT_DONE);
+		inconsistentData.add(STOP_DONT_EXISTS);
+		inconsistentData.add(ROUTE_DONT_EXISTS);
+		inconsistentData.add(BOARDING_STOP_DONT_BELONG_TO_ROUTE);
+		inconsistentData.add(BOARDED_ON_LAST_STATION);
 		
 		/*dictionnary.put(UtilsTS.ageGroup, "age");
 		dictionnary.put(UtilsTS.sex, "sex");

@@ -49,6 +49,7 @@ public class SmartcardDataManager extends DataManager {
 	// condsider for scheduled arrival time at the station has seen in the GTFS.
 	public void inferDestinations() throws ParseException {
 		for (Smartcard sm : mySmartcards) {
+			sm.checkDataConsistency();
 			sm.inferDestinations();
 		}
 	}
@@ -172,26 +173,17 @@ public class SmartcardDataManager extends DataManager {
 		GTFSRoute curBoardingRoute = PublicTransitSystem.myRoutes.get(curBoardingRouteId);
 		
 		//First we check if the data was not corrupted (the smartcard may not correspond to the GTFS data)
-		if(curBoardingStop == null){
-			trip.alightingInferrenceCase = UtilsSM.DATA_CORRUPTED_STOP_DONT_EXIST;
-		}
-		else if(curBoardingRoute == null){
-			trip.alightingInferrenceCase = UtilsSM.DATA_CORRUPTED_ROUTE_DONT_EXIST;
-		}
-		else{
-			trip.myID = curId;
-			trip.boardingStop = curBoardingStop;
-			trip.boardingRoute = curBoardingRoute;
-			trip.boardingDirection = curDirectionId;
+		trip.myId = curId;
+		trip.boardingStop = curBoardingStop;
+		trip.boardingRoute = curBoardingRoute;
+		trip.boardingDirection = curDirectionId;
 
-			String curDate = myData.get(UtilsSM.boardingDate).get(i);
-			String curTime = myData.get(UtilsSM.boardingTime).get(i);
-			String curDateTime = curDate + " at " + curTime;
-			Date d = sdf.parse(curDateTime);
-			DateTime d2 = new DateTime(d);
-			trip.boardingDate = d2;
-			
-		}	
+		String curDate = myData.get(UtilsSM.boardingDate).get(i);
+		String curTime = myData.get(UtilsSM.boardingTime).get(i);
+		String curDateTime = curDate + " at " + curTime;
+		Date d = sdf.parse(curDateTime);
+		DateTime d2 = new DateTime(d);
+		trip.boardingDate = d2;
 		return trip;
 	}
 

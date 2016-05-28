@@ -458,6 +458,23 @@ public class Smartcard extends BiogemeChoice {
 		return myData.size() / dayCount;
 	}
 
+	/**
+	 * For each transaction record of the smart card, it applies the destination inference methodology as described in
+	 * Trépanier, Tranchant, Chapleau (2007) Individual Trip Destination Estimation in a Transit Smart Card Automated Fare Collection System.
+	 * The function attach, when possible, an alighting stop to the transaction. 
+	 * In all cases it attach a destination inferrence code:
+	 * <br/>11: destination was found using the next transaction of the day
+	 * <br/>12: transaction is the last of the day and the destination was found using the first transaction of the day
+	 * <br/>13: transaction is the last of the day and the destination was found using the first transaction of the next day
+	 * <br/>14: destination was found using historical data
+	 * <br/>30: despite going through all our hypothesis, no destination could be inferred
+	 * <br/>41: data inconsistency, the stop id recorded in the transaction does not exists
+	 * <br/>42: data inconsistency, the route id recorded in the transaction does not exists
+	 * <br/>43: data inconsistency, the stop recorded in the transaction does not belong to the route
+	 * <br/>44: data inconsistency, the boarding stop was actually the last of the route
+	 * @throws ParseException
+	 */
+
 	public void inferDestinations() throws ParseException {
 		ArrayList<DateTime> myDates = getDates();
 		for (DateTime curDate : myDates) {
@@ -468,16 +485,44 @@ public class Smartcard extends BiogemeChoice {
 		inferSingleTripDestination();
 	}
 
+	/**
+	 * Check for the following data inconsistencies, for each transaction record:
+	 * <br/>  a) stop Id exists in the GTFS dataset
+	 * <br/>  b) route Id exists in the GTFS dataset
+	 * <br/>  c) the boarding stop belongs to the boarding route in the GTFS dataset
+	 * <br/>  d) the boarding stop is not the last one of its route
+	 * <br/>The inconsistency is recorded in the SmartcardTrip.alightingInferrenceCase following the dictionary available in UtilsSM
+	 */
+	public void checkDataConsistency() {
+		// TODO Auto-generated method stub
+		for(SmartcardTrip smTp: myTrips){
+			ArrayList<GTFSStop> vanishingRoute = smTp.boardingRoute.getVanishingRoute(smTp.boardingStop, smTp.boardingDirection);		
+			
+			if (!PublicTransitSystem.myStops.containsKey(smTp.boardingStop.myId)) {
+				smTp.alightingInferrenceCase = UtilsSM.STOP_DONT_EXISTS;
+			}
+			else if(!PublicTransitSystem.myRoutes.containsKey(smTp.boardingRoute.myId)){
+				smTp.alightingInferrenceCase = UtilsSM.ROUTE_DONT_EXISTS;
+			}
+			else if(!smTp.boardingRoute.contains(smTp.boardingStop)){
+				smTp.alightingInferrenceCase = UtilsSM.BOARDING_STOP_DONT_BELONG_TO_ROUTE;
+			}
+			else if(vanishingRoute.size() == 0){
+				smTp.alightingInferrenceCase = UtilsSM.BOARDED_ON_LAST_STATION;
+			}
+		}
+	}
+
 	private void inferSingleTripDestination() throws ParseException {
 		// TODO Auto-generated method stub
-		for (SmartcardTrip smtp : myTrips) {
-			if (UtilsSM.notInferredCases.contains(smtp.alightingInferrenceCase)) {
-				SmartcardTrip similarTrip = getMostSimilarTrip(smtp);
+		for (SmartcardTrip smTp : myTrips) {
+			if (!UtilsSM.inconsistentData.contains(smTp.alightingInferrenceCase) && smTp.alightingStop == null) {
+				SmartcardTrip similarTrip = getMostSimilarTrip(smTp);
 				if (similarTrip == null) {
-					smtp.alightingInferrenceCase = UtilsSM.SINGLE;
+					smTp.alightingInferrenceCase = UtilsSM.UNLINKED;
 				} else {
-					smtp.alightingStop = similarTrip.alightingStop;
-					smtp.alightingInferrenceCase = UtilsSM.HISTORY;
+					smTp.alightingStop = similarTrip.alightingStop;
+					smTp.alightingInferrenceCase = UtilsSM.HISTORY;
 				}
 			}
 		}
@@ -503,15 +548,15 @@ public class Smartcard extends BiogemeChoice {
 		double deltaTime = Double.POSITIVE_INFINITY;
 		SmartcardTrip mostSimilarTrip = null;
 
-		for (SmartcardTrip smtp: myTrips) {
-			if (smtp.myID != trip.myID && 
-					smtp.boardingDate.getMonthOfYear() == trip.boardingDate.getMonthOfYear() && 
-					smtp.boardingRoute.myId.equals(trip.boardingRoute.myId) && 
-					smtp.boardingDirection.equals(trip.boardingDirection) && 
-					(smtp.alightingStop!=null)) {
-				if (Math.abs(smtp.boardingDate.getMinuteOfDay() - trip.boardingDate.getMinuteOfDay()) < deltaTime) {
-					deltaTime = Math.abs(smtp.boardingDate.getMinuteOfDay() - trip.boardingDate.getMinuteOfDay());
-					mostSimilarTrip = smtp;
+		for (SmartcardTrip smTp: myTrips) {
+			if (smTp.myId != trip.myId && 
+					smTp.boardingDate.getMonthOfYear() == trip.boardingDate.getMonthOfYear() && 
+					smTp.boardingRoute.myId.equals(trip.boardingRoute.myId) && 
+					smTp.boardingDirection.equals(trip.boardingDirection) && 
+					smTp.alightingStop!=null) {
+				if (Math.abs(smTp.boardingDate.getMinuteOfDay() - trip.boardingDate.getMinuteOfDay()) < deltaTime) {
+					deltaTime = Math.abs(smTp.boardingDate.getMinuteOfDay() - trip.boardingDate.getMinuteOfDay());
+					mostSimilarTrip = smTp;
 				}
 			}
 		}
@@ -521,31 +566,19 @@ public class Smartcard extends BiogemeChoice {
 	private void inferRegularTripDestinations(ArrayList<SmartcardTrip> dailyData) {
 		// TODO Auto-generated method stub
 
-		for (int i = 0; i < dailyData.size(); i++) {
+		for (int i = 0; i < dailyData.size()-1; i++) {
 			SmartcardTrip curSmartcardTrip = dailyData.get(i);
+			SmartcardTrip nextSmartcardTrip = dailyData.get(i + 1);
 			GTFSStop alightingStop;
 			
-			if (!(curSmartcardTrip.alightingInferrenceCase == UtilsSM.DATA_CORRUPTED_STOP_DONT_EXIST)) {
+			if (!UtilsSM.inconsistentData.contains(curSmartcardTrip.alightingInferrenceCase)
+					&& !UtilsSM.inconsistentData.contains(nextSmartcardTrip.alightingInferrenceCase)) {
 				ArrayList<GTFSStop> curVanishingRoute = curSmartcardTrip.boardingRoute.getVanishingRoute(curSmartcardTrip.boardingStop, curSmartcardTrip.boardingDirection);
-
-				// Treat regular case: when there is a following record the same
-				// day
-				if (i != dailyData.size() - 1) {
-					SmartcardTrip nextSmartcardTrip = dailyData.get(i + 1);
-					double distMin = Double.POSITIVE_INFINITY;
-					alightingStop = getClosestStop(nextSmartcardTrip.boardingStop, curVanishingRoute);
-					
-					if (alightingStop != null) {
-						distMin = alightingStop.getDistance(nextSmartcardTrip.boardingStop);
-						if (distMin <= UtilsSM.WALKING_DISTANCE_THRESHOLD) {
-							curSmartcardTrip.alightingInferrenceCase = UtilsSM.REGULAR;
-							curSmartcardTrip.alightingStop = alightingStop;
-						} else {
-							curSmartcardTrip.alightingInferrenceCase = UtilsSM.TOO_FAR;
-						}
-					} else {
-						curSmartcardTrip.alightingInferrenceCase = UtilsSM.NOT_INFERRED;
-					}
+				alightingStop = getClosestStop(nextSmartcardTrip.boardingStop, curVanishingRoute);
+				double distMin = alightingStop.getDistance(nextSmartcardTrip.boardingStop);
+				if (distMin <= UtilsSM.WALKING_DISTANCE_THRESHOLD) {
+					curSmartcardTrip.alightingInferrenceCase = UtilsSM.REGULAR;
+					curSmartcardTrip.alightingStop = alightingStop;
 				}
 			}
 		}
@@ -553,48 +586,40 @@ public class Smartcard extends BiogemeChoice {
 
 	private void inferLastTripDestinations(ArrayList<SmartcardTrip> dailyData) throws ParseException {
 		// TODO Auto-generated method stub
-		if (dailyData.size() != 1) {
-			SmartcardTrip curSmartcardTrip = dailyData.get(dailyData.size() - 1);
-			GTFSStop alightingStop = null;
-
-			if (!PublicTransitSystem.myStops.containsKey(curSmartcardTrip.boardingStop.myId)) {
-				curSmartcardTrip.alightingInferrenceCase = UtilsSM.DATA_CORRUPTED_STOP_DONT_EXIST;
-			} else {
-				ArrayList<GTFSStop> curVanishingRoute = curSmartcardTrip.boardingRoute.getVanishingRoute(curSmartcardTrip.boardingStop, curSmartcardTrip.boardingDirection);
-				SmartcardTrip firstDailySmartcardTrip = dailyData.get(0);
-				double distMin = Double.POSITIVE_INFINITY;
-				GTFSStop nextStop = firstDailySmartcardTrip.boardingStop;
-				alightingStop = getClosestStop(nextStop, curVanishingRoute);
-
-				if (alightingStop != null) {
-					distMin = alightingStop.getDistance(nextStop);
+		SmartcardTrip lastSmartcardTrip = dailyData.get(dailyData.size() - 1);
+		SmartcardTrip firstSmartcardTripOfDay = dailyData.get(0);
+		SmartcardTrip firstSmartcardTripOfNextDay = getNextDayFirstTapIn(lastSmartcardTrip);
+		ArrayList<GTFSStop> lastVanishingRoute = lastSmartcardTrip.boardingRoute.getVanishingRoute(lastSmartcardTrip.boardingStop, lastSmartcardTrip.boardingDirection);		
+		
+		if (!UtilsSM.inconsistentData.contains(lastSmartcardTrip.alightingInferrenceCase)) {
+			if(dailyData.size() > 1 && !UtilsSM.inconsistentData.contains(firstSmartcardTripOfDay.alightingInferrenceCase)){
+				GTFSStop potentialAlighting = getClosestStop(firstSmartcardTripOfDay.boardingStop, lastVanishingRoute);
+				double distMin = potentialAlighting.getDistance(firstSmartcardTripOfDay.boardingStop);
+				if (distMin <= UtilsSM.WALKING_DISTANCE_THRESHOLD) {
+					lastSmartcardTrip.alightingInferrenceCase = UtilsSM.LAST_DAY_BUCKLED;
+					lastSmartcardTrip.alightingStop = potentialAlighting;
+				}
+				else if(firstSmartcardTripOfNextDay == null){}
+				else if(!UtilsSM.inconsistentData.contains(firstSmartcardTripOfNextDay.alightingInferrenceCase)){
+					potentialAlighting = getClosestStop(firstSmartcardTripOfNextDay.boardingStop, lastVanishingRoute);
+					distMin = potentialAlighting.getDistance(firstSmartcardTripOfNextDay.boardingStop);
 					if (distMin <= UtilsSM.WALKING_DISTANCE_THRESHOLD) {
-						curSmartcardTrip.alightingInferrenceCase = UtilsSM.LAST_DAILY_BUCKLED;
-						curSmartcardTrip.alightingStop = alightingStop;
-					} else {
-						firstDailySmartcardTrip = getNextDayFirstTapIn(curSmartcardTrip);
-						distMin = Double.POSITIVE_INFINITY;
-						nextStop = firstDailySmartcardTrip.boardingStop;
-						alightingStop = getClosestStop(nextStop, curVanishingRoute);
-						if (alightingStop != null) {
-							distMin = alightingStop.getDistance(nextStop);
-							if (distMin <= UtilsSM.WALKING_DISTANCE_THRESHOLD) {
-								curSmartcardTrip.alightingInferrenceCase = UtilsSM.LAST_NEXT_DAY_BUCKLED;
-								curSmartcardTrip.alightingStop = alightingStop;
-							} else {
-								curSmartcardTrip.alightingInferrenceCase = UtilsSM.TOO_FAR;
-							}
-						} else {
-							curSmartcardTrip.alightingInferrenceCase = UtilsSM.NOT_INFERRED;
-						}
+						lastSmartcardTrip.alightingInferrenceCase = UtilsSM.LAST_NEXT_DAY_BUCKLED;
+						lastSmartcardTrip.alightingStop = potentialAlighting;
 					}
-				} else {
-					curSmartcardTrip.alightingInferrenceCase = UtilsSM.NOT_INFERRED;
 				}
 			}
 		}
+		else if(firstSmartcardTripOfNextDay == null){}
+		else if(dailyData.size()==1 && !UtilsSM.inconsistentData.contains(firstSmartcardTripOfNextDay.alightingInferrenceCase)){
+			GTFSStop potentialAlighting = getClosestStop(firstSmartcardTripOfNextDay.boardingStop, lastVanishingRoute);
+			double distMin = potentialAlighting.getDistance(firstSmartcardTripOfNextDay.boardingStop);
+			if (distMin <= UtilsSM.WALKING_DISTANCE_THRESHOLD) {
+				lastSmartcardTrip.alightingInferrenceCase = UtilsSM.LAST_NEXT_DAY_BUCKLED;
+				lastSmartcardTrip.alightingStop = potentialAlighting;
+			}
+		}
 	}
-
 
 	private SmartcardTrip getNextDayFirstTapIn(SmartcardTrip smtp) throws ParseException {
 		// TODO Auto-generated method stub
@@ -604,7 +629,17 @@ public class Smartcard extends BiogemeChoice {
 		}
 		return null;
 	}
+	
 
+
+	/**
+	 * Compute the minimal distance between the bus route inputed and the bus stop inputed and
+	 * return the stop which realizes this minimal distance.
+	 * 
+	 * @param stop stop which doesn't belong to the route
+	 * @param route the ArrayList<GTFSStop> represents a bus route
+	 * @return the stop in the inputed route which realizes the minimal distance to the inputed stop.
+	 */
 	private GTFSStop getClosestStop(GTFSStop stop, ArrayList<GTFSStop> route) {
 		// TODO Auto-generated method stub
 		double distMin = Double.POSITIVE_INFINITY;
