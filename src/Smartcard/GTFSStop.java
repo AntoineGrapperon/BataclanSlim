@@ -40,7 +40,7 @@ public class GTFSStop {
 		Iterator<Smartcard> itS = PublicTransitSystem.mySmartcards.iterator();
 		while(itS.hasNext()){
 			Smartcard tempS = itS.next();
-			if(tempS.stationId == myId){
+			if(tempS.stationId.myId.equals(myId)){
 				if(!tempS.isDistributed){
 					localSmartcards.add(tempS);
 				}

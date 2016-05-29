@@ -64,7 +64,7 @@ public class UtilsSM {
 	
 	public static HashMap<String, String> dictionnary = new HashMap<String, String>();
 	public static String agentId = "agentId";
-	public static String fare = "paidFare";
+	
 	
 	
 	/*#######################################GTFS dictionnary######################################*/
@@ -91,6 +91,7 @@ public class UtilsSM {
 	
 	
 	/*#######################################Smartcard data dictionnary######################################*/
+	public static String fare = "paid_fare";
 	public static String boardingStopId = "stop_id";
 	public static String boardingRouteId = "route_id";
 	public static String boardingDirectionId = "direction_id";

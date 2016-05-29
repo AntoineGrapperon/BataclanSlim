@@ -22,6 +22,7 @@ import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.ParseException;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
@@ -312,7 +313,6 @@ public class Window extends JFrame implements ActionListener {
 				myPublicTransitSystem.initialize(
 						myCtrlGenerator, 
 						smartcard, 
-						Utils.DATA_DIR + "ptSystem\\stops.txt",
 						geoDico,
 						syntheticPopulation,
 						model
@@ -332,7 +332,7 @@ public class Window extends JFrame implements ActionListener {
 				myPublicTransitSystem.processMatchingOnPtRidersByBatch(nBatches);
 				myPublicTransitSystem.printSmartcards(output);
 			}
-			catch(IOException|NumberFormatException e1){
+			catch(IOException|NumberFormatException | ParseException e1){
 				System.out.println(e1);
 			}
 			

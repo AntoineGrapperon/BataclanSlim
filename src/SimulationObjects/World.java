@@ -3137,19 +3137,6 @@ public void printLocalMarginalFittingAnalysis(String metro, long startTime){
 	    				currSubSample.put(ConfigFile.fmt(currZone.myAttributes.get(0).value), currZone);
 	    				k++;
 	    			}
-	    			/*if((k>=(i+1)*subSampleSize && i == numberOfCores-1)){
-	    				if(l == i){
-	    					SpatialZone currZone = (SpatialZone)entry.getValue();
-		    				currSubSample.put(ConfigFile.fmt(currZone.myAttributes.get(0).value), currZone);
-		    				if(l==numberOfCores-1){l=0;}else{l++;}
-	    				}
-	    				else{
-	    					if(l==numberOfCores-1){l=0;}else{l++;}
-	    				}
-	    			}*/
-	    			/*else if(k>(i+1)*subSampleSize){
-	    				break;
-	    			}*/
 	    			else{
 	    				k++;
 	    			}

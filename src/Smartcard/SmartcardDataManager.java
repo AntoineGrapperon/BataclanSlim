@@ -41,14 +41,14 @@ public class SmartcardDataManager extends DataManager {
 		System.out.println("--smartcard manager initialized");
 		createSmartcards();
 		System.out.println("--smartcard created");
-		assignFareType();
+		assignFareTypes();
 		assignColumnIndex();
 	}
 
-	private void assignFareType() {
+	private void assignFareTypes() {
 		// TODO Auto-generated method stub
 		for(Smartcard sm: mySmartcards){
-			
+			sm.assignFaretype();
 		}
 	}
 
@@ -203,5 +203,13 @@ public class SmartcardDataManager extends DataManager {
 			}
 		}
 		write.CloseFile();
+	}
+
+	public ArrayList<Smartcard> processTripChainChoiceIds() {
+		// TODO Auto-generated method stub
+		for(Smartcard sm: mySmartcards){
+			sm.processTripChainChoiceId();
+		}
+		return null;
 	}
 }

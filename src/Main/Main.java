@@ -8,6 +8,7 @@ import org.joda.time.DateTime;
 
 import ActivityChoiceModel.BiogemeControlFileGenerator;
 import ActivityChoiceModel.BiogemeSimulator;
+import ActivityChoiceModel.CensusPreparator;
 import ActivityChoiceModel.TravelSurveyPreparator;
 import ActivityChoiceModel.UtilsTS;
 import Gui.Window;
@@ -17,6 +18,8 @@ import Smartcard.PublicTransitSystem;
 import Smartcard.SmartcardDataManager;
 import Smartcard.UtilsSM;
 import Utils.ConditionalGenerator;
+import Utils.ConfigFile;
+import Utils.OutputFileWritter;
 import Utils.Utils;
 
 /*
@@ -89,7 +92,7 @@ public class Main {
 		//////////////////////////////////////////////////////////////////
 		//////////////////////////////////////////////////////////////////
 
-		//Window gui = new Window();
+		Window gui = new Window();
 		// PublicTransitSystem myPublicTransitSystem = new
 		// PublicTransitSystem();
 
@@ -99,7 +102,7 @@ public class Main {
 			// ###############################################################################
 			// Infer smartcard destinations
 			// ###############################################################################
-			PublicTransitSystem myPublicTransitSystem = new PublicTransitSystem();
+			/*PublicTransitSystem myPublicTransitSystem = new PublicTransitSystem();
 
 			String pathGTFSTrips = "D:\\Recherche\\CharlieWorkspace\\BataclanSlim\\example\\destinationInference\\GTFS\\trips.txt";
 			String pathGTFSStops = "D:\\Recherche\\CharlieWorkspace\\BataclanSlim\\example\\destinationInference\\GTFS\\stops.txt";
@@ -146,89 +149,89 @@ public class Main {
 			// , Population)
 			// ###############################################################################
 
-			/*
-			 * CensusPreparator census = new CensusPreparator(Utils.DATA_DIR +
-			 * "CENSUS2006DAAROUNDSTOP.csv"); System.out.println(
-			 * "--census file was found"); int nBatch = 15;
-			 * census.writeZonalInputFile(nBatch); census.writeCtrlFile(nBatch);
-			 * 
-			 * //###############################################################
-			 * ################ //Synthetic population generator by batches
-			 * //###############################################################
-			 * ################ // BE SURE YOU ARE USING THE RIGTH DISTRIBUTIONS
-			 * FROM THE RIGTH DATASET
-			 * 
-			 * String pathToSeeds = Utils.DATA_DIR + "data\\CMA505PUMF2006.csv";
-			 * myWorld.Initialize(true, 1);// we need this for writing headers
-			 * 
-			 * //Initialize the statistical log OutputFileWritter
-			 * localStatAnalysis = new OutputFileWritter();
-			 * localStatAnalysis.OpenFile(Utils.DATA_DIR +
-			 * "data\\505\\localStatAnalysis.csv"); String headers
-			 * =UtilsSM.zoneId + Utils.COLUMN_DELIMETER + Utils.population;
-			 * for(int i = 0; i <
-			 * ConfigFile.AttributeDefinitionsImportance.size(); i++){ headers =
-			 * headers + Utils.COLUMN_DELIMETER +
-			 * ConfigFile.AttributeDefinitionsImportance.get(i).category +
-			 * "SRMSE" + Utils.COLUMN_DELIMETER +
-			 * ConfigFile.AttributeDefinitionsImportance.get(i).category +
-			 * "TAE_DA" + Utils.COLUMN_DELIMETER +
-			 * ConfigFile.AttributeDefinitionsImportance.get(i).category +
-			 * "%SAE_DA" ; } for(int i = 0; i <
-			 * ConfigFile.AttributeDefinitionsImportance.size(); i++){ for(int j
-			 * = 0 ; j < ConfigFile.AttributeDefinitionsImportance.get(i).value;
-			 * j++){ headers = headers + Utils.COLUMN_DELIMETER +
-			 * ConfigFile.AttributeDefinitionsImportance.get(i).category + j +
-			 * "TAE"; } } for(int i = 0; i <
-			 * ConfigFile.AttributeDefinitionsImportance.size(); i++){ for(int j
-			 * = 0 ; j < ConfigFile.AttributeDefinitionsImportance.get(i).value;
-			 * j++){ headers = headers + Utils.COLUMN_DELIMETER +
-			 * ConfigFile.AttributeDefinitionsImportance.get(i).category +
-			 * "SAE"; } } for(int i = 0; i <
-			 * ConfigFile.AttributeDefinitionsImportance.size(); i++){ for(int j
-			 * = 0 ; j < ConfigFile.AttributeDefinitionsImportance.get(i).value;
-			 * j++){ headers = headers + Utils.COLUMN_DELIMETER +
-			 * ConfigFile.AttributeDefinitionsImportance.get(i).category + j +
-			 * "Target"; } } for(int i = 0; i <
-			 * ConfigFile.AttributeDefinitionsImportance.size(); i++){ for(int j
-			 * = 0 ; j < ConfigFile.AttributeDefinitionsImportance.get(i).value;
-			 * j++){ headers = headers + Utils.COLUMN_DELIMETER +
-			 * ConfigFile.AttributeDefinitionsImportance.get(i).category + j +
-			 * "Result"; } }
-			 * 
-			 * localStatAnalysis.myFileWritter.write(headers);
-			 * 
-			 * // Initialize the population pool log OutputFileWritter
-			 * population = new OutputFileWritter();
-			 * population.OpenFile(Utils.DATA_DIR +
-			 * "data\\505\\createdPopulation.csv"); headers = "agentId" +
-			 * Utils.COLUMN_DELIMETER + UtilsSM.zoneId; for(int i = 0; i <
-			 * ConfigFile.AttributeDefinitions.size(); i++){ headers = headers +
-			 * Utils.COLUMN_DELIMETER +
-			 * ConfigFile.AttributeDefinitions.get(i).category ; }
-			 * population.myFileWritter.write(headers);
-			 * 
-			 * ConfigFile.resetConfigFile(); myWorld = null;
-			 * 
-			 * //Create batches for(int i = 0; i < nBatch; i++){
-			 * 
-			 * 
-			 * World currWorld = new World(505); currWorld.Initialize(true, 1,
-			 * i); int numberOfLogicalProcessors =
-			 * Runtime.getRuntime().availableProcessors() -3;
-			 * System.out.println("--computation with: " +
-			 * numberOfLogicalProcessors + " logical processors"); String[]
-			 * answer =
-			 * currWorld.CreatePersonPopulationPoolLocalLevelMultiThreadsBatch(
-			 * Utils.DATA_DIR + "myPersonPool.csv",
-			 * pathToSeeds,numberOfLogicalProcessors); currWorld = null;
-			 * //System.out.println(answer[1]);
-			 * localStatAnalysis.myFileWritter.write(answer[0]);
-			 * population.myFileWritter.write(answer[1]);
-			 * ConfigFile.resetConfigFile(); }
-			 * 
-			 * localStatAnalysis.CloseFile(); population.CloseFile();
-			 */
+			
+			  CensusPreparator census = new CensusPreparator(Utils.DATA_DIR +
+			  "CENSUS2006DAAROUNDSTOP.csv"); System.out.println(
+			  "--census file was found"); int nBatch = 15;
+			  census.writeZonalInputFile(nBatch); census.writeCtrlFile(nBatch);
+			  
+			  //###############################################################
+			  //Synthetic population generator by batches
+			  //###############################################################
+
+			  
+			  String pathToSeeds = Utils.DATA_DIR + "data\\CMA505PUMF2006.csv";
+			  myWorld.Initialize(true, 1);// we need this for writing headers
+			  
+			  //Initialize the statistical log 
+			  OutputFileWritter localStatAnalysis = new OutputFileWritter();
+			  localStatAnalysis.OpenFile(Utils.DATA_DIR +
+			  "data\\505\\localStatAnalysis.csv"); String headers
+			  =UtilsSM.zoneId + Utils.COLUMN_DELIMETER + Utils.population;
+			  for(int i = 0; i <
+			  ConfigFile.AttributeDefinitionsImportance.size(); i++){ headers =
+			  headers + Utils.COLUMN_DELIMETER +
+			  ConfigFile.AttributeDefinitionsImportance.get(i).category +
+			  "SRMSE" + Utils.COLUMN_DELIMETER +
+			  ConfigFile.AttributeDefinitionsImportance.get(i).category +
+			  "TAE_DA" + Utils.COLUMN_DELIMETER +
+			  ConfigFile.AttributeDefinitionsImportance.get(i).category +
+			  "%SAE_DA" ; } for(int i = 0; i <
+			  ConfigFile.AttributeDefinitionsImportance.size(); i++){ for(int j
+			  = 0 ; j < ConfigFile.AttributeDefinitionsImportance.get(i).value;
+			  j++){ headers = headers + Utils.COLUMN_DELIMETER +
+			  ConfigFile.AttributeDefinitionsImportance.get(i).category + j +
+			  "TAE"; } } for(int i = 0; i <
+			  ConfigFile.AttributeDefinitionsImportance.size(); i++){ for(int j
+			  = 0 ; j < ConfigFile.AttributeDefinitionsImportance.get(i).value;
+			  j++){ headers = headers + Utils.COLUMN_DELIMETER +
+			  ConfigFile.AttributeDefinitionsImportance.get(i).category +
+			  "SAE"; } } for(int i = 0; i <
+			  ConfigFile.AttributeDefinitionsImportance.size(); i++){ for(int j
+			  = 0 ; j < ConfigFile.AttributeDefinitionsImportance.get(i).value;
+			  j++){ headers = headers + Utils.COLUMN_DELIMETER +
+			  ConfigFile.AttributeDefinitionsImportance.get(i).category + j +
+			  "Target"; } } for(int i = 0; i <
+			  ConfigFile.AttributeDefinitionsImportance.size(); i++){ for(int j
+			  = 0 ; j < ConfigFile.AttributeDefinitionsImportance.get(i).value;
+			  j++){ headers = headers + Utils.COLUMN_DELIMETER +
+			  ConfigFile.AttributeDefinitionsImportance.get(i).category + j +
+			  "Result"; } }
+			  
+			  localStatAnalysis.myFileWritter.write(headers);
+			  
+			  // Initialize the population pool log 
+			  OutputFileWritter population = new OutputFileWritter();
+			  population.OpenFile(Utils.DATA_DIR +
+			  "data\\505\\createdPopulation.csv"); headers = "agentId" +
+			  Utils.COLUMN_DELIMETER + UtilsSM.zoneId; for(int i = 0; i <
+			  ConfigFile.AttributeDefinitions.size(); i++){ headers = headers +
+			  Utils.COLUMN_DELIMETER +
+			  ConfigFile.AttributeDefinitions.get(i).category ; }
+			  population.myFileWritter.write(headers);
+			  
+			  ConfigFile.resetConfigFile(); myWorld = null;
+			  
+			  //Create batches for(int i = 0; i < nBatch; i++){
+			  
+			  
+			  World currWorld = new World(505); currWorld.Initialize(true, 1,
+			  i); int numberOfLogicalProcessors =
+			  Runtime.getRuntime().availableProcessors() -3;
+			  System.out.println("--computation with: " +
+			  numberOfLogicalProcessors + " logical processors"); String[]
+			  answer = currWorld.CreatePersonPopulationPoolLocalLevelMultiThreadsBatch( 
+					  Utils.DATA_DIR + "myPersonPool.csv",
+					  pathToSeeds,
+					  numberOfLogicalProcessors); 
+			  currWorld = null;
+			  //System.out.println(answer[1]);
+			  localStatAnalysis.myFileWritter.write(answer[0]);
+			  population.myFileWritter.write(answer[1]);
+			  ConfigFile.resetConfigFile(); }
+			  
+			  localStatAnalysis.CloseFile(); population.CloseFile();
+			 
 
 			// ############################################################################################
 			// prepare OD data for modeling no multithreading, input: travel
@@ -442,11 +445,11 @@ public class Main {
 			 * zonalData,destPath);
 			 */
 
-		} catch (IOException | ParseException e) {
+		/*} catch (IOException | ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 
-		}
+		}*/
 
 		long endTime = System.currentTimeMillis();
 

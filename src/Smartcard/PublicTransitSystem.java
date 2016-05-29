@@ -6,6 +6,7 @@ package Smartcard;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -89,7 +90,7 @@ public class PublicTransitSystem {
 			String pathSmartcard, 
 			String pathGeoDico, 
 			String pathPop,
-			String pathModel) throws IOException{
+			String pathModel) throws IOException, ParseException{
 		myCtrlGen = ctrlGenerator;
 		SmartcardDataManager mySmartcardManager = new SmartcardDataManager(myCtrlGen);
 		GeoDicoManager myGeoDico = new GeoDicoManager();
@@ -100,8 +101,8 @@ public class PublicTransitSystem {
 		mySimulator.importBiogemeModel(pathModel);
 		mySimulator.importNest(pathModel);
 		
-		
-		mySmartcards = mySmartcardManager.enrichWithTripChainChoice(pathSmartcard);
+		mySmartcardManager.prepareSmartcards(pathSmartcard);
+		mySmartcards = mySmartcardManager.processTripChainChoiceIds();
 		geoDico = myGeoDico.getDico(pathGeoDico);
 		System.out.println("--geodico assigned");
 		myPopulation = myPopGenerator.getAgents(pathPop);
