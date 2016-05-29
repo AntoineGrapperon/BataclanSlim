@@ -6,6 +6,7 @@ package Gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -25,6 +26,7 @@ import Controlers.PromptStringInformation;
 public class TabPreparePopulationSynthesis extends JPanel {
 
 	//JScrollPane myScroll = new JScrollPane();
+	ArrayList<PromptStringInformation> myStringPrompts = new ArrayList<PromptStringInformation>();
 	Button act1;
 	Button act2;
 	PromptStringInformation line1;
@@ -90,9 +92,12 @@ public class TabPreparePopulationSynthesis extends JPanel {
 	    myContent.add(line5);
 	    myContent.add(line6);
 	    
-	    myContent.setLayout(new BoxLayout(myContent, BoxLayout.PAGE_AXIS));
-	    
-	    
+	    myContent.setLayout(new BoxLayout(myContent, BoxLayout.PAGE_AXIS));	    
 	    this.add(myContent,BorderLayout.SOUTH);
+	    
+	    myStringPrompts.add(line1);
+		myStringPrompts.add(line2);
+		myStringPrompts.add(line3);
+		myStringPrompts.add(line5);
 	}
 }

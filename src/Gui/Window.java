@@ -3,32 +3,22 @@
  */
 package Gui;
 
-import javax.imageio.ImageIO;
-import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 
 import java.awt.BorderLayout;
-import java.awt.CardLayout;
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Image;
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
 
 import javax.swing.JPanel;
-import javax.swing.JScrollBar;
-import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTextField;
 
 import ActivityChoiceModel.BiogemeControlFileGenerator;
 import ActivityChoiceModel.BiogemeSimulator;
@@ -36,6 +26,7 @@ import ActivityChoiceModel.CensusPreparator;
 import ActivityChoiceModel.TravelSurveyPreparator;
 import Controlers.Button;
 import Controlers.ComboBox;
+import Controlers.PromptStringInformation;
 import Controlers.TextField;
 import SimulationObjects.World;
 import Smartcard.PublicTransitSystem;
@@ -80,61 +71,38 @@ public class Window extends JFrame implements ActionListener {
 	    
 	    content.paneGeneral.line3.myButton.addActionListener(new UpdateWorkingDirectory());
 	    
-	    content.panePopulationSynthesis.tabPreparePopulationSynthesis.line1.myText.addMouseListener(new HelpListenerText());
-	    content.panePopulationSynthesis.tabPreparePopulationSynthesis.line2.myText.addMouseListener(new HelpListenerText());
-	    content.panePopulationSynthesis.tabPreparePopulationSynthesis.line3.myText.addMouseListener(new HelpListenerText());
 	    content.panePopulationSynthesis.tabPreparePopulationSynthesis.line4.myButton.addMouseListener(new HelpListenerButton());
 	    content.panePopulationSynthesis.tabPreparePopulationSynthesis.line4.myButton.addActionListener(new PrepareGlobalPopulationSynthesisButton());
-	    content.panePopulationSynthesis.tabPreparePopulationSynthesis.line5.myText.addMouseListener(new HelpListenerText());
 	    content.panePopulationSynthesis.tabPreparePopulationSynthesis.line6.myButton.addMouseListener(new HelpListenerButton());
 	    content.panePopulationSynthesis.tabPreparePopulationSynthesis.line6.myButton.addActionListener(new PrepareLocalPopulationSynthesisButton());
-	     
-	    content.panePopulationSynthesis.tabRunPopulationSynthesis.line1.myText.addMouseListener(new HelpListenerText());
-	    content.panePopulationSynthesis.tabRunPopulationSynthesis.line2.myText.addMouseListener(new HelpListenerText());
-	    content.panePopulationSynthesis.tabRunPopulationSynthesis.line3.myText.addMouseListener(new HelpListenerText());
-	    content.panePopulationSynthesis.tabRunPopulationSynthesis.line4.myText.addMouseListener(new HelpListenerText());
+	    
 	    content.panePopulationSynthesis.tabRunPopulationSynthesis.line5.myComboBox.addMouseListener(new HelpListenerComboBox());
-	    content.panePopulationSynthesis.tabRunPopulationSynthesis.line6.myText.addMouseListener(new HelpListenerText());
-	    content.panePopulationSynthesis.tabRunPopulationSynthesis.line7.myText.addMouseListener(new HelpListenerText());
-	    content.panePopulationSynthesis.tabRunPopulationSynthesis.line8.myText.addMouseListener(new HelpListenerText());
-	    content.panePopulationSynthesis.tabRunPopulationSynthesis.line10.myText.addMouseListener(new HelpListenerText());
 	    content.panePopulationSynthesis.tabRunPopulationSynthesis.line11.myButton.addMouseListener(new HelpListenerButton());
 	    content.panePopulationSynthesis.tabRunPopulationSynthesis.line11.myButton.addActionListener(new RunPopulationSynthesisButton());
 	    
-	    content.paneModelCalibration.tabPrepareBiogemeCalibration.line1.myText.addMouseListener(new HelpListenerText());
-	    content.paneModelCalibration.tabPrepareBiogemeCalibration.line2.myText.addMouseListener(new HelpListenerText());
-	    content.paneModelCalibration.tabPrepareBiogemeCalibration.line3.myText.addMouseListener(new HelpListenerText());
 	    content.paneModelCalibration.tabPrepareBiogemeCalibration.line4.myButton.addMouseListener(new HelpListenerButton());
 	    content.paneModelCalibration.tabPrepareBiogemeCalibration.line4.myButton.addActionListener(new PrepareBiogemeCtrlFile());
-	    content.paneModelCalibration.tabPrepareBiogemeCalibration.line5.myText.addMouseListener(new HelpListenerText());
-	    content.paneModelCalibration.tabPrepareBiogemeCalibration.line6.myText.addMouseListener(new HelpListenerText());
-	    content.paneModelCalibration.tabPrepareBiogemeCalibration.line7.myText.addMouseListener(new HelpListenerText());
 	    content.paneModelCalibration.tabPrepareBiogemeCalibration.line8.myComboBox.addMouseListener(new HelpListenerComboBox());
-	    content.paneModelCalibration.tabPrepareBiogemeCalibration.line9.myText.addMouseListener(new HelpListenerText());
-	    content.paneModelCalibration.tabPrepareBiogemeCalibration.line10.myText.addMouseListener(new HelpListenerText());
-	    content.paneModelCalibration.tabPrepareBiogemeCalibration.line11.myButton.addMouseListener(new HelpListenerButton());
-	    content.paneModelCalibration.tabPrepareBiogemeCalibration.line11.myButton.addActionListener(new FormatTravelSurvey());
 	    
-	    content.paneModelCalibration.tabRunModelValidation.line1.myText.addMouseListener(new HelpListenerText());
-	    content.paneModelCalibration.tabRunModelValidation.line2.myText.addMouseListener(new HelpListenerText());
-	    content.paneModelCalibration.tabRunModelValidation.line3.myText.addMouseListener(new HelpListenerText());
-	    content.paneModelCalibration.tabRunModelValidation.line4.myText.addMouseListener(new HelpListenerText());
 	    content.paneModelCalibration.tabRunModelValidation.line5.myComboBox.addMouseListener(new HelpListenerComboBox());
-	    content.paneModelCalibration.tabRunModelValidation.line6.myText.addMouseListener(new HelpListenerText());
 	    content.paneModelCalibration.tabRunModelValidation.line7.myButton.addMouseListener(new HelpListenerButton());
 	    
-	    content.paneSocioDemographicInference.tabRunSocioDemographicInference.line1.myText.addMouseListener(new HelpListenerText());
-	    content.paneSocioDemographicInference.tabRunSocioDemographicInference.line2.myText.addMouseListener(new HelpListenerText());
-	    content.paneSocioDemographicInference.tabRunSocioDemographicInference.line3.myText.addMouseListener(new HelpListenerText());
-	    content.paneSocioDemographicInference.tabRunSocioDemographicInference.line4.myText.addMouseListener(new HelpListenerText());
-	    content.paneSocioDemographicInference.tabRunSocioDemographicInference.line5.myText.addMouseListener(new HelpListenerText());
-	    content.paneSocioDemographicInference.tabRunSocioDemographicInference.line6.myText.addMouseListener(new HelpListenerText());
-	    content.paneSocioDemographicInference.tabRunSocioDemographicInference.line7.myText.addMouseListener(new HelpListenerText());
-	    content.paneSocioDemographicInference.tabRunSocioDemographicInference.line8.myText.addMouseListener(new HelpListenerText());
-	    content.paneSocioDemographicInference.tabRunSocioDemographicInference.line9.myText.addMouseListener(new HelpListenerText());
 	    content.paneSocioDemographicInference.tabRunSocioDemographicInference.line10.myButton.addMouseListener(new HelpListenerButton());
 	    content.paneSocioDemographicInference.tabRunSocioDemographicInference.line10.myButton.addActionListener(new RunSocioDemographicInference());
 	    
+	    ArrayList<PromptStringInformation> toListen = new ArrayList<PromptStringInformation>();
+	    toListen = content.panePopulationSynthesis.tabPreparePopulationSynthesis.myStringPrompts;
+	    listenText(toListen);
+	    toListen = content.panePopulationSynthesis.tabRunPopulationSynthesis.myStringPrompts;
+	    listenText(toListen);
+	    toListen = content.paneModelCalibration.tabPrepareBiogemeCalibration.myStringPrompts;
+	    listenText(toListen);
+	    toListen = content.paneModelCalibration.tabRunModelValidation.myStringPrompts;
+	    listenText(toListen);
+	    toListen = content.paneDestinationInference.tabRunDestinationInference.myStringPrompts;
+	    listenText(toListen);
+	    toListen = content.paneSocioDemographicInference.tabRunSocioDemographicInference.myStringPrompts;
+	    listenText(toListen);
 	    
 	    JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, paneButtons, content);
 	    JSplitPane split2 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, split, informationPane);
@@ -148,6 +116,13 @@ public class Window extends JFrame implements ActionListener {
 	    
 	}
 	
+	private void listenText(ArrayList<PromptStringInformation> toListen) {
+		// TODO Auto-generated method stub
+		for(PromptStringInformation str: toListen){
+	    	str.myText.addMouseListener(new HelpListenerText());
+	    }
+	}
+
 	class ButtonListener implements ActionListener{
 		public void actionPerformed(ActionEvent arg0){
 			int index = ((Button)arg0.getSource()).id;
@@ -163,7 +138,20 @@ public class Window extends JFrame implements ActionListener {
 			String newWD = content.paneGeneral.line2.myText.getText();
 			Utils.DATA_DIR = newWD;
 			System.out.println("--new project directory = " + Utils.DATA_DIR);
+			update(content);
 		}
+
+		private void update(Component compo) {
+			// TODO Auto-generated method stub
+			 if (compo instanceof PromptStringInformation) {
+				 ((PromptStringInformation)compo).updateText();
+				 }
+				Component[] insideCompo = ((Container) compo).getComponents();
+				for(Component curComp: insideCompo){
+					update(curComp);
+				}
+		}
+
 		
 	}
 	

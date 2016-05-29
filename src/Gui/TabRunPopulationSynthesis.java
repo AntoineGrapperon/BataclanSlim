@@ -24,7 +24,7 @@ import Controlers.PromptStringInformation;
  */
 public class TabRunPopulationSynthesis extends JPanel {
 
-
+	ArrayList<PromptStringInformation>myStringPrompts = new ArrayList<PromptStringInformation>();
 	PromptStringInformation line1;
 	PromptStringInformation line12;
 	PromptButton line13;
@@ -122,8 +122,16 @@ public class TabRunPopulationSynthesis extends JPanel {
 	    myContent.add(line11);
 	    
 	    myContent.setLayout(new BoxLayout(myContent, BoxLayout.PAGE_AXIS));
-	    
 	    this.add(myContent,BorderLayout.SOUTH);
+	    
+	    myStringPrompts.add(line1);
+		myStringPrompts.add(line2);
+		myStringPrompts.add(line3);
+		myStringPrompts.add(line4);
+		myStringPrompts.add(line6);
+		myStringPrompts.add(line7);
+		myStringPrompts.add(line8);
+		myStringPrompts.add(line10);
 	
 	}
 	

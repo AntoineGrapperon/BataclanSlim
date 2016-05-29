@@ -22,6 +22,7 @@ import Controlers.PromptStringInformation;
  */
 public class TabRunModelValidation extends JPanel {
 	
+	ArrayList<PromptStringInformation> myStringPrompts = new ArrayList<PromptStringInformation>();
 	PromptStringInformation line1;
 	PromptStringInformation line2;
 	PromptStringInformation line3;
@@ -103,5 +104,11 @@ public class TabRunModelValidation extends JPanel {
 	    
 	    myContent.setLayout(new BoxLayout(myContent, BoxLayout.PAGE_AXIS));
 	    this.add(myContent,BorderLayout.SOUTH);
+	    
+	    myStringPrompts.add(line1);
+		myStringPrompts.add(line2);
+		myStringPrompts.add(line3);
+		myStringPrompts.add(line4);
+		myStringPrompts.add(line6);
 	}
 }

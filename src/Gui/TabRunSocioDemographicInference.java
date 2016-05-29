@@ -5,6 +5,7 @@ package Gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
@@ -19,6 +20,7 @@ import Controlers.PromptStringInformation;
  */
 public class TabRunSocioDemographicInference extends JPanel {
 
+	ArrayList<PromptStringInformation> myStringPrompts = new ArrayList<PromptStringInformation>();
 	PromptStringInformation line1;
 	PromptStringInformation line2;
 	PromptStringInformation line3;
@@ -109,7 +111,16 @@ public class TabRunSocioDemographicInference extends JPanel {
 		myContent.add(line10);
 		
 		myContent.setLayout(new BoxLayout(myContent, BoxLayout.PAGE_AXIS));
-	    
 		this.add(myContent, BorderLayout.SOUTH);
+		
+		myStringPrompts.add(line1);
+		myStringPrompts.add(line2);
+		myStringPrompts.add(line3);
+		myStringPrompts.add(line4);
+		myStringPrompts.add(line5);
+		myStringPrompts.add(line6);
+		myStringPrompts.add(line7);
+		myStringPrompts.add(line8);
+		myStringPrompts.add(line9);
 	}
 }
