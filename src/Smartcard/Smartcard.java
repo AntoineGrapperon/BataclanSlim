@@ -4,12 +4,9 @@
 package Smartcard;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 
 import org.joda.time.DateTime;
@@ -52,7 +49,7 @@ public class Smartcard extends BiogemeChoice {
 	}
 
 	public void setChoiceId() {
-		HashMap<String, Integer> myCombination = new HashMap<String, Integer>();
+		/*HashMap<String, Integer> myCombination = new HashMap<String, Integer>();
 		int firstDep = getWeekDayAverageFirstDep();
 		int lastDep = getWeekDayAverageLastDep();
 		int nAct = getWeekDayAverageActivityCount(UtilsSM.timeThreshold);
@@ -64,178 +61,7 @@ public class Smartcard extends BiogemeChoice {
 		myCombination.put(UtilsTS.fidelPtRange, ptFidelity);
 		myCombination.put(UtilsTS.nest, 2);
 		biogeme_case_id = BiogemeControlFileGenerator.returnChoiceId(myCombination);
-		choiceCombination = myCombination;
-	}
-
-	/**
-	 * This function process the departure hour which is assumed to be in a
-	 * string format HHMM based on the public transit authority journey which
-	 * starts at 00AM and end at 2730 (in case of Gatineau, 2005, public transit
-	 * system.) It returns a category of departure hour (defined with respect
-	 * to: a) granularity available in the travel survey for calibrating the
-	 * activity choice model b) hypothesis made in the activity choice model in
-	 * terms of power of making a difference between categories. For first
-	 * departure of the day, this function implements the following
-	 * categorization (0am to 7 am, 7am to 9 am, after 9am)
-	 * 
-	 * @return the departure hour category according the methodology developed
-	 */
-	private int getWeekDayAverageFirstDep() {
-		// TODO Auto-generated method stub
-		int counter = 0;
-		double averageDepHour = 0;
-		for (int i = 0; i < myData.get(UtilsSM.cardId).size(); i++) {
-			String currDate = myData.get(UtilsSM.date).get(i);
-			if (isWeekDay(currDate)) {
-				if (myData.get(UtilsSM.firstTrans).get(i).equals(UtilsSM.isFirst)) {
-					counter++;
-					averageDepHour += hourStrToDouble(myData.get(UtilsSM.time).get(i));
-				}
-			}
-		}
-		averageDepHour = averageDepHour / counter;
-
-		if (averageDepHour <= UtilsSM.morningPeakHourStart) {
-			return 0;
-		} else if (averageDepHour < UtilsSM.morningPeakHourEnd) {
-			return 1;
-		} else if (averageDepHour >= UtilsSM.morningPeakHourEnd) {
-			return 2;
-		} else {
-			System.out.println("--error affecting departure hours");
-			return 10;
-		}
-	}
-
-	/**
-	 * This function process the departure hour which is assumed to be in a
-	 * string format HHMM based on the public transit authority journey which
-	 * starts at 00AM and end at 2730 (in case of Gatineau, 2005, public transit
-	 * system.) It returns a category of departure hour (defined with respect
-	 * to: a) granularity available in the travel survey for calibrating the
-	 * activity choice model b) hypothesis made in the activity choice model in
-	 * terms of power of making a difference between categories. For first
-	 * departure of the day, this function implements the following
-	 * categorization (before 3.30pm, 3.30pm to 6pm, after 6pm)
-	 * 
-	 * @return the departure hour category according the methodology developed
-	 */
-	private int getWeekDayAverageLastDep() {
-		// TODO Auto-generated method stub
-		int counter = 0;
-		double averageDepHour = 0;
-		for (int i = 0; i < myData.get(UtilsSM.cardId).size(); i++) {
-			String date = myData.get(UtilsSM.date).get(i);
-			double time = hourStrToDouble(myData.get(UtilsSM.time).get(i));
-			if (isWeekDay(date)) {
-				if (isLast(date, time)) {
-					counter++;
-					averageDepHour += hourStrToDouble(myData.get(UtilsSM.time).get(i));
-				}
-			}
-		}
-		averageDepHour = averageDepHour / counter;
-
-		if (averageDepHour <= UtilsSM.eveningPeakHourStart) {
-			return 0;
-		} else if (averageDepHour < UtilsSM.eveningPeakHourEnd) {
-			return 1;
-		} else if (averageDepHour >= UtilsSM.eveningPeakHourEnd) {
-			return 2;
-		} else {
-			System.out.println("--error affecting departure hours");
-			return 10;
-		}
-	}
-
-	/**
-	 * This function identifies activities out of boarding time.
-	 * 
-	 * @param timeThreshold
-	 *            in minutes, is the time limit between two boardings to
-	 *            consider it as an activity.
-	 * @return the number of activities
-	 */
-	public int getWeekDayAverageActivityCount(double timeThreshold) {
-
-		HashMap<String, ArrayList<Double>> boardingTimes = new HashMap<String, ArrayList<Double>>();
-		for (int i = 0; i < myData.get(UtilsSM.cardId).size(); i++) {
-			String currDate = myData.get(UtilsSM.date).get(i);
-			Double time = hourStrToDouble(myData.get(UtilsSM.time).get(i));
-			if (isWeekDay(currDate)) {
-				if (!boardingTimes.containsKey(currDate)) {
-					boardingTimes.put(currDate, new ArrayList<Double>());
-					boardingTimes.get(currDate).add(time);
-				} else {
-					boardingTimes.get(currDate).add(time);
-				}
-			}
-		}
-		int nAct = 0;
-		int dayCounter = 0;
-		for (String date : boardingTimes.keySet()) {
-			if (!boardingTimes.get(date).isEmpty()) {
-				dayCounter++;
-				Collections.sort(boardingTimes.get(date));
-				if (boardingTimes.get(date).size() == 1) {
-					nAct++;
-				} else {
-					for (int j = 0; j < boardingTimes.get(date).size() - 1; j++) {
-						double timeInterval = boardingTimes.get(date).get(j + 1) - boardingTimes.get(date).get(j);
-						if (timeInterval >= timeThreshold) {
-							nAct++;
-						}
-					}
-				}
-			}
-
-		}
-
-		double avgNAct = nAct / dayCounter;
-		int answer = (int) Math.round(avgNAct);
-		if (answer < 3) {
-			return answer;
-		} else {
-			return 3;
-		}
-	}
-
-	public int getWeekDayAveragePtFidelity(double distanceThreshold) {
-		int counterTripLegs = 0;
-		int counterNonPt = 0;
-		for (int i = 0; i < myData.get(UtilsSM.cardId).size(); i++) {
-			String currDate = myData.get(UtilsSM.date).get(i);
-			if (isWeekDay(currDate)) {
-				int stationId = Integer.parseInt(myData.get(UtilsSM.stationId).get(i));
-				int nextStationId = Integer.parseInt(myData.get(UtilsSM.nextStationId).get(i));
-				if (nextStationId != 0) {
-					GTFSStop gTFSStop = PublicTransitSystem.myStops.get(stationId);
-					GTFSStop nextStation = PublicTransitSystem.myStops.get(nextStationId);
-					gTFSStop.getDistance(nextStation);
-					if (gTFSStop.getDistance(nextStation) > distanceThreshold) {
-						counterNonPt++;
-						counterTripLegs++;
-					}
-				} else {
-					counterNonPt++;
-					counterTripLegs++;
-				}
-				counterTripLegs++;
-			}
-		}
-		if (counterTripLegs != 0) {
-			double ptFidelity = 1 - counterNonPt / counterTripLegs;
-			if (ptFidelity < 0.05) {
-				return 0;
-			} else if (ptFidelity < 0.95) {
-				return 1;
-			} else {
-				return 2;
-			}
-		} else {
-			return 0;
-		}
-
+		choiceCombination = myCombination;*/
 	}
 
 	private boolean isWeekDay(String currDate) {
@@ -260,44 +86,7 @@ public class Smartcard extends BiogemeChoice {
 		stationId = myStationId;
 	}
 
-	private ArrayList<Object> getAverageFirstDepTime() {
-		// TODO Auto-generated method stub
-		HashMap<String, Integer> stopFrequencies = new HashMap<String, Integer>();
-		HashMap<String, Double> stopTime = new HashMap<String, Double>();
-
-		for (int i = 0; i < myData.get(UtilsSM.cardId).size(); i++) {
-			String date = myData.get(UtilsSM.date).get(i);
-			double time = hourStrToDouble(myData.get(UtilsSM.time).get(i));
-			if (isFirst(date, time)) {
-				String stopId = myData.get(UtilsSM.stationId).get(i);
-				if (stopFrequencies.containsKey(stopId)) {
-					int fr = stopFrequencies.get(stopId) + 1;
-					double t = stopFrequencies.get(stopId) + time;
-					stopFrequencies.put(stopId, fr);
-					stopTime.put(stopId, t);
-				} else {
-					stopFrequencies.put(stopId, 1);
-					stopTime.put(stopId, time);
-				}
-			}
-		}
-
-		String myStationId = new String();
-		Integer freq = 0;
-		for (String key : stopFrequencies.keySet()) {
-			if (stopFrequencies.get(key) > freq) {
-				myStationId = key;
-				freq = stopFrequencies.get(key);
-			}
-		}
-
-		double avgTime = stopTime.get(myStationId);
-		avgTime = avgTime / stopTime.size();
-		ArrayList<Object> answer = new ArrayList<Object>();
-		answer.add(myStationId);
-		answer.add(avgTime);
-		return answer;
-	}
+	
 
 	private String getMostFrequentLastStation() {
 		// TODO Auto-generated method stub
@@ -357,75 +146,11 @@ public class Smartcard extends BiogemeChoice {
 		return stopFrequencies;
 	}
 
-	public void tagFirstTransaction() {
-		myData.put(UtilsSM.firstTrans, new ArrayList<String>());
-		for (int i = 0; i < myData.get(UtilsSM.cardId).size(); i++) {
-			String date = myData.get(UtilsSM.date).get(i);
-			double time = hourStrToDouble(myData.get(UtilsSM.time).get(i));
-			if (isFirst(date, time)) {
-				myData.get(UtilsSM.firstTrans).add(UtilsSM.isFirst);
-			} else {
-				myData.get(UtilsSM.firstTrans).add(UtilsSM.isNotFirst);
-			}
-		}
-	}
-
-	public boolean isFirst(String date, double time) {
-		for (int j = 0; j < myData.get(UtilsSM.cardId).size(); j++) {
-			String date2 = myData.get(UtilsSM.date).get(j);
-			double time2 = hourStrToDouble(myData.get(UtilsSM.time).get(j));
-			if (date.equals(date2)) {
-				if (time2 < time) {
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-
-	public void tagLastTransaction() {
-		myData.put(UtilsSM.lastTrans, new ArrayList<String>());
-		for (int i = 0; i < myData.get(UtilsSM.cardId).size(); i++) {
-			String date = myData.get(UtilsSM.date).get(i);
-			double time = hourStrToDouble(myData.get(UtilsSM.time).get(i));
-			if (isLast(date, time)) {
-				myData.get(UtilsSM.lastTrans).add(UtilsSM.isLast);
-			} else {
-				myData.get(UtilsSM.lastTrans).add(UtilsSM.isNotLast);
-			}
-		}
-	}
-
-	public boolean isLast(String date, double time) {
-		for (int j = 0; j < myData.get(UtilsSM.cardId).size(); j++) {
-			String date2 = myData.get(UtilsSM.date).get(j);
-			double time2 = hourStrToDouble(myData.get(UtilsSM.time).get(j));
-			if (date.equals(date2)) {
-				if (time2 > time) {
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-
-	private double hourStrToDouble(String time) {
-		// TODO Auto-generated method stub
-
-		time.trim();
-		double hour = 0;
-		if (time.length() == 4) {
-			hour = 60 * Double.parseDouble(time.substring(0, 2)) + Double.parseDouble(time.substring(2, 4));
-		} else if (time.length() == 3) {
-			hour = 60 * Double.parseDouble(Character.toString(time.charAt(0)))
-					+ Double.parseDouble(time.substring(1, 2));
-		}
-		return hour; // here, hour is in minutes
-	}
 
 	public void identifyLivingStation() {
 		// TODO Auto-generated method stub
 
+		
 		int nAct = getDailyBoardings();
 
 		ArrayList<Object> firstDepTime = getAverageFirstDepTime();
@@ -441,7 +166,113 @@ public class Smartcard extends BiogemeChoice {
 		} else {
 			stationId = station;
 		}
+	}
+	
+	public void processWeekDayTripChainCharacteristics(){
+		ArrayList<DateTime> myDates = getDates();
+		int nDaysTravelled = 0;
+		int firstDepartureTime = 0;
+		int lastDepartureTime = 0;
+		int nObservedActivities = 0;
+		int nUnlinkedTripLegs = 0;
+		int nObservedTripLegs = 0;
+		double ptFidelity = 0;
+		
+		for (DateTime curDate : myDates) {
+			if(curDate.getDayOfWeek() != 6 && curDate.getDayOfWeek() != 7){
+				ArrayList<SmartcardTrip> dailyData = getOrderedDailyTransaction(curDate);
+				nDaysTravelled++;
+				firstDepartureTime += dailyData.get(0).boardingDate.getMinuteOfDay();
+				lastDepartureTime += dailyData.get(dailyData.size()-1).boardingDate.getMinuteOfDay();
+				
+				if(dailyData.size()==1){
+					nObservedActivities++;
+				}
+				else{
+					for(int i = 0; i < dailyData.size()-1; i++){
+						SmartcardTrip smTp = dailyData.get(i);
+						SmartcardTrip nextSmTp = dailyData.get(i+1);
+						int deltaT = nextSmTp.boardingDate.getMinuteOfDay() - smTp.boardingDate.getMinuteOfDay();
+						if(deltaT >= UtilsSM.timeThreshold){
+							nObservedActivities++;
+						}
+					}
+				}
+				
+				for(SmartcardTrip smTp: dailyData){
+					if(smTp.alightingInferrenceCase==UtilsSM.UNLINKED){
+						nUnlinkedTripLegs++;
+					}
+					else if(UtilsSM.inconsistentData.contains(smTp.alightingInferrenceCase)){}
+					else{
+						nObservedTripLegs++;
+					}
+				}
+			}
+		}
+		
+		firstDepartureTime = categorizeFirstDepartureTime(firstDepartureTime/nDaysTravelled);
+		lastDepartureTime = categorizeLastDepartureTime(lastDepartureTime/nDaysTravelled);
+		int ptFidelityRank = categorizePtFidelity(ptFidelity/nDaysTravelled);
+		nObservedActivities = categorizeNumberOfActivities(Math.round(nObservedActivities/nDaysTravelled));
+		
+		HashMap<String,Integer> myCombination = new HashMap<String,Integer>();
+		myCombination.put(UtilsTS.firstDep + "Short", firstDepartureTime);
+		myCombination.put(UtilsTS.lastDep + "Short", lastDepartureTime);
+		myCombination.put(UtilsTS.nAct, nObservedActivities);
+		myCombination.put(UtilsTS.fidelPtRange, ptFidelityRank);
+		myCombination.put(UtilsTS.nest, 2);
+		biogeme_case_id = BiogemeControlFileGenerator.returnChoiceId(myCombination);
+		choiceCombination = myCombination;
+		
+	}
 
+	private int categorizeNumberOfActivities(int n) {
+		// TODO Auto-generated method stub
+		if (n < 3) {
+			return n;
+		} else {
+			return 3;
+		}
+	}
+
+	private int categorizePtFidelity(double ptFidelity) {
+		// TODO Auto-generated method stub
+		if (ptFidelity < 0.05) {
+			return 0;
+		} else if (ptFidelity < 0.95) {
+			return 1;
+		} else {
+			return 2;
+		}
+	}
+
+	private int categorizeLastDepartureTime(int lastDepartureTime) {
+		// TODO Auto-generated method stub
+		if (lastDepartureTime <= UtilsSM.eveningPeakHourStart) {
+			return 0;
+		} else if (lastDepartureTime < UtilsSM.eveningPeakHourEnd) {
+			return 1;
+		} else if (lastDepartureTime >= UtilsSM.eveningPeakHourEnd) {
+			return 2;
+		} else {
+			System.out.println("--error affecting departure hours");
+			return 10;
+		}
+	}
+
+	private int categorizeFirstDepartureTime(int firstDepartureTime) {
+		// TODO Auto-generated method stub
+		if (firstDepartureTime <= UtilsSM.morningPeakHourStart) {
+			return 0;
+		} else if (firstDepartureTime < UtilsSM.morningPeakHourEnd) {
+			return 1;
+		} else if (firstDepartureTime >= UtilsSM.morningPeakHourEnd) {
+			return 2;
+		} else {
+			System.out.println("--error affecting departure hours");
+			return 10;
+		}
 	}
 
 	private int getDailyBoardings() {

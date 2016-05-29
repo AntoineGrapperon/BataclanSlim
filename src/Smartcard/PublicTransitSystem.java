@@ -87,13 +87,11 @@ public class PublicTransitSystem {
 	@Deprecated
 	public void initialize(BiogemeControlFileGenerator ctrlGenerator, 
 			String pathSmartcard, 
-			String pathStations, 
 			String pathGeoDico, 
 			String pathPop,
 			String pathModel) throws IOException{
 		myCtrlGen = ctrlGenerator;
 		SmartcardDataManager mySmartcardManager = new SmartcardDataManager(myCtrlGen);
-		StationDataManager myStationManager = new StationDataManager();
 		GeoDicoManager myGeoDico = new GeoDicoManager();
 		PopulationDataManager myPopGenerator = new PopulationDataManager();
 		
@@ -103,7 +101,6 @@ public class PublicTransitSystem {
 		mySimulator.importNest(pathModel);
 		
 		
-		myStops = myStationManager.prepareStations(pathStations);
 		mySmartcards = mySmartcardManager.enrichWithTripChainChoice(pathSmartcard);
 		geoDico = myGeoDico.getDico(pathGeoDico);
 		System.out.println("--geodico assigned");

@@ -6,6 +6,7 @@ import java.util.HashMap;
 
 import org.joda.time.DateTime;
 
+import ActivityChoiceModel.BiogemeControlFileGenerator;
 import ActivityChoiceModel.BiogemeSimulator;
 import ActivityChoiceModel.TravelSurveyPreparator;
 import ActivityChoiceModel.UtilsTS;
@@ -306,46 +307,45 @@ public class Main {
 			// ############################################################################################
 			// Load Smartcard data and process them to label with a choice id
 			// ############################################################################################
-			/*
-			 * String pathControlFile =Utils.DATA_DIR +
-			 * "biogeme\\ctrl\\biogeme_ctrl_file_with_nest.txt"; String
-			 * pathOutput = Utils.DATA_DIR + "\\biogeme\\ctrl11~2.mod"; String
-			 * pathHypothesis = Utils.DATA_DIR +
-			 * "biogeme\\ctrl\\hypoMultiNests11.txt";
-			 * 
-			 * BiogemeControlFileGenerator myCtrlGenerator = new
-			 * BiogemeControlFileGenerator();
-			 * 
-			 * PublicTransitSystem myPublicTransitSystem = new
-			 * PublicTransitSystem();
-			 * 
-			 * myCtrlGenerator.initialize(pathControlFile, pathHypothesis);
-			 * //myCtrlGenerator.generateBiogemeControlFile();
-			 * //myCtrlGenerator.printChoiceIndex(Utils.DATA_DIR +
-			 * "biogeme\\choiceIndex.csv"); System.out.println(
-			 * "-- control file generator initiated");
-			 * 
-			 * myPublicTransitSystem.initialize( myCtrlGenerator, Utils.DATA_DIR
-			 * + "ptSystem\\smartcardData.txt", Utils.DATA_DIR +
-			 * "ptSystem\\stops.txt", Utils.DATA_DIR +
-			 * "ptSystem\\geoDico500.csv", Utils.DATA_DIR +
-			 * "ptSystem\\population.csv", Utils.DATA_DIR +
-			 * "ptSystem\\ctrl11~2.F12" ); myPublicTransitSystem.getValues();
-			 * System.out.println("--pt system initialized");
-			 * myPublicTransitSystem.createZonalSmartcardIndex();
-			 * myPublicTransitSystem.createZonalPopulationIndex();
-			 * 
-			 * //myPublicTransitSystem.printStation(Utils.DATA_DIR +
-			 * "ptSystem\\station_smartcard.csv"); System.out.println(
-			 * "--potential smartcard assigned");
-			 * 
-			 * //######## Utils.occupationCriterion = true;
-			 * //myPublicTransitSystem.processMatchingStationByStation();
-			 * //myPublicTransitSystem.processMatchingOnPtRiders();
-			 * myPublicTransitSystem.processMatchingOnPtRidersByBatch(3);
-			 * myPublicTransitSystem.printSmartcards(Utils.DATA_DIR +
-			 * "ptSystem\\matchedSMWithCHoiceSetWithBetterLivingLocation.csv");
-			 */
+			
+			  String pathControlFile =Utils.DATA_DIR +
+			  "biogeme\\ctrl\\biogeme_ctrl_file_with_nest.txt"; 
+			  String pathOutput = Utils.DATA_DIR + "\\biogeme\\ctrl11~2.mod"; 
+			  String pathHypothesis = Utils.DATA_DIR +
+			  "biogeme\\ctrl\\hypoMultiNests11.txt";
+			  
+			  BiogemeControlFileGenerator myCtrlGenerator = new BiogemeControlFileGenerator();
+			  
+			  PublicTransitSystem myPublicTransitSystem = new
+			  PublicTransitSystem();
+			  
+			  myCtrlGenerator.initialize(pathControlFile, pathHypothesis);
+			  //myCtrlGenerator.generateBiogemeControlFile();
+			  //myCtrlGenerator.printChoiceIndex(Utils.DATA_DIR +
+			  "biogeme\\choiceIndex.csv"); 
+			  System.out.println("-- control file generator initiated");
+			  
+			  myPublicTransitSystem.initialize( myCtrlGenerator, Utils.DATA_DIR + "ptSystem\\smartcardData.txt", 
+					  Utils.DATA_DIR + "ptSystem\\stops.txt", 
+					  Utils.DATA_DIR + "ptSystem\\geoDico500.csv",
+					  Utils.DATA_DIR + "ptSystem\\population.csv", 
+					  Utils.DATA_DIR + "ptSystem\\ctrl11~2.F12" ); 
+			  myPublicTransitSystem.getValues();
+			  System.out.println("--pt system initialized");
+			  myPublicTransitSystem.createZonalSmartcardIndex();
+			  myPublicTransitSystem.createZonalPopulationIndex();
+			  
+			  //myPublicTransitSystem.printStation(Utils.DATA_DIR +
+			  "ptSystem\\station_smartcard.csv"); System.out.println(
+			  "--potential smartcard assigned");
+			  
+			  //######## Utils.occupationCriterion = true;
+			  //myPublicTransitSystem.processMatchingStationByStation();
+			  //myPublicTransitSystem.processMatchingOnPtRiders();
+			  myPublicTransitSystem.processMatchingOnPtRidersByBatch(3);
+			  myPublicTransitSystem.printSmartcards(Utils.DATA_DIR +
+			  "ptSystem\\matchedSMWithCHoiceSetWithBetterLivingLocation.csv");
+			 
 
 			// ###############################################################################
 			// COMPUTE THE SRMSE BETWEEN TWO DATA SETS

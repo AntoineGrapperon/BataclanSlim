@@ -121,8 +121,8 @@ public class SmartcardDataManager extends DataManager {
 	private void identifyMostFrequentStation() {
 		// TODO Auto-generated method stub
 		for (Smartcard currSm : mySmartcards) {
-			currSm.tagFirstTransaction();
-			currSm.tagLastTransaction();
+			//currSm.tagFirstTransaction();
+			//currSm.tagLastTransaction();
 			// currSm.identifyMostFrequentStation();
 			currSm.identifyLivingStation();
 		}
