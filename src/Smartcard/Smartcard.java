@@ -22,7 +22,7 @@ import ActivityChoiceModel.UtilsTS;
 public class Smartcard extends BiogemeChoice {
 
 	double cardId;
-	String stationId;
+	GTFSStop stationId;
 	// public int choiceId;
 	protected HashMap<String, ArrayList<String>> myData = new HashMap<String, ArrayList<String>>();
 	protected ArrayList<SmartcardTrip> myTrips = new ArrayList<SmartcardTrip>();
@@ -48,127 +48,8 @@ public class Smartcard extends BiogemeChoice {
 		this.cardId = id;
 	}
 
-	public void setChoiceId() {
-		/*HashMap<String, Integer> myCombination = new HashMap<String, Integer>();
-		int firstDep = getWeekDayAverageFirstDep();
-		int lastDep = getWeekDayAverageLastDep();
-		int nAct = getWeekDayAverageActivityCount(UtilsSM.timeThreshold);
-		int ptFidelity = getWeekDayAveragePtFidelity(UtilsSM.distanceThreshold);
-
-		myCombination.put(UtilsTS.firstDep + "Short", firstDep);
-		myCombination.put(UtilsTS.lastDep + "Short", lastDep);
-		myCombination.put(UtilsTS.nAct, nAct);
-		myCombination.put(UtilsTS.fidelPtRange, ptFidelity);
-		myCombination.put(UtilsTS.nest, 2);
-		biogeme_case_id = BiogemeControlFileGenerator.returnChoiceId(myCombination);
-		choiceCombination = myCombination;*/
-	}
-
-	private boolean isWeekDay(String currDate) {
-		// TODO Auto-generated method stub
-		return !Arrays.asList(UtilsSM.weekEnd).contains(currDate);
-	}
-
-	/**
-	 * Assign to the smart card instance the identifier of the local area where
-	 * the smart card holder did validate the most frequently.
-	 */
-	public void identifyMostFrequentStation() {
-		HashMap<String, Integer> stationFrequencies = getStationFrequencies();
-		String myStationId = new String();
-		Integer freq = 0;
-		for (String key : stationFrequencies.keySet()) {
-			if (stationFrequencies.get(key) > freq) {
-				myStationId = key;
-				freq = stationFrequencies.get(key);
-			}
-		}
-		stationId = myStationId;
-	}
-
 	
-
-	private String getMostFrequentLastStation() {
-		// TODO Auto-generated method stub
-		HashMap<String, Integer> stopFrequencies = new HashMap<String, Integer>();
-
-		for (int i = 0; i < myData.get(UtilsSM.cardId).size(); i++) {
-			String date = myData.get(UtilsSM.date).get(i);
-			double time = hourStrToDouble(myData.get(UtilsSM.time).get(i));
-			if (isLast(date, time)) {
-				String stopId = myData.get(UtilsSM.destStationId).get(i);
-				if (stopFrequencies.containsKey(stopId) && !stopId.equals("0")) {
-					int fr = stopFrequencies.get(stopId) + 1;
-					stopFrequencies.put(stopId, fr);
-				} else {
-					stopFrequencies.put(stopId, 1);
-				}
-			}
-		}
-
-		String myStationId = new String();
-		Integer freq = 0;
-		for (String key : stopFrequencies.keySet()) {
-			if (stopFrequencies.get(key) > freq) {
-				myStationId = key;
-				freq = stopFrequencies.get(key);
-			}
-		}
-
-		return myStationId;
-	}
-
-	/**
-	 * This function returns a HashMap those key set is constituted of all the
-	 * zone id that the smart card holder validated in for the first trip of
-	 * each day. The value is the number of time he validated in in the zone.
-	 * 
-	 * @return a HashMap which keyset is the local zone identifier and the value
-	 *         is the count of time the first validation of day was made in this
-	 *         specific local area.
-	 */
-	public HashMap<String, Integer> getStationFrequencies() {
-		// TODO Auto-generated method stub
-		HashMap<String, Integer> stopFrequencies = new HashMap<String, Integer>();
-		for (int i = 0; i < myData.get(UtilsSM.cardId).size(); i++) {
-			String date = myData.get(UtilsSM.date).get(i);
-			double time = hourStrToDouble(myData.get(UtilsSM.time).get(i));
-			if (isFirst(date, time)) {
-				String stopId = myData.get(UtilsSM.stationId).get(i);
-				if (stopFrequencies.containsKey(stopId)) {
-					int fr = stopFrequencies.get(stopId) + 1;
-					stopFrequencies.put(stopId, fr);
-				} else {
-					stopFrequencies.put(stopId, 1);
-				}
-			}
-		}
-		return stopFrequencies;
-	}
-
-
-	public void identifyLivingStation() {
-		// TODO Auto-generated method stub
-
-		
-		int nAct = getDailyBoardings();
-
-		ArrayList<Object> firstDepTime = getAverageFirstDepTime();
-		String station = (String) firstDepTime.get(0);
-		double depTime = (double) firstDepTime.get(1);
-
-		if (nAct <= 1) {
-			if (depTime < 720) {
-				stationId = station;
-			} else {
-				stationId = getMostFrequentLastStation();
-			}
-		} else {
-			stationId = station;
-		}
-	}
-	
-	public void processWeekDayTripChainCharacteristics(){
+	public void processTripChainChoiceId(){
 		ArrayList<DateTime> myDates = getDates();
 		int nDaysTravelled = 0;
 		int firstDepartureTime = 0;
@@ -176,7 +57,9 @@ public class Smartcard extends BiogemeChoice {
 		int nObservedActivities = 0;
 		int nUnlinkedTripLegs = 0;
 		int nObservedTripLegs = 0;
-		double ptFidelity = 0;
+		int ptFidelity = 0;
+		HashMap<String,Integer> stationFrequenciesFirstBoarding = new HashMap<String,Integer>();
+		HashMap<String,Integer> stationFrequenciesLastBoarding = new HashMap<String,Integer>();
 		
 		for (DateTime curDate : myDates) {
 			if(curDate.getDayOfWeek() != 6 && curDate.getDayOfWeek() != 7){
@@ -184,6 +67,8 @@ public class Smartcard extends BiogemeChoice {
 				nDaysTravelled++;
 				firstDepartureTime += dailyData.get(0).boardingDate.getMinuteOfDay();
 				lastDepartureTime += dailyData.get(dailyData.size()-1).boardingDate.getMinuteOfDay();
+				incrementCounter(stationFrequenciesFirstBoarding,dailyData.get(0).boardingStop.myId);
+				incrementCounter(stationFrequenciesLastBoarding,dailyData.get(dailyData.size()-1).boardingStop.myId);
 				
 				if(dailyData.size()==1){
 					nObservedActivities++;
@@ -211,20 +96,59 @@ public class Smartcard extends BiogemeChoice {
 			}
 		}
 		
+		stationId = getLivingStation(stationFrequenciesFirstBoarding, stationFrequenciesLastBoarding, firstDepartureTime/nDaysTravelled);
+		
 		firstDepartureTime = categorizeFirstDepartureTime(firstDepartureTime/nDaysTravelled);
 		lastDepartureTime = categorizeLastDepartureTime(lastDepartureTime/nDaysTravelled);
-		int ptFidelityRank = categorizePtFidelity(ptFidelity/nDaysTravelled);
+		ptFidelity = categorizePtFidelity(nObservedTripLegs/(nObservedTripLegs+nUnlinkedTripLegs));
 		nObservedActivities = categorizeNumberOfActivities(Math.round(nObservedActivities/nDaysTravelled));
 		
 		HashMap<String,Integer> myCombination = new HashMap<String,Integer>();
 		myCombination.put(UtilsTS.firstDep + "Short", firstDepartureTime);
 		myCombination.put(UtilsTS.lastDep + "Short", lastDepartureTime);
 		myCombination.put(UtilsTS.nAct, nObservedActivities);
-		myCombination.put(UtilsTS.fidelPtRange, ptFidelityRank);
+		myCombination.put(UtilsTS.fidelPtRange, ptFidelity);
 		myCombination.put(UtilsTS.nest, 2);
 		biogeme_case_id = BiogemeControlFileGenerator.returnChoiceId(myCombination);
 		choiceCombination = myCombination;
-		
+	}
+
+	private GTFSStop getLivingStation(HashMap<String, Integer> stationFrequenciesFirstBoarding,
+			HashMap<String, Integer> stationFrequenciesLastBoarding, int avgFirstDepartureTime) {
+		// TODO Auto-generated method stub
+		//if first departure is after 2pm, then we consider that the last departure time to be more reliable to find the living location
+		if(avgFirstDepartureTime > 840){
+			String livingStopId = getMostFrequent(stationFrequenciesFirstBoarding);
+			return PublicTransitSystem.myStops.get(livingStopId);
+		}
+		else{
+			String livingStopId = getMostFrequent(stationFrequenciesLastBoarding);
+			return PublicTransitSystem.myStops.get(livingStopId);
+		}
+	}
+
+	private <T> T getMostFrequent(HashMap<T, Integer> counter) {
+		// TODO Auto-generated method stub
+		T mostFrequentId =null;
+		int freq = 0;
+		for(T s: counter.keySet()){
+			int tempFreq = counter.get(s);
+			if(tempFreq>freq){
+				freq = tempFreq;
+				mostFrequentId = s;
+			}
+		}
+		return mostFrequentId;
+	}
+
+	private <T>void incrementCounter(HashMap<T, Integer> counter, T newOccurence) {
+		// TODO Auto-generated method stub
+		if(counter.containsKey(newOccurence)){
+			counter.put(newOccurence, counter.get(newOccurence)+1);
+		}
+		else{
+			counter.put(newOccurence, 1);
+		}
 	}
 
 	private int categorizeNumberOfActivities(int n) {
@@ -275,19 +199,6 @@ public class Smartcard extends BiogemeChoice {
 		}
 	}
 
-	private int getDailyBoardings() {
-		// TODO Auto-generated method stub
-		int dayCount = 0;
-
-		for (int j = 0; j < myData.get(UtilsSM.cardId).size(); j++) {
-			String date2 = myData.get(UtilsSM.date).get(j);
-			double time2 = hourStrToDouble(myData.get(UtilsSM.time).get(j));
-			if (isFirst(date2, time2)) {
-				dayCount++;
-			}
-		}
-		return myData.size() / dayCount;
-	}
 
 	/**
 	 * For each transaction record of the smart card, it applies the destination inference methodology as described in
@@ -528,5 +439,14 @@ public class Smartcard extends BiogemeChoice {
 			return true;
 		}
 		return false;
+	}
+
+	public void assignFaretype() {
+		// TODO Auto-generated method stub
+		HashMap<Integer,Integer> fareFrequency = new HashMap<Integer,Integer>();
+		for(SmartcardTrip smTp: myTrips){
+			incrementCounter(fareFrequency,smTp.fare);
+		}
+		fare = getMostFrequent(fareFrequency);
 	}
 }

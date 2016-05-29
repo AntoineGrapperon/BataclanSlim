@@ -308,7 +308,7 @@ public class Main {
 			// Load Smartcard data and process them to label with a choice id
 			// ############################################################################################
 			
-			  String pathControlFile =Utils.DATA_DIR +
+			 /* String pathControlFile =Utils.DATA_DIR +
 			  "biogeme\\ctrl\\biogeme_ctrl_file_with_nest.txt"; 
 			  String pathOutput = Utils.DATA_DIR + "\\biogeme\\ctrl11~2.mod"; 
 			  String pathHypothesis = Utils.DATA_DIR +

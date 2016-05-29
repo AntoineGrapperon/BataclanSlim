@@ -41,6 +41,15 @@ public class SmartcardDataManager extends DataManager {
 		System.out.println("--smartcard manager initialized");
 		createSmartcards();
 		System.out.println("--smartcard created");
+		assignFareType();
+		assignColumnIndex();
+	}
+
+	private void assignFareType() {
+		// TODO Auto-generated method stub
+		for(Smartcard sm: mySmartcards){
+			
+		}
 	}
 
 	// Note that we are working at the route level to infer destination.
@@ -56,44 +65,6 @@ public class SmartcardDataManager extends DataManager {
 
 	///// NEW WAY
 
-	public ArrayList<Smartcard> enrichWithTripChainChoice(String smartcardData) throws IOException {
-		/*
-		 * initialize(smartcardData); System.out.println(
-		 * "--smartcard manager initialized"); createSmartcards();
-		 * System.out.println("--smartcard created");
-		 */
-		identifyMostFrequentStation();
-		System.out.println("--assign bus station");
-		identifyFare();
-		assignChoiceId();
-		System.out.println("--identify choice Id");
-		prepareTripChainAttributes();
-
-		assignColumnIndex();
-
-		return mySmartcards;
-	}
-
-	private void prepareTripChainAttributes() {
-		// TODO Auto-generated method stub
-
-		for (Smartcard sm : mySmartcards) {
-			for (String key : sm.choiceCombination.keySet()) {
-				String value = Integer.toString(sm.choiceCombination.get(key));
-				sm.myAttributes.put(key, value);
-			}
-		}
-		// add any data processing of the smartcard data to create trip chains
-		// attributes
-	}
-
-	private void identifyFare() {
-		// TODO Auto-generated method stub
-		for (Smartcard sm : mySmartcards) {
-			int fare = Integer.parseInt(sm.myData.get(UtilsSM.fare).get(0));
-			sm.fare = fare;
-		}
-	}
 
 	private void assignColumnIndex() {
 		// TODO Auto-generated method stub
@@ -104,29 +75,6 @@ public class SmartcardDataManager extends DataManager {
 		}
 	}
 
-	private void assignChoiceId() {
-		// TODO Auto-generated method stub
-		for (Smartcard currSm : mySmartcards) {
-			currSm.setChoiceId();
-		}
-	}
-
-	/**
-	 * This method aims to identify the dissemination area ID of the smartcard
-	 * holder. The basic assumption is that every morning, the smart card holder
-	 * validate his smart card at a bus stop. The location of the bus stop is
-	 * known, we look over a month of data and we infer that the most frequent
-	 * dissemination area is the place of living.
-	 */
-	private void identifyMostFrequentStation() {
-		// TODO Auto-generated method stub
-		for (Smartcard currSm : mySmartcards) {
-			//currSm.tagFirstTransaction();
-			//currSm.tagLastTransaction();
-			// currSm.identifyMostFrequentStation();
-			currSm.identifyLivingStation();
-		}
-	}
 
 	/**
 	 * Creates the smart cards object out of the smart card dataset and fill it
@@ -140,7 +88,6 @@ public class SmartcardDataManager extends DataManager {
 			Smartcard curSm = getSmartcard(i);
 			SmartcardTrip newTrip = createTrip(i);
 			curSm.myTrips.add(newTrip);
-			// updateSmartcard(currSm,i);
 		}
 		System.out.println("--number of smart cards " + mySmartcards.size());
 	}
@@ -168,6 +115,7 @@ public class SmartcardDataManager extends DataManager {
 		String curBoardingRouteId = myData.get(UtilsSM.boardingRouteId).get(i);
 		String curDirectionId = myData.get(UtilsSM.boardingDirectionId).get(i);
 		int curId = Integer.parseInt(myData.get(UtilsSM.smartcardTripId).get(i));
+		int curFare = Integer.parseInt(myData.get(UtilsSM.fare).get(i));
 		
 		GTFSStop curBoardingStop =  PublicTransitSystem.myStops.get(curBoardingStopId);
 		GTFSRoute curBoardingRoute = PublicTransitSystem.myRoutes.get(curBoardingRouteId);
@@ -177,6 +125,8 @@ public class SmartcardDataManager extends DataManager {
 		trip.boardingStop = curBoardingStop;
 		trip.boardingRoute = curBoardingRoute;
 		trip.boardingDirection = curDirectionId;
+		trip.fare = curFare;
+		
 
 		String curDate = myData.get(UtilsSM.boardingDate).get(i);
 		String curTime = myData.get(UtilsSM.boardingTime).get(i);
@@ -205,44 +155,10 @@ public class SmartcardDataManager extends DataManager {
 		}
 		Smartcard newSm = new Smartcard();
 		newSm.setId(Double.parseDouble(myData.get(UtilsSM.cardId).get(i)));
-		// createDataStructure(newSm);
 		mySmartcards.add(newSm);
 		return newSm;
 	}
 
-	public boolean containsSmartcard(int id) {
-		for (Smartcard currS : mySmartcards) {
-			if (currS.cardId == id) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * Update the smart card information with the information from the new line
-	 * i.
-	 * 
-	 * @param sm
-	 * @param i
-	 */
-	public void updateSmartcard(Smartcard sm, int i) {
-		for (String key : myData.keySet()) {
-			String value = myData.get(key).get(i);
-			sm.myData.get(key).add(value);
-		}
-	}
-
-	/**
-	 * Replicate in the smartcard, the data structure from the data set.
-	 * 
-	 * @param sm
-	 */
-	public void createDataStructure(Smartcard sm) {
-		for (String key : myData.keySet()) {
-			sm.myData.put(key, new ArrayList<String>());
-		}
-	}
 
 	public void printSmartcards(String path) throws IOException {
 		// TODO Auto-generated method stub

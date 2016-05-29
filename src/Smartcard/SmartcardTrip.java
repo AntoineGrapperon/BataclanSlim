@@ -23,6 +23,7 @@ import org.joda.time.ReadableInstant;
 public class SmartcardTrip implements Comparable<SmartcardTrip>{
 
 	int myId;
+	int fare;
 	GTFSStop boardingStop;
 	GTFSRoute boardingRoute;
 	String boardingDirection;
