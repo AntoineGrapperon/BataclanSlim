@@ -40,11 +40,12 @@ import Utils.*;
 public class Window extends JFrame implements ActionListener {
 	
 	JPanel container = new JPanel();
-	PaneContent content = new PaneContent();
+	PaneContent content;
     InformationPane informationPane = new InformationPane();
     PaneButtons paneButtons = new PaneButtons();
 
-	public Window(){
+	public Window() throws IOException{
+		content = new PaneContent();
 		this.setTitle("BataclanGUI");
 		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		//this.setUndecorated(true);

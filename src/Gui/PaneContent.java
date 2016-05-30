@@ -7,6 +7,7 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -27,9 +28,10 @@ public class PaneContent extends JPanel {
 	PaneModelCalibration paneModelCalibration = new PaneModelCalibration();
 	PaneDestinationInference paneDestinationInference = new PaneDestinationInference();
 	PaneSocioDemographicInference paneSocioDemographicInference = new PaneSocioDemographicInference();
-    Panel map = new Panel();
-	public PaneContent(){
-		
+    PaneMap map;
+    
+	public PaneContent() throws IOException{
+		map = new PaneMap();
 	    this.setLayout(cl);
 	    this.add(paneGeneral,listContent[0]);
 	    this.add(panePopulationSynthesis, listContent[1]);

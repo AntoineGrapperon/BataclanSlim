@@ -67,37 +67,46 @@ public class Main {
 
 		//////////////////////////////////////////////////////////////////
 		//////////////////////////////////////////////////////////////////
-		/*
-		 * File file = JFileDataStoreChooser.showOpenFile("shp", null); if (file
-		 * == null) { return; }
-		 * 
-		 * FileDataStore store; try { store =
-		 * FileDataStoreFinder.getDataStore(file); SimpleFeatureSource
-		 * featureSource = store.getFeatureSource(); MapContent map = new
-		 * MapContent(); map.setTitle("Quickstart");
-		 * 
-		 * Style style = SLD.createSimpleStyle(featureSource.getSchema()); Layer
-		 * layer = new FeatureLayer(featureSource, style); map.addLayer(layer);
-		 * JMapFrame.showMap(map); } catch (IOException e) { // TODO
-		 * Auto-generated catch block e.printStackTrace(); }
-		 * 
-		 * 
-		 * // Create a map content and add our shapefile to it
-		 * 
-		 * 
-		 * // Now display the map
-		 * 
-		 */
+		
+		  /*File file = JFileDataStoreChooser.showOpenFile("shp", null); 
+		  if (file == null) { return; }
+		  
+		  FileDataStore store; 
+		  try {
+			  
+			  store = FileDataStoreFinder.getDataStore(file); 
+			  SimpleFeatureSource featureSource = store.getFeatureSource(); 
+			  MapContent map = new MapContent(); 
+			  map.setTitle("Quickstart");
+		  
+			  Style style = SLD.createSimpleStyle(featureSource.getSchema()); 
+		  	  Layer layer = new FeatureLayer(featureSource, style); 
+		  	  map.addLayer(layer);
+		  	  JMapFrame.showMap(map);
+		  } 
+		  catch (IOException e) { 
+			  // TODO
+			  Auto-generated catch block e.printStackTrace(); 
+		  }*/
+		  
+		  
+		  // Create a map content and add our shapefile to it
+		  
+		  
+		  // Now display the map
+		
+		 
 
 		//////////////////////////////////////////////////////////////////
 		//////////////////////////////////////////////////////////////////
 
-		Window gui = new Window();
+
 		// PublicTransitSystem myPublicTransitSystem = new
 		// PublicTransitSystem();
 
-		//try {
-
+		try {
+			Window gui = new Window();
+		
 
 			// ###############################################################################
 			// Infer smartcard destinations
@@ -379,12 +388,6 @@ public class Main {
 	    	String zonalData = "D://Recherche//CharlieWorkspace//PopSynz//data//933VancouverDA.csv";
 	    	String  destPath = "933";
 	    	condGenerator.GenerateConditionalsStepByStep(data,descFile,zonalData,destPath);*/
-	    	
-	    	
-	    	
-	    	
-	    /*	
-		
 	    }
 		catch (IOException e) {
 			// TODO Auto-generated catch block
