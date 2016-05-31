@@ -3,7 +3,9 @@
  */
 package Gui;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.GradientPaint;
 /**
  * @author Antoine
@@ -19,6 +21,7 @@ import java.awt.event.MouseWheelListener;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import javax.swing.ActionMap;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -45,6 +48,10 @@ import org.geotools.swing.JMapPane;
 import org.geotools.swing.action.ResetAction;
 import org.geotools.swing.action.ZoomInAction;
 import org.geotools.swing.action.ZoomOutAction;
+import org.geotools.swing.action.InfoAction;
+import org.geotools.swing.action.MapAction;
+import org.geotools.swing.action.NoToolAction;
+import org.geotools.swing.action.PanAction;
 import org.geotools.swing.data.JFileDataStoreChooser;
 import org.geotools.swing.event.MapMouseEvent;
 import org.geotools.swing.event.MapMouseListener;
@@ -55,7 +62,7 @@ import com.vividsolutions.jts.geom.Envelope;
 
  
 public class PaneMap extends JMapPane { 
-	double clickToZoom = 0.0001;
+	double clickToZoom = 0.01;
 	
 	public PaneMap() throws IOException{
 		super();
@@ -82,8 +89,8 @@ public class PaneMap extends JMapPane {
         
         
         JToolBar toolBar = new JToolBar();
-        toolBar.setOrientation(JToolBar.HORIZONTAL);
-        toolBar.setFloatable(true);
+        toolBar.setOrientation(JToolBar.VERTICAL);
+        toolBar.setFloatable(false);
 
         ButtonGroup cursorToolGrp = new ButtonGroup();
 
@@ -99,8 +106,26 @@ public class PaneMap extends JMapPane {
         toolBar.add(centerBtn);
         cursorToolGrp.add(centerBtn);
         
+        JButton infoBtn = new JButton(new InfoAction(this));
+        toolBar.add(infoBtn);
+        cursorToolGrp.add(infoBtn);
+        
+        JButton noBtn = new JButton(new NoToolAction(this));
+        toolBar.add(noBtn);
+        cursorToolGrp.add(noBtn);
+        
+        JButton panBtn = new JButton(new PanAction(this));
+        toolBar.add(panBtn);
+        cursorToolGrp.add(panBtn);
+        
+        
+        //this.setActionMap(new WheelAction(this));
+        
+        
         this.add(toolBar);
-        this.addMouseListener(new ZoomWithWheel());
+        this.add(toolBar, BorderLayout.WEST);
+        this.setLayout(new FlowLayout(FlowLayout.LEFT));
+        //this.addMouseListener(new ZoomWithWheel());
        
 	}
 	
@@ -160,15 +185,15 @@ public class PaneMap extends JMapPane {
 
 		    Envelope env = getDisplayArea();
 		    double width = env.getWidth();
-		    double scale = width * clickToZoom * sign;
+		    double scale = clickToZoom * sign;
 		   
 		    Rectangle paneArea = getVisibleRect();
 	        DirectPosition2D mapPos = ev.getWorldPos();
 
 
 	         DirectPosition2D corner = new DirectPosition2D(
-	                mapPos.getX() - 0.5d * paneArea.getWidth() / scale,
-	                mapPos.getY() + 0.5d * paneArea.getHeight() / scale);
+	                mapPos.getX() - 0.5d * paneArea.getWidth() * scale,
+	                mapPos.getY() + 0.5d * paneArea.getHeight() * scale);
 	        
 	         Envelope2D newMapArea = new Envelope2D();
 	         newMapArea.setFrameFromCenter(mapPos, corner);

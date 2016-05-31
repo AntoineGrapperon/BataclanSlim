@@ -25,6 +25,8 @@ public class ConditionalGenerator
     ConditionalDataReader myDataReader;
     OutputFileWritter myDataWriter;
     ArrayList myDimensionNames;
+    private ArrayList<String> headersData;
+    private ArrayList<String> headersDescFile;
     HashMap<String, Object> myCondCollection;
     ConditionalDataReader myZonalDataReader;
 
@@ -89,6 +91,7 @@ public class ConditionalGenerator
 
     private void SetDimensions(String inputDescFile ) throws IOException
     {
+    	headersDescFile = new ArrayList<String>();
         ConditionalDataReader descReader = new ConditionalDataReader();
         descReader.OpenFile(inputDescFile);
         String dimStr = descReader.GetNextRow();
@@ -99,7 +102,8 @@ public class ConditionalGenerator
         	counter++;
         	//System.out.println(counter);
             String[] currTok = dimStr.split(Utils.COLUMN_DELIMETER);
-            myCondCollection.put(currTok[0], new HashMap<String, Object>());
+            myCondCollection.put(currTok[0].trim(), new HashMap<String, Object>());
+            headersDescFile.add(currTok[0].trim());
             ArrayList curCats = new ArrayList();
                 
             for (String curCat: currTok)
@@ -160,27 +164,14 @@ public class ConditionalGenerator
            }
        }
        
-       //The commented line below was not working, it was calling the table [age,0,1,2] instead of the name "age"
        ArrayList test = (ArrayList)myDimensionNames.get(idx);
-       //System.out.println(test.get(0));
-       //System.out.println((ArrayList)myDimensionNames.get(idx).get(0));
        HashMap<String, Object> currDimColl = (HashMap<String, Object>) myCondCollection.get(test.get(0));
-       //System.out.println(currDimColl); 
-       //int counter = 0;
        
        for (String curStr: combStr)
        {
-           //counter++;
     	   LightKeyValPair currKey = new LightKeyValPair();
            currKey.category = curStr.substring(0,curStr.length()-1);
-           //System.out.println(currKey.category);
            currDimColl.put(currKey.category, (Object)currKey);
-           //this if function is to insure that the RAM is not filled by the garbage collector
-           /*if(counter == 100000){
-        	   System.out.println("--clearing garbage collector");
-        	   System.gc();
-        	   counter = 0;
-           }*/
        }
        myCondCollection.put(((String)test.get(0)), currDimColl);
     }
@@ -298,6 +289,20 @@ public class ConditionalGenerator
        System.gc();
     }*/
     
+    /**
+     * Read the agent description from the input description file. Then read the disaggregated data file and create conditional distribution out of it.
+     * If some attribute information is lacking in the disaggregated data (with respect to the description file), then it will uniformly randomly distributed.
+     * <br>The agent description file is structure as follow (for example):
+     * <br>age,0,1,2,3,4,5,6
+     * <br>sex,0,1,,,,,
+     * <br>mStat,0,1,2,,,,
+     * <br>nPers,0,1,2,3,4,,
+     * @param inputDataFile path to the CSV file which contains the disaggregated data
+     * @param inputDescFile path to the TXT file which contains the agent descrition
+     * @param destPath path to the folder where to store distributions
+     * @return
+     * @throws IOException
+     */
     public boolean GenerateConditionalsStepByStep(String inputDataFile, String inputDescFile, String destPath ) throws IOException
     {
     	//these data required to copy paste CMA information to DA level (projecting information)
@@ -323,6 +328,8 @@ public class ConditionalGenerator
         {
         	myDataReader.OpenFile(inputDataFile);
             currRow = myDataReader.GetNextRow();
+            
+            headersData = storeHeaders(currRow);
             currRow = myDataReader.GetNextRow();
             String pathToConditionalDistribution = null;;
             
@@ -352,14 +359,28 @@ public class ConditionalGenerator
         return true;
     }
     
-    private void WriteNextConditionalOneCategoryAtATime(String currStr, int idx)
+    private ArrayList<String> storeHeaders(String currRow) {
+		// TODO Auto-generated method stub
+		ArrayList<String> headers = new ArrayList<String>();
+		String[] tok = currRow.split(Utils.COLUMN_DELIMETER);
+		for(int i = 0; i < tok.length; i++){
+			headers.add(tok[i].trim());
+		}
+		return headers;
+	}
+
+	private void WriteNextConditionalOneCategoryAtATime(String currStr, int idx)
     {
         String[] currVal = currStr.split(Utils.COLUMN_DELIMETER);
         HashMap<String, Object> currDimColl = (HashMap<String, Object>) myCondCollection.get(((ArrayList)myDimensionNames.get(idx)).get(0));
         String currCondNm = currVal[idx] + Utils.CATEGORY_DELIMITER;
+        
         for (int j = 0; j < currVal.length; j++)
         {
-            if (idx != j)
+        	String beingComputed = (String)((ArrayList)myDimensionNames.get(idx)).get(0);
+        	String tempCat = headersData.get(j); 
+            //if (idx != j)
+        	if(!beingComputed.equals(tempCat) && headersDescFile.contains(tempCat) )
             {
                 currCondNm = currCondNm + currVal[j] + Utils.CONDITIONAL_DELIMITER;
             }

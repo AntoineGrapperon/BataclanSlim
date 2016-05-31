@@ -43,17 +43,23 @@ public class TabPreparePopulationSynthesis extends JPanel {
 		
 		
 		JLabel header1 = new JLabel("Prepare global conditional distributions");
-		line1 = new PromptStringInformation("Path to disaggregated data", 
-				".csv file -- Provide the path to the disaggregated data source (travel survey, public use micro sample etc)",
+		line1 = new PromptStringInformation("<html>Path to disaggregated data", 
+				"<html>.csv file -- Provide the path to the disaggregated data source (travel survey, public use micro sample etc)"
+				+ "<br> WARNING: for this specific case, we used the SEMI-COLON ( ;) to separate the columns instead of the more traditional COMA for specific reason related to our original case study",
 				"populationSynthesis\\data\\pumf2006GatineauOttawa.csv");
-		line2 = new PromptStringInformation("Path to data description", 
-				".txt file -- You have to create a text file which describes each agent attributes and the number of categories for each attributes, starting from 0. For instance: <br>"
-				+ "gender, 0, 1,, : it means that gender attribute can have two values -0 and 1- whose meaning is to be defined by the user.",
+		line2 = new PromptStringInformation("<html>Path to data description", 
+				"<html>.txt file -- You have to create a text file which describes each agent attributes and the number of categories for each attributes, starting from 0. For instance: <br>"
+				+ "<br>age,0,1,2,3,4,5,6" + 
+				"  <br>sex,0,1,,,,," + 
+				"  <br>mStat,0,1,2,,,," + 
+				"  <br>nPers,0,1,2,3,4,,",
 				"populationSynthesis\\ctrl\\descFile.txt");
-		line3 = new PromptStringInformation("Path to output directory", "folder -- provide the path to the output directory, if you have multiple disaggregated datasource, it is recommended to provide a different folder for each of them to avoid overwriting information. <br>"
+		line3 = new PromptStringInformation("Path to output directory", 
+				"<html>folder -- provide the path to the output directory, if you have multiple disaggregated datasource, it is recommended to provide a different folder for each of them to avoid overwriting information. <br>"
 				+ "If you have if have various data sets, you will have to manually select the source for each conditional distribution by browsing the folders and copy pasting the file you want to use.",
 				"populationSynthesis\\distributions\\");
-		line4 = new PromptButton("Draw conditional distributions","<html>Input: disaggregated data. <br>"
+		line4 = new PromptButton("Draw conditional distributions",
+				"<html>Input: disaggregated data. <br>"
 	    		+ "Output: conditional distributions for each attribute described in the data description file.<br>"
 	    		+ "--<br>"
 	    		+ "The function will create conditional distributions from disaggregated data. The output as the following format (describing for each category and each existing attribute combination): <br>"
