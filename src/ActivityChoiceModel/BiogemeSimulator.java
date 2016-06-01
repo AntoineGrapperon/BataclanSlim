@@ -29,7 +29,7 @@ public class BiogemeSimulator {
 	ArrayList<BiogemeAgent> myPopulationSample = new ArrayList<BiogemeAgent>();
 	public static ArrayList<BiogemeHypothesis> modelHypothesis = new ArrayList<BiogemeHypothesis>();
 	public static ArrayList<BiogemeChoice> modelChoiceUniverse = new ArrayList<BiogemeChoice>();
-	public static HashMap<String, Double> nests = new HashMap<String, Double>();
+	public static HashMap<String, Double> modelNests = new HashMap<String, Double>();
 	
 	//public static double stoScale = 1;
 	//public static double noPtScale = 1;
@@ -368,7 +368,7 @@ public class BiogemeSimulator {
 	
 	private void updateNest(String coefName, double coefValue) {
 		// TODO Auto-generated method stub
-		if(coefName.equals(UtilsTS.carDriver)){
+		/*if(coefName.equals(UtilsTS.carDriver)){
 			nests.put(UtilsTS.carDriver, coefValue);
 		}
 		else if (coefName.equals(UtilsTS.carPassenger)){
@@ -382,6 +382,16 @@ public class BiogemeSimulator {
 		}
 		else if (coefName.equals(UtilsTS.activeMode)){
 			nests.put(UtilsTS.activeMode, coefValue);
+		}*/
+		boolean wasFound = false;
+		for(String h: modelNests.keySet()){
+			if(h.trim().equals(coefName.trim())){
+				modelNests.put(coefName.trim(), coefValue);
+				wasFound = true;
+			}
+		}
+		if(!wasFound){
+			modelNests.put(coefName.trim(), coefValue);
 		}
 	}
 	

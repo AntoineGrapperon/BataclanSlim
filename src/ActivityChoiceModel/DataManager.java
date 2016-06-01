@@ -107,6 +107,11 @@ public class DataManager {
 		myOutputFileWriter.CloseFile();
 	}
 	
+	public void printColumns(ArrayList<String> toPrint, String outputPath) throws IOException{
+		myOutputFileWriter.OpenFile(outputPath);
+		printColumns(toPrint);
+	}
+	
 	public void printColumns(ArrayList<String> toPrint) throws IOException {
 
 		String headers= new String();

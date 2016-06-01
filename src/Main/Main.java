@@ -2,6 +2,7 @@ package Main;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.joda.time.DateTime;
@@ -13,7 +14,10 @@ import ActivityChoiceModel.TravelSurveyPreparator;
 import ActivityChoiceModel.UtilsTS;
 import Gui.Window;
 import SimulationObjects.World;
+import Smartcard.GTFSLoader;
 import Smartcard.GTFSRoute;
+import Smartcard.GTFSStop;
+import Smartcard.GeoDicoManager;
 import Smartcard.PublicTransitSystem;
 import Smartcard.SmartcardDataManager;
 import Smartcard.UtilsSM;
@@ -65,47 +69,24 @@ public class Main {
 
 		Utils.DATA_DIR = System.getProperty("user.dir") + "\\example\\";
 
-		//////////////////////////////////////////////////////////////////
-		//////////////////////////////////////////////////////////////////
 		
-		  /*File file = JFileDataStoreChooser.showOpenFile("shp", null); 
-		  if (file == null) { return; }
-		  
-		  FileDataStore store; 
-		  try {
-			  
-			  store = FileDataStoreFinder.getDataStore(file); 
-			  SimpleFeatureSource featureSource = store.getFeatureSource(); 
-			  MapContent map = new MapContent(); 
-			  map.setTitle("Quickstart");
-		  
-			  Style style = SLD.createSimpleStyle(featureSource.getSchema()); 
-		  	  Layer layer = new FeatureLayer(featureSource, style); 
-		  	  map.addLayer(layer);
-		  	  JMapFrame.showMap(map);
-		  } 
-		  catch (IOException e) { 
-			  // TODO
-			  Auto-generated catch block e.printStackTrace(); 
-		  }*/
-		  
-		  
-		  // Create a map content and add our shapefile to it
-		  
-		  
-		  // Now display the map
 		
-		 
-
-		//////////////////////////////////////////////////////////////////
-		//////////////////////////////////////////////////////////////////
-
-
-		// PublicTransitSystem myPublicTransitSystem = new
-		// PublicTransitSystem();
 
 		try {
-			Window gui = new Window();
+			String pathDA = "D:\\Recherche\\CharlieWorkspace\\BataclanSlim\\example\\association\\data\\disseminationArea.shp";
+			String pathStops = "D:\\Recherche\\CharlieWorkspace\\BataclanSlim\\example\\destinationInference\\GTFS\\stops.txt";
+			
+			GTFSLoader myLoader = new GTFSLoader();
+			HashMap<String,GTFSStop> myStop = myLoader.getStops(pathStops);
+			ArrayList<GTFSStop> myStops = new ArrayList<GTFSStop>();
+			for(GTFSStop stop : myStop.values()){
+				myStops.add(stop);
+			}
+			GeoDicoManager myDico = new GeoDicoManager();
+			myDico.getDico(pathDA, myStops);
+			System.out.println("test");
+			
+			//Window gui = new Window();
 		
 
 			// ###############################################################################
@@ -354,40 +335,7 @@ public class Main {
 	    	myWorld.CreatePersonPopulationPoolLocalLevelMultiThreads(Utils.DATA_DIR + "myPersonPool.csv", pathToSeeds,numberOfLogicalProcessors);
 			myWorld.printMetroMarginalFittingAnalysis(UtilsTS.city, startTime);*/
 	    	
-			
-			//###############################################################################
-	    	//Generate a synthetic population and output statistical analysis of the goodness
-	    	//of fit for Vancouver
-	    	//###############################################################################
-			/*myWorld.Initialize(true, 1);
-	    	System.out.println("--initialization completed");
-	    	String pathToSeeds = Utils.DATA_DIR+"data\\ImportanceSamplingConditionals\\Vancouver.txt";
-			//myWorld.CreatePersonPopulationPoolMetroLevel(Utils.DATA_DIR + "myPersonPool.csv", pathToSeeds);
-	    	//myWorld.CreatePersonPopulationPoolLocalLevel(Utils.DATA_DIR + "myPersonPool.csv", pathToSeeds);
-	    	
-	    	int numberOfLogicalProcessors = Runtime.getRuntime().availableProcessors() -1;
-	    	System.out.println("--computation with: " + numberOfLogicalProcessors + " logical processors");
-	    	myWorld.CreatePersonPopulationPoolLocalLevelMultiThreads(Utils.DATA_DIR + "myPersonPool.csv", pathToSeeds,numberOfLogicalProcessors);
-			myWorld.printMetroMarginalFittingAnalysis("Vancouver", startTime);*/
-	    	
-	    	
-			
-	    	
-	    	
-	    	//Generate conditional distributions at metro level for Vancouver
-	    	/*String data = Utils.DATA_DIR+"data\\ImportanceSamplingConditionals\\Vancouver.txt";
-	    	String descFile = Utils.DATA_DIR+"data\\ImportanceSamplingConditionals\\descFile.txt";
-	    	String zonalData = "D://Recherche//CharlieWorkspace//PopSynz//data//933VancouverDA.csv";
-	    	String  destPath = "933";
-	    	condGenerator.GenerateConditionalsStepByStep(data,descFile,zonalData,destPath);*/
-	    	
-	    	
-	    	
-	    	/*String data = Utils.DATA_DIR+"data\\ImportanceSamplingConditionals\\Vancouver.txt";
-	    	String descFile = Utils.DATA_DIR+"data\\ImportanceSamplingConditionals\\descFile.txt";
-	    	String zonalData = "D://Recherche//CharlieWorkspace//PopSynz//data//933VancouverDA.csv";
-	    	String  destPath = "933";
-	    	condGenerator.GenerateConditionalsStepByStep(data,descFile,zonalData,destPath);*/
+		
 	    }
 		catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -399,9 +347,6 @@ public class Main {
 
 		System.out.println("--time to compute age x gender : " + (endTime - startTime) + "ms");
 
-		/*
-		 * System.out.flush(); System.setOut(old);
-		 */
 	}
 
 	// TODO Auto-generated method stub

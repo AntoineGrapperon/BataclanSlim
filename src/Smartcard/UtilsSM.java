@@ -26,6 +26,7 @@ public class UtilsSM {
 	
 	
 	
+	
 	public static String alightingStop = "alighting_stop";
 	public static String index = "index";
 	public static String cardId = "card_id";
@@ -47,16 +48,7 @@ public class UtilsSM {
 	public static double morningPeakHourEnd = 540;
 	public static double eveningPeakHourStart = 930;
 	public static double eveningPeakHourEnd = 1080;
-	public static String[] weekEnd = {
-			"05/10/2005",
-			"06/10/2005",
-			"12/10/2005",
-			"13/10/2005",
-			"19/10/2005",
-			"20/10/2005",
-			"26/10/2005",
-			"27/10/2005"
-			};
+
 	public static double timeThreshold = 30;
 	public static double distanceThreshold = 1000;
 	public static int choiceSetSize = 20;
@@ -104,8 +96,8 @@ public class UtilsSM {
 	public static String boardingLat = "boarding_lat";
 	public static String boardingLong = "boarding_long";
 	
-	
-	
+	/*#######################################geographic area SHP dico######################################*/
+	public static String areaId = "id";
 	
 	
 	public UtilsSM(){

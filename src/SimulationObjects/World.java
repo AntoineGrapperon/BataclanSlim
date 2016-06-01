@@ -27,8 +27,8 @@ import com.sun.jmx.snmp.internal.SnmpAccessControlSubSystem;
 /*
  * created by: b farooq, poly montreal
  * on: 22 october, 2013
- * last edited by: b farooq, poly montreal
- * on: 22 october, 2013
+ * last edited by: a Grapperon, poly montreal
+ * on: 01 june, 2016
  * summary: 
  * comments:
  */
@@ -1260,108 +1260,6 @@ public class World extends SimulationObject
             }
             localStatAnalysis.CloseFile();
             
-        }
-        
-        @Deprecated
-        public void CreatePersonPopulationPoolLocalLevelMultiThreads(String fileName, String pathToSeeds, int numberOfCores) throws IOException
-        {
-        	
-            int agentsCreated = 1;
-            int counter = 0;
-            
-            //Initialize the statistical log
-            OutputFileWritter localStatAnalysis = new OutputFileWritter();
-            localStatAnalysis.OpenFile(Utils.DATA_DIR + "data\\" + fmt(myAttributes.get(0).value) + "\\localStatAnalysis.csv");
-            String headers = "zoneId";
-            for(int i = 0; i < ConfigFile.AttributeDefinitionsImportance.size(); i++){
-    			headers = headers + Utils.COLUMN_DELIMETER + ConfigFile.AttributeDefinitionsImportance.get(i).category + "_MSE"
-    					 + Utils.COLUMN_DELIMETER + ConfigFile.AttributeDefinitionsImportance.get(i).category + "_absErr"
-    							 + Utils.COLUMN_DELIMETER + ConfigFile.AttributeDefinitionsImportance.get(i).category + "_%Err" ;
-            }
-            localStatAnalysis.WriteToFile(headers);
-            
-            // Initialize the population pool log
-            OutputFileWritter population =  new OutputFileWritter();
-        	population.OpenFile(Utils.DATA_DIR + "data\\" + fmt(myAttributes.get(0).value) + "\\createdPopulation.csv");
-        	headers = "zoneId" + Utils.COLUMN_DELIMETER + "zoneId";
-            for(int i = 0; i < ConfigFile.AttributeDefinitions.size(); i++){
-    			headers = headers + Utils.COLUMN_DELIMETER + ConfigFile.AttributeDefinitions.get(i).category ;
-            }
-            population.WriteToFile(headers);
-            
-            //
-            // We warm the sampler once for all the spatial zones.
-            myGibbsSampler.GenerateAgentsMetroLevel(this,
-                    Utils.WARMUP_ITERATIONS,
-                    new Person(pathToSeeds, true), true,
-                    attributesMainConditionals, null);
-		    myPersonPool.clear();
-		    myGibbsSampler.SetAgentCounter(agentsCreated + counter);
-		    
-		    //creates sub group of zone that can be processed using multithreading to accelerate computation
-		    int subSampleSize = myZonalCollection.size()/(numberOfCores);
-		    ArrayList<Object> subSamples = new ArrayList<Object>();
-		    for (int i = 0; i<numberOfCores; i++){
-		    	HashMap<String, Object> currSubSample = new HashMap<String, Object>();
-	    		int k = 0;
-	    		int l = 0;
-	    		for (Map.Entry<String, Object> entry : myZonalCollection.entrySet()){
-	    			if((k>=i*subSampleSize && k < (i+1)*subSampleSize)|| (k>=i*subSampleSize && i == numberOfCores-1)){// || (k>=i*subSampleSize && i == numberOfCores-1)
-	    				SpatialZone currZone = (SpatialZone)entry.getValue();
-	    				currSubSample.put(ConfigFile.fmt(currZone.myAttributes.get(0).value), currZone);
-	    				k++;
-	    			}
-	    			/*if((k>=(i+1)*subSampleSize && i == numberOfCores-1)){
-	    				if(l == i){
-	    					SpatialZone currZone = (SpatialZone)entry.getValue();
-		    				currSubSample.put(ConfigFile.fmt(currZone.myAttributes.get(0).value), currZone);
-		    				if(l==numberOfCores-1){l=0;}else{l++;}
-	    				}
-	    				else{
-	    					if(l==numberOfCores-1){l=0;}else{l++;}
-	    				}
-	    			}*/
-	    			/*else if(k>(i+1)*subSampleSize){
-	    				break;
-	    			}*/
-	    			else{
-	    				k++;
-	    			}
-	    		}
-	    		System.out.println("sample " + i + ": " + currSubSample.size());
-	    		subSamples.add(currSubSample);	    	
-		    }
-		    
-		    //create and run multiple threads
-		    ExecutorService cores = Executors.newFixedThreadPool(numberOfCores);
-        	//Set<Future<Integer>> set = new HashSet<Future<Integer>>();
-        	Set<Future<ArrayList>> set = new HashSet<Future<ArrayList>>();
-        	
-        	
-        	for(int i = 0; i< numberOfCores; i++){
-        		/*Callable<Integer> callable = new processZone(subSamples.get(i), pathToSeeds, myPersonPool, attributesMainConditionals);
-            	Future<Integer> future = cores.submit(callable);*/
-        		Callable<ArrayList> callable = new processZone(subSamples.get(i), pathToSeeds, myPersonPool, attributesMainConditionals);
-            	Future<ArrayList> future = cores.submit(callable);
-                set.add(future);
-        	}
-        	String analysis = new String();
-        	String pop = new String();
-        	try {
-	            for (Future<ArrayList> future : set) {
-	            	ArrayList<String> answer = future.get();
-	            	analysis = analysis +  future.get().get(0);//Utils.NEW_LINE_DELIMITER +
-	            	pop = pop + future.get().get(1);
-	            }
-        	} 
-        	catch (InterruptedException | ExecutionException ex) {
-        		ex.printStackTrace(); 
-        	}
-        	
-        	localStatAnalysis.WriteToFile(analysis);
-            localStatAnalysis.CloseFile();
-            population.WriteToFile(pop);
-            population.CloseFile();
         }
 
 

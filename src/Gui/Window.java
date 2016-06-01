@@ -84,9 +84,12 @@ public class Window extends JFrame implements ActionListener {
 	    content.paneModelCalibration.tabPrepareBiogemeCalibration.line4.myButton.addMouseListener(new HelpListenerButton());
 	    content.paneModelCalibration.tabPrepareBiogemeCalibration.line4.myButton.addActionListener(new PrepareBiogemeCtrlFile());
 	    content.paneModelCalibration.tabPrepareBiogemeCalibration.line8.myComboBox.addMouseListener(new HelpListenerComboBox());
+	    content.paneModelCalibration.tabPrepareBiogemeCalibration.line11.myButton.addMouseListener(new HelpListenerButton());
+	    content.paneModelCalibration.tabPrepareBiogemeCalibration.line11.myButton.addActionListener(new FormatTravelSurvey());
 	    
 	    content.paneModelCalibration.tabRunModelValidation.line5.myComboBox.addMouseListener(new HelpListenerComboBox());
 	    content.paneModelCalibration.tabRunModelValidation.line7.myButton.addMouseListener(new HelpListenerButton());
+	    content.paneModelCalibration.tabRunModelValidation.line7.myButton.addActionListener(new RunModelValidation());
 	    
 	    content.paneSocioDemographicInference.tabRunSocioDemographicInference.line10.myButton.addMouseListener(new HelpListenerButton());
 	    content.paneSocioDemographicInference.tabRunSocioDemographicInference.line10.myButton.addActionListener(new RunSocioDemographicInference());
@@ -156,29 +159,6 @@ public class Window extends JFrame implements ActionListener {
 		
 	}
 	
-	class PrepareCtrlFilePopulationSynthesis implements ActionListener{
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			// TODO Auto-generated method stub
-			try {
-				String censusData = content.panePopulationSynthesis.tabRunPopulationSynthesis.line1.myText.getText();
-				String nBtch = content.panePopulationSynthesis.tabRunPopulationSynthesis.line12.myText.getText();
-				int nBatch = Integer.parseInt(nBtch.trim());
-				
-				CensusPreparator census = new CensusPreparator(censusData);
-				census.writeZonalInputFile(nBatch);
-		    	census.writeCtrlFile(nBatch);
-		    	System.out.println("<html>-- local controler and local description file produced");
-		    	
-	    	} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-				System.out.println(e1.getMessage());
-			}
-		}
-		
-	}
 	
 	class RunPopulationSynthesisButton implements ActionListener{
 
@@ -186,7 +166,7 @@ public class Window extends JFrame implements ActionListener {
 			// TODO Auto-generated method stub
 			System.out.println("<html>--population synthesis is running");
 			try{
-				
+				String censusData = content.panePopulationSynthesis.tabRunPopulationSynthesis.line1.myText.getText();
 				String seedData = content.panePopulationSynthesis.tabRunPopulationSynthesis.line2.myText.getText();
 				String distributionsDirectory = content.panePopulationSynthesis.tabRunPopulationSynthesis.line3.myText.getText();
 				String nBtch = content.panePopulationSynthesis.tabRunPopulationSynthesis.line4.myText.getText();
@@ -202,7 +182,10 @@ public class Window extends JFrame implements ActionListener {
 				Utils.SKIP_ITERATIONS = nSkips;
 				Utils.WARMUP_ITERATIONS = nWarm;
 				
-				
+				CensusPreparator census = new CensusPreparator(censusData);
+				census.writeZonalInputFile(nBatch);
+		    	census.writeCtrlFile(nBatch);
+		    	System.out.println("<html>-- local controler and local description file produced");
 				
 				OutputFileWritter localStatAnalysis = new OutputFileWritter();
 	            localStatAnalysis.OpenFile(outputStat);
@@ -439,7 +422,7 @@ public class Window extends JFrame implements ActionListener {
 			CensusPreparator census = new CensusPreparator(data);
 			
 	    	try {
-				census.prepareDataColumnStorage();
+				census.createLocalConditionalDistributions();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				System.out.println(e.toString());

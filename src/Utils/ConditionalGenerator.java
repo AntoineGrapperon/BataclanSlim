@@ -39,7 +39,8 @@ public class ConditionalGenerator
         myDimensionNames = new ArrayList();
     }
 
-    /*public boolean GenerateConditionals(String inputDataFile, String inputDescFile ) throws IOException
+    @Deprecated
+    public boolean GenerateConditionals(String inputDataFile, String inputDescFile ) throws IOException
     {
         myDataReader.OpenFile(inputDataFile);
 	String currRow = null;
@@ -57,7 +58,7 @@ public class ConditionalGenerator
 
         for (int i = 0; i < myDimensionNames.size(); i++)
         {
-            CreateCategoryCombinations(i);
+            CreateCategoryCombinationsOLD(i);
             System.out.println("--category combinations created");
             System.gc();
         }
@@ -87,7 +88,7 @@ public class ConditionalGenerator
 	
         myDataReader.CloseFile();
         return true;
-    }*/
+    }
 
     private void SetDimensions(String inputDescFile ) throws IOException
     {
@@ -194,8 +195,8 @@ public class ConditionalGenerator
             }
         }
     }
-    
-    /*private void WriteNextConditional(String currStr)
+    @Deprecated
+    private void WriteNextConditional(String currStr)
     {
         String[] currVal = currStr.split(Utils.COLUMN_DELIMETER);
 			
@@ -225,9 +226,10 @@ public class ConditionalGenerator
                 //currDimColl.Add(currCondNm, curPair);
             }
         }
-    }*/
+    }
     
-    /*private void CreateCategoryCombinations(int idx)
+    @Deprecated
+    private void CreateCategoryCombinationsOLD(int idx)
     {
         int dimCnt = 1;
         String curDimNm = myDimensionNames.get(idx).toString();
@@ -279,15 +281,9 @@ public class ConditionalGenerator
            //System.out.println(currKey.category);
            currDimColl.put(currKey.category, (Object)currKey);
            
-           //this if function is to insure that the RAM is not filled by the garbage collector
-           /*if(counter == 100000){
-        	   System.out.println("--clearing garbage collector");
-        	   System.gc();
-        	   counter = 0;
-           }
        }
        System.gc();
-    }*/
+    }
     
     /**
      * Read the agent description from the input description file. Then read the disaggregated data file and create conditional distribution out of it.

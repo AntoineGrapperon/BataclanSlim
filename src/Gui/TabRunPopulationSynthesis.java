@@ -26,8 +26,6 @@ public class TabRunPopulationSynthesis extends JPanel {
 
 	ArrayList<PromptStringInformation>myStringPrompts = new ArrayList<PromptStringInformation>();
 	PromptStringInformation line1;
-	PromptStringInformation line12;
-	PromptButton line13;
 	PromptStringInformation line2;
 	PromptStringInformation line3;
 	PromptStringInformation line4;
@@ -44,18 +42,12 @@ public class TabRunPopulationSynthesis extends JPanel {
 		JLabel runPopSyn = new JLabel("Run the population synthesis");
 		line1 = new PromptStringInformation("Path to census data", 
 				"<html>.csv file -- provide the path to census data",
-				"populationSynthesis\\data\\census2006GatineauOttawaDAlevel.csv");
-		
-		line12 = new PromptStringInformation("Number of batches", 
-				"<html>number -- if you have an important population, you may want to proceed the population synthesis by batch to avoid to reach RAM capability and the resulting crash");
-		
-		line13 = new PromptButton("Prepare control files",
-				"<html> prepare the agent attributes description files and creates control files for population synthesis",
-				d);
+				"populationSynthesis\\data\\censusSlim.csv");
 		
 		line2 = new PromptStringInformation("Path to seeds" , 
-				"<html>.csv file -- provide a path to a disaggregated data source which will be used to take a good seed to initiate the MCMC random walk",
-				"populationSynthesis\\data\\pumf2006GatineauOttawa.csv");
+				"<html>.csv file -- provide a path to a disaggregated data source which will be used to take a good seed to initiate the MCMC random walk"
+				+ "<br><br>Be careful to construct the seed file (it can be the disaggregated file) as it is described in the description file (same attribute's names and same order of columns)",
+				"populationSynthesis\\data\\pumfSlim.csv");
 		
 		line3 = new PromptStringInformation("Distributions directory",
 				"<html> path to the folder where distributions are stored. It is expected to be structure as follow:<br>"
@@ -108,15 +100,12 @@ public class TabRunPopulationSynthesis extends JPanel {
 	    JPanel myContent = new JPanel();
 	    myContent.add(runPopSyn);
 	    myContent.add(line1);
-	    myContent.add(line12);
-	    myContent.add(line13);
 	    myContent.add(line2);
 	    myContent.add(line3);
 	    myContent.add(line4);
 	    myContent.add(line5);
 	    myContent.add(line6);
 	    myContent.add(line7);
-	    //prepareData.add(threadChoice);
 	    myContent.add(line8);
 	    myContent.add(line10);
 	    myContent.add(line11);

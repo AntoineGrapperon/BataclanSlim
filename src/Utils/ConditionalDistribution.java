@@ -60,9 +60,6 @@ public class ConditionalDistribution
     {
     	
         String[] procdKeyTok = key.split(Utils.CONDITIONAL_DELIMITER);
-        if(procdKeyTok.length != 7){
-        	System.out.println(this.GetDimensionName() + "  "+ key);
-    	}
         
         for (int i = 0; i < procdKeyTok.length; i++)
         {

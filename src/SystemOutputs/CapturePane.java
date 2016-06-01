@@ -26,11 +26,6 @@ public class CapturePane extends JScrollPane implements Consumer {
     	super();
         //setLayout(new BoxLayout(this,BoxLayout.PAGE_AXIS));
         output = new JLabel("<html>");
-        //add(new JScrollPane(output));
-        //output.setForeground(Color.WHITE);
-		/*setBackground(Color.BLACK);
-		output.setBackground(Color.BLACK);
-		this.setBackground(Color.BLACK);*/
         
         output.setForeground(Color.WHITE);
 		outputPane.setBackground(Color.BLACK);
@@ -44,9 +39,8 @@ public class CapturePane extends JScrollPane implements Consumer {
     @Override
     public void appendText(final String text) {
         if (EventQueue.isDispatchThread()) {
-            output.setText(output.getText() + text + "<br>");
+            output.setText("<html>" + text + "<br>" + output.getText());
         } else {
-
             EventQueue.invokeLater(new Runnable() {
                 @Override
                 public void run() {

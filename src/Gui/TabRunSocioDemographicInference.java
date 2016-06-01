@@ -61,7 +61,7 @@ public class TabRunSocioDemographicInference extends JPanel {
 				+ "we recommend using at least one month of data so average values are meaningful<br>"
 				+ "--<br>"
 				+ "the program should be modified so it can connect to the transaction database, handle large data sets and process information on a daily basis</html>",
-				"association\\data\\smartcard.csv");
+				"outputs\\smartcard_with_destinations.csv");
 		line4 = new PromptStringInformation("Path to the synthetic population file", 
 				".csv file -- provide here the path to the synthetic population you want to use.",
 				"association\\data\\syntheticPopulation.csv");
@@ -82,7 +82,7 @@ public class TabRunSocioDemographicInference extends JPanel {
 				+ "0 ParameterName	F	0.1	0.02<br>"
 				+ "-1<br>"
 				+ "here, 0.1 is the average value for the parameter, and that is what is being used. For information, 0.02 is the standard deviation, we don't use this information in our framework.</html>",
-				"association\\ctrl\\model.F12");
+				"association\\ctrl\\myModel.F12");
 		
 		line8 = new PromptStringInformation("Number of batches",
 				"The cost matrix used for smart card distributions to the synthetic population is essentially a scattered matrix. However the Hungarian algorithm is no coded to consider this efficiently."

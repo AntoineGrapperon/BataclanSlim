@@ -70,8 +70,6 @@ public class UtilsTS {
 	
 	//###########DICO pour le recensement
 	public static String dauid = "dauid";
-	public static String noPt = "C_NOT_PT_RIDER";
-	public static String biogemeStayedHome = "C_HOME";
 	public static String alternative = "alternative";
 	public static String var = "_var";
 	public static String edu = "edu";
