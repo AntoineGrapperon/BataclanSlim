@@ -85,14 +85,14 @@ public class Window extends JFrame implements ActionListener {
 	    content.paneModelCalibration.tabPrepareBiogemeCalibration.line4.myButton.addActionListener(new PrepareBiogemeCtrlFile());
 	    content.paneModelCalibration.tabPrepareBiogemeCalibration.line8.myComboBox.addMouseListener(new HelpListenerComboBox());
 	    content.paneModelCalibration.tabPrepareBiogemeCalibration.line11.myButton.addMouseListener(new HelpListenerButton());
-	    content.paneModelCalibration.tabPrepareBiogemeCalibration.line11.myButton.addActionListener(new FormatTravelSurvey());
+	    content.paneModelCalibration.tabPrepareBiogemeCalibration.line11.myButton.addActionListener(new PrepareTravelSurvey());
 	    
 	    content.paneModelCalibration.tabRunModelValidation.line5.myComboBox.addMouseListener(new HelpListenerComboBox());
 	    content.paneModelCalibration.tabRunModelValidation.line7.myButton.addMouseListener(new HelpListenerButton());
 	    content.paneModelCalibration.tabRunModelValidation.line7.myButton.addActionListener(new RunModelValidation());
 	    
-	    content.paneSocioDemographicInference.tabRunSocioDemographicInference.line10.myButton.addMouseListener(new HelpListenerButton());
-	    content.paneSocioDemographicInference.tabRunSocioDemographicInference.line10.myButton.addActionListener(new RunSocioDemographicInference());
+	    content.paneSocioDemographicInference.tabRunSocioDemographicInference.line11.myButton.addMouseListener(new HelpListenerButton());
+	    content.paneSocioDemographicInference.tabRunSocioDemographicInference.line11.myButton.addActionListener(new RunSocioDemographicInference());
 	    
 	    ArrayList<PromptStringInformation> toListen = new ArrayList<PromptStringInformation>();
 	    toListen = content.panePopulationSynthesis.tabPreparePopulationSynthesis.myStringPrompts;
@@ -268,7 +268,7 @@ public class Window extends JFrame implements ActionListener {
 				String hypothesis = content.paneSocioDemographicInference.tabRunSocioDemographicInference.line2.myText.getText();
 				String smartcard = content.paneSocioDemographicInference.tabRunSocioDemographicInference.line3.myText.getText();
 				String syntheticPopulation = content.paneSocioDemographicInference.tabRunSocioDemographicInference.line4.myText.getText();
-				String geoDico = content.paneSocioDemographicInference.tabRunSocioDemographicInference.line5.myText.getText();
+				String coordinateReferenceSystem = content.paneSocioDemographicInference.tabRunSocioDemographicInference.line5.myText.getText();
 				
 				String model = content.paneSocioDemographicInference.tabRunSocioDemographicInference.line7.myText.getText();
 				String btch = content.paneSocioDemographicInference.tabRunSocioDemographicInference.line8.myText.getText();
@@ -282,13 +282,18 @@ public class Window extends JFrame implements ActionListener {
 				myCtrlGenerator.printChoiceIndex(Utils.DATA_DIR + "outputs\\choiceIndex.csv");
 				System.out.println("-- control file generator initiated");
 				
-				myPublicTransitSystem.initialize(
+				
+				
+				/*ialize(
 						myCtrlGenerator, 
 						smartcard, 
 						geoDico,
 						syntheticPopulation,
 						model
-						);
+						);*/
+				
+				
+				
 				myPublicTransitSystem.getValues();
 				System.out.println("--pt system initialized");
 				myPublicTransitSystem.createZonalSmartcardIndex();
@@ -304,7 +309,7 @@ public class Window extends JFrame implements ActionListener {
 				myPublicTransitSystem.processMatchingOnPtRidersByBatch(nBatches);
 				myPublicTransitSystem.printSmartcards(output);
 			}
-			catch(IOException|NumberFormatException | ParseException e1){
+			catch(IOException|NumberFormatException e1){
 				System.out.println(e1);
 			}
 			
@@ -344,7 +349,7 @@ public class Window extends JFrame implements ActionListener {
 		
 	}
 	
-	class FormatTravelSurvey implements ActionListener{
+	class PrepareTravelSurvey implements ActionListener{
 
 		@Override
 		public void actionPerformed(ActionEvent e) {

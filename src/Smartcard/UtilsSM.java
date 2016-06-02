@@ -6,6 +6,8 @@ package Smartcard;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.geotools.referencing.CRS;
+
 import ActivityChoiceModel.UtilsTS;
 
 /**
@@ -21,6 +23,8 @@ public class UtilsSM {
 	public static final double WALKING_DISTANCE_THRESHOLD = 1000; //in meters
 	
 	public static final String DATE_FORMAT = "dd/MM/yyyy 'at' HHmm";
+	public static final String CRS = "EPSG:26918";
+	
 	
 	
 	

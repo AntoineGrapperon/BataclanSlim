@@ -6,6 +6,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.joda.time.DateTime;
+import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.operation.TransformException;
+import org.geotools.referencing.CRS;
 
 import ActivityChoiceModel.BiogemeControlFileGenerator;
 import ActivityChoiceModel.BiogemeSimulator;
@@ -72,8 +76,8 @@ public class Main {
 		
 		
 
-		try {
-			String pathDA = "D:\\Recherche\\CharlieWorkspace\\BataclanSlim\\example\\association\\data\\disseminationArea.shp";
+		/*try {
+			String pathDA = "D:\\Recherche\\CharlieWorkspace\\BataclanSlim\\example\\association\\data\\disseminationArea2.shp";
 			String pathStops = "D:\\Recherche\\CharlieWorkspace\\BataclanSlim\\example\\destinationInference\\GTFS\\stops.txt";
 			
 			GTFSLoader myLoader = new GTFSLoader();
@@ -83,7 +87,7 @@ public class Main {
 				myStops.add(stop);
 			}
 			GeoDicoManager myDico = new GeoDicoManager();
-			myDico.getDico(pathDA, myStops);
+			//myDico.getDico(pathDA, myStops, true);
 			System.out.println("test");
 			
 			//Window gui = new Window();
@@ -336,13 +340,14 @@ public class Main {
 			myWorld.printMetroMarginalFittingAnalysis(UtilsTS.city, startTime);*/
 	    	
 		
-	    }
-		catch (IOException e) {
+	  /*  }
+		catch (IOException | MismatchedDimensionException | TransformException | FactoryException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			
-		}
+		}*/
 
+		
 		long endTime = System.currentTimeMillis();
 
 		System.out.println("--time to compute age x gender : " + (endTime - startTime) + "ms");
