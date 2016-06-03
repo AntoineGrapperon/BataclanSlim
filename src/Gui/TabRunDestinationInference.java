@@ -11,6 +11,8 @@ import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import org.geotools.temporal.object.Utils;
+
 import Controlers.PromptButton;
 import Controlers.PromptStringInformation;
 
@@ -39,27 +41,27 @@ public class TabRunDestinationInference extends JPanel {
 				+ "<br/>trips.txt"
 				+ "<br/>stops.txt"
 				+ "<br/>stop_times.txt";
-				
+			
 		JLabel destinationInference = new JLabel("<html>Destination inference");
 		
 		line1 = new PromptStringInformation("<html>Path to the GTFS trips file",
 				GTFSadvice,
-				"destinationInference//GTFS//trips.txt");
+				"destinationInference\\GTFS\\trips.txt");
 		line2 = new PromptStringInformation("<html>Path to the GTFS stops file",
 				GTFSadvice,
-				"destinationInference//GTFS//stops.txt");
+				"destinationInference\\GTFS\\stops.txt");
 		line3 = new PromptStringInformation("<html>Path to the GTFS stop_times file",
 				GTFSadvice,
-				"destinationInference//GTFS//stop_times.txt");
+				"destinationInference\\GTFS\\stop_times.txt");
 		line4 = new PromptStringInformation("<html>Path to the GTFS routes file",
 				GTFSadvice,
-				"destinationInference//GTFS//routes.txt");
+				"destinationInference\\GTFS\\routes.txt");
 		line5 = new PromptStringInformation("<html>Path to the smartcard data",
 				"<html>The smart card data should be related somehow to the GTFS file. Stop id, route id etc should be consistent with the GTFS description of the public transit system",
-				"destinationInference//smartcardData.csv");
+				"destinationInference\\smartcardSlim.csv");
 		line6 = new PromptStringInformation("<html>Output path",
 				"<html>CSV file -- path to save the smartcard file with the destinations",
-				"outputs//smartcards_with_destination.csv");
+				"outputs\\smartcards_with_destination.csv");
 		line7 = new PromptStringInformation("<html>2 * Walkable distance threshold (in meters)",
 				"<html> The walking distance threshold. Studies usually use a threshold between 2 * 500 meters and 2 * 1000 m");
 		line8 = new PromptStringInformation("<html>Activity inference time threshold (in minutes)",

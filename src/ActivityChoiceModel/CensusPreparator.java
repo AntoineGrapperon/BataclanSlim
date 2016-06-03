@@ -97,8 +97,27 @@ public class CensusPreparator extends DataManager {
 					"age(0,1,2,3,4,5,6) =count=Censusage.csv=importance");
 			writerCtrlFile.close();
 		}
+	}
+	
+	public void writeCtrlFile(int nBatch, String configFile) throws IOException {
+		// TODO Auto-generated method stub
+		InputDataReader currReader = new InputDataReader();
+		currReader.OpenFile(configFile);
+		ArrayList <String> currConfig = currReader.StoreLineByLine();
 		
-		
+		for(int i = 0; i< nBatch; i++){
+			FileWriter writerCtrlFile = createCtrlFileWriter(i);
+			for(int j = 0; j < currConfig.size(); j++){
+				String str = currConfig.get(j);
+				if(j != 3){
+					writerCtrlFile.append(str + "\r\n");
+				}
+				else{
+					writerCtrlFile.append("=zonalFile_auto"+i+".txt\r\n");
+				}
+			}
+			writerCtrlFile.close();
+		}
 	}
 	
 	public void createLocalConditionalDistributions() throws IOException{
@@ -391,7 +410,8 @@ public class CensusPreparator extends DataManager {
 			if(!file.exists()){b=file.mkdirs();}
 			if(!b){}
 			
-			FileWriter writer = new FileWriter(directory +  "zonalFile_" + UtilsTS.city +"_auto"+n+".txt");
+			//FileWriter writer = new FileWriter(directory +  "zonalFile_" + UtilsTS.city +"_auto"+n+".txt");
+			FileWriter writer = new FileWriter(directory +  "zonalFile_auto"+n+".txt");
 			writer.append("da_uid, total \n");
 			return writer;
 		}
@@ -427,6 +447,8 @@ public class CensusPreparator extends DataManager {
 		}
 		return daList;
 	}
+
+	
 	
 	
 }

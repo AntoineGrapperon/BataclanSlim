@@ -465,7 +465,6 @@ private ArrayList<BiogemeHypothesis> getHypothesis() throws NumberFormatExceptio
 				//this part is specific to our model
 				else if(currCombination.get(UtilsTS.nAct) == 0 || 
 						currCombination.get(UtilsTS.fidelPtRange)== 0){
-					System.out.println("there was a problem in the index generation, case was labeled -1");
 					currChoice.biogeme_id = combinationId;
 					currChoice.choiceCombination = currCombination;
 					currChoice.biogeme_case_id = -1;

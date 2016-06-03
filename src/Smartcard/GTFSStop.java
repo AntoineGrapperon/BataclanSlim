@@ -59,8 +59,8 @@ public class GTFSStop {
 				double agentZone = Double.parseDouble(currA.myAttributes.get(UtilsSM.zoneId));
 				
 				if(PublicTransitSystem.geoDico.containsKey(agentZone)){
-					ArrayList<Integer> closeStation = PublicTransitSystem.geoDico.get(agentZone);
-					if(closeStation.contains(myId)){
+					ArrayList<String> closeStation = PublicTransitSystem.geoDico.get(agentZone);
+					if(closeStation.contains(myId.trim())){
 						localPopulation.add(currA);
 					}
 				}

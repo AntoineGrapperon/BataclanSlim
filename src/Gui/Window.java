@@ -16,9 +16,15 @@ import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
+
+import org.geotools.data.store.ContentState;
+import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.operation.TransformException;
 
 import ActivityChoiceModel.BiogemeControlFileGenerator;
 import ActivityChoiceModel.BiogemeSimulator;
@@ -29,7 +35,9 @@ import Controlers.ComboBox;
 import Controlers.PromptStringInformation;
 import Controlers.TextField;
 import SimulationObjects.World;
+import Smartcard.GTFSRoute;
 import Smartcard.PublicTransitSystem;
+import Smartcard.SmartcardDataManager;
 import Smartcard.UtilsSM;
 import Utils.*;
 
@@ -91,8 +99,11 @@ public class Window extends JFrame implements ActionListener {
 	    content.paneModelCalibration.tabRunModelValidation.line7.myButton.addMouseListener(new HelpListenerButton());
 	    content.paneModelCalibration.tabRunModelValidation.line7.myButton.addActionListener(new RunModelValidation());
 	    
-	    content.paneSocioDemographicInference.tabRunSocioDemographicInference.line11.myButton.addMouseListener(new HelpListenerButton());
-	    content.paneSocioDemographicInference.tabRunSocioDemographicInference.line11.myButton.addActionListener(new RunSocioDemographicInference());
+	    content.paneDestinationInference.tabRunDestinationInference.line9.myButton.addMouseListener(new HelpListenerButton());
+	    content.paneDestinationInference.tabRunDestinationInference.line9.myButton.addActionListener(new RunDestinationInference());
+	    
+	    content.paneSocioDemographicInference.tabRunSocioDemographicInference.line15.myButton.addMouseListener(new HelpListenerButton());
+	    content.paneSocioDemographicInference.tabRunSocioDemographicInference.line15.myButton.addActionListener(new RunSocioDemographicInference());
 	    
 	    ArrayList<PromptStringInformation> toListen = new ArrayList<PromptStringInformation>();
 	    toListen = content.panePopulationSynthesis.tabPreparePopulationSynthesis.myStringPrompts;
@@ -159,6 +170,49 @@ public class Window extends JFrame implements ActionListener {
 		
 	}
 	
+	class RunDestinationInference implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e){
+			// TODO Auto-generated method stub
+			try {
+				PublicTransitSystem myPublicTransitSystem = new PublicTransitSystem();
+	
+				String pathGTFSTrips = content.paneDestinationInference.tabRunDestinationInference.line1.myText.getText();
+				String pathGTFSStops = content.paneDestinationInference.tabRunDestinationInference.line2.myText.getText();
+				String pathGTFSStopTimes =content.paneDestinationInference.tabRunDestinationInference.line3.myText.getText();
+				String pathGTFSRoutes = content.paneDestinationInference.tabRunDestinationInference.line4.myText.getText();
+				
+				myPublicTransitSystem.initializePTsystemForDestinationInference(pathGTFSTrips, pathGTFSStops, pathGTFSStopTimes, pathGTFSRoutes);
+			
+				System.out.println("-- public transportation system loaded");
+
+				String pathSmartcards = content.paneDestinationInference.tabRunDestinationInference.line5.myText.getText();
+				String pathOutput = content.paneDestinationInference.tabRunDestinationInference.line6.myText.getText();
+				String walkingDistance = content.paneDestinationInference.tabRunDestinationInference.line7.myText.getText();
+				String activityThreshold = content.paneDestinationInference.tabRunDestinationInference.line8.myText.getText();
+				UtilsSM.distanceThreshold = Double.parseDouble(walkingDistance);
+				UtilsSM.timeThreshold = Double.parseDouble(activityThreshold);
+				
+				
+				SmartcardDataManager mySmartcardManager = new SmartcardDataManager();
+				mySmartcardManager.prepareSmartcards(pathSmartcards);
+				mySmartcardManager.inferDestinations();
+				System.out.println("--destination infered");
+				mySmartcardManager.printSmartcards(pathOutput);
+			
+			} 
+			
+			
+			catch (IOException | ParseException | NumberFormatException e1) {
+				// TODO Auto-generated catch block
+				System.out.println(e1.getMessage());
+				e1.printStackTrace();
+			}
+		}
+		
+	}
+	
 	
 	class RunPopulationSynthesisButton implements ActionListener{
 
@@ -166,6 +220,9 @@ public class Window extends JFrame implements ActionListener {
 			// TODO Auto-generated method stub
 			System.out.println("<html>--population synthesis is running");
 			try{
+				String configFile = content.panePopulationSynthesis.tabRunPopulationSynthesis.line0.myText.getText();
+				ConfigFile.InitializeImportance(configFile);
+				
 				String censusData = content.panePopulationSynthesis.tabRunPopulationSynthesis.line1.myText.getText();
 				String seedData = content.panePopulationSynthesis.tabRunPopulationSynthesis.line2.myText.getText();
 				String distributionsDirectory = content.panePopulationSynthesis.tabRunPopulationSynthesis.line3.myText.getText();
@@ -184,7 +241,7 @@ public class Window extends JFrame implements ActionListener {
 				
 				CensusPreparator census = new CensusPreparator(censusData);
 				census.writeZonalInputFile(nBatch);
-		    	census.writeCtrlFile(nBatch);
+		    	census.writeCtrlFile(nBatch, configFile);
 		    	System.out.println("<html>-- local controler and local description file produced");
 				
 				OutputFileWritter localStatAnalysis = new OutputFileWritter();
@@ -264,27 +321,43 @@ public class Window extends JFrame implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
 			try{
+				String configFile = content.paneSocioDemographicInference.tabRunSocioDemographicInference.line0.myText.getText();
+				ConfigFile.InitializeImportance(configFile);
+				
 				String choiceDescription = content.paneSocioDemographicInference.tabRunSocioDemographicInference.line1.myText.getText();
 				String hypothesis = content.paneSocioDemographicInference.tabRunSocioDemographicInference.line2.myText.getText();
 				String smartcard = content.paneSocioDemographicInference.tabRunSocioDemographicInference.line3.myText.getText();
 				String syntheticPopulation = content.paneSocioDemographicInference.tabRunSocioDemographicInference.line4.myText.getText();
-				String coordinateReferenceSystem = content.paneSocioDemographicInference.tabRunSocioDemographicInference.line5.myText.getText();
 				
-				String model = content.paneSocioDemographicInference.tabRunSocioDemographicInference.line7.myText.getText();
-				String btch = content.paneSocioDemographicInference.tabRunSocioDemographicInference.line8.myText.getText();
+				String coordinateReferenceSystem = content.paneSocioDemographicInference.tabRunSocioDemographicInference.line7.myText.getText();
+				UtilsSM.CRS = coordinateReferenceSystem.trim();
+				String pathGtfsStops = content.paneSocioDemographicInference.tabRunSocioDemographicInference.line5.myText.getText();
+				String pathLocalZonesShp = content.paneSocioDemographicInference.tabRunSocioDemographicInference.line6.myText.getText();
+				
+				String model = content.paneSocioDemographicInference.tabRunSocioDemographicInference.line8.myText.getText();
+				String btch = content.paneSocioDemographicInference.tabRunSocioDemographicInference.line9.myText.getText();
 				int nBatches = Integer.parseInt(btch.trim());
-				String output = content.paneSocioDemographicInference.tabRunSocioDemographicInference.line9.myText.getText();
+				String output = content.paneSocioDemographicInference.tabRunSocioDemographicInference.line10.myText.getText();
 				
-				BiogemeControlFileGenerator myCtrlGenerator = new BiogemeControlFileGenerator();
+				
+				
+				
 				PublicTransitSystem myPublicTransitSystem = new PublicTransitSystem();
 				
+				BiogemeControlFileGenerator myCtrlGenerator = new BiogemeControlFileGenerator();
 		    	myCtrlGenerator.initialize(choiceDescription, hypothesis);
 				myCtrlGenerator.printChoiceIndex(Utils.DATA_DIR + "outputs\\choiceIndex.csv");
 				System.out.println("-- control file generator initiated");
 				
+				myPublicTransitSystem.initializeForSocioInference(
+						myCtrlGenerator,
+						smartcard,
+						syntheticPopulation,
+						model,
+						pathGtfsStops,
+						pathLocalZonesShp);
 				
-				
-				/*ialize(
+				/*myPublicTransitSystem.initializeForSocioInference(
 						myCtrlGenerator, 
 						smartcard, 
 						geoDico,
@@ -309,7 +382,7 @@ public class Window extends JFrame implements ActionListener {
 				myPublicTransitSystem.processMatchingOnPtRidersByBatch(nBatches);
 				myPublicTransitSystem.printSmartcards(output);
 			}
-			catch(IOException|NumberFormatException e1){
+			catch(IOException|NumberFormatException | MismatchedDimensionException | ParseException | TransformException | FactoryException e1){
 				System.out.println(e1);
 			}
 			

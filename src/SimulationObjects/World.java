@@ -320,22 +320,7 @@ public class World extends SimulationObject
         private void InitializeInputDataImportance(int currType)
         {
         	int numberofmodels = 1;
-            if (currType == AgentType.Household)
-            {
-                mobelWrkrsConditionals = new DiscreteCondDistribution();
-                mobelKidsConditionals = new DiscreteCondDistribution();
-                mobelPersConditionals = new DiscreteCondDistribution();
-
-                mobelWrkrsFileReader = new InputDataReader();
-                mobelKidsFileReader = new InputDataReader();
-                mobelPersFileReader = new InputDataReader();
-
-                censusUnivDegFileReader = new InputDataReader();
-                censusDwellFileReader = new InputDataReader();
-                censusCarFileReader = new InputDataReader();
-                censusPersonFileReader = new InputDataReader();
-            }
-            else if (currType == AgentType.Person)
+            if (currType == AgentType.Person)
             {
             	for (int i=0; i< ConfigFile.AttributeDefinitions.size(); i++) 
             	{
@@ -358,14 +343,6 @@ public class World extends SimulationObject
             		localStandardDeviations.put(ConfigFile.AttributeDefinitions.get(i-numberofmodels+1).category, new HashMap<String, Object>());
             		localAbsoluteErrors.put(ConfigFile.AttributeDefinitions.get(i-numberofmodels+1).category, new HashMap<String, Object>());
             		}
-            		
-            		/*else if(ConfigFile.TypeOfConditionals.get(i).equals("model"))
-            		{
-            			
-            		InputDataReader modelAttributeFileReader = new InputDataReader();
-            		modelAttributesFileReader.add(modelAttributeFileReader);
-            			System.out.println("--functionnality for households was not implemented");
-            		}*/
             	}
             	for (int i=0; i< ConfigFile.AttributeDefinitionsImportance.size(); i++) 
             	{
@@ -377,9 +354,6 @@ public class World extends SimulationObject
             		
             		else if(ConfigFile.TypeOfConditionalsImportance.get(i).equals("model"))
             		{
-            			/*
-            		InputDataReader modelAttributeFileReader = new InputDataReader();
-            		modelAttributesFileReader.add(modelAttributeFileReader);*/
             			System.out.println("--functionnality for households was not implemented");
             		}
             	}
@@ -407,11 +381,6 @@ public class World extends SimulationObject
                     LoadPesronData(currZone);
                     CloseFiles(currType);
                 }
-              //  LoadMarginalsForAge();
-              //  LoadMarginalsForSex();
-              //  LoadMarginalsForHhldSize2();
-              //  LoadMarginalsForEducation();
-
             }
         }
         
@@ -438,11 +407,6 @@ public class World extends SimulationObject
                     LoadPersonDataImportance(currZone);
                     CloseFilesImportance(currType);
                 }
-              //  LoadMarginalsForAge();
-              //  LoadMarginalsForSex();
-              //  LoadMarginalsForHhldSize2();
-              //  LoadMarginalsForEducation();
-
             }
         }
         
@@ -450,14 +414,7 @@ public class World extends SimulationObject
         //avant de commencer, myZonalCollection est constitué de 1) un identifiant et 2) un object qui le KeyValPair (nom de categorie/valeur de la proba ou du comptage)
         //myZonalCOllection a été créé a partir du fichier zonal
         {
-            if (currType == AgentType.Household)
-            {
-                LoadMobelData();
-                LoadMarginalsForCars();
-                LoadMarginalsForDwellings();
-                LoadMarginalsForPersons();
-            }
-            else if (currType == AgentType.Person)
+        	if (currType == AgentType.Person)
             {
             	OpenFilesMain(currType, directory);
                 LoadPersonDataMain();
@@ -469,11 +426,6 @@ public class World extends SimulationObject
                     LoadPersonDataImportance(currZone);
                     CloseFilesImportance(currType);
                 }
-              //  LoadMarginalsForAge();
-              //  LoadMarginalsForSex();
-              //  LoadMarginalsForHhldSize2();
-              //  LoadMarginalsForEducation();
-
             }
         }
 
@@ -757,26 +709,10 @@ public class World extends SimulationObject
         
         private void OpenFilesImportance(int currType, SpatialZone currZone, String directory) throws IOException
         {
-            if (currType == AgentType.Household)
-            {
-            	System.out.println("--functionnality not implemented");
-            	/*
-                censusPersonFileReader.OpenFile(
-                    Utils.DATA_DIR + "\\Household\\CensusNumOfPers.csv");
-                censusDwellFileReader.OpenFile(
-                    Utils.DATA_DIR + "\\Household\\CensusDwellingType.csv");
-                censusCarFileReader.OpenFile(
-                    Utils.DATA_DIR + "\\Household\\CensusNumOfCars.csv");
-
-                censusPersonFileReader.GetConditionalList();
-                censusDwellFileReader.GetConditionalList();
-                censusCarFileReader.GetConditionalList();*/
-            }
             if (currType == AgentType.Person)
             {
             	int numberofmodels = 1;
             	int numberofcounts = 1;
-            	
             	
             	for (int i=0; i<ConfigFile.AttributeDefinitionsImportance.size();i++)
             	{	
@@ -794,14 +730,9 @@ public class World extends SimulationObject
             					fmt(currZone.myAttributes.get(0).value) +
             					"\\" +
             					ConfigFile.AttributesPathsImportance.get(i));
-            			
-            			
-            				
             		}
             		else if(ConfigFile.TypeOfConditionals.get(i).equals("model"))
             		{	
-            			/*	numberofmodels += numberofmodels;
-            			modelAttributesFileReader.get(i-numberofcounts+1).OpenFile(Utils.DATA_DIR + "\\"+ConfigFile.AttributesPaths.get(i));*/
             			System.out.println("--functionnality not implemented");
             		}
             	}
@@ -857,21 +788,6 @@ public class World extends SimulationObject
             
         private void OpenFilesMain(int currType, String directory) throws IOException
         {
-            if (currType == AgentType.Household)
-            {
-            	System.out.println("--functionnality not implemented");
-            	/*
-                censusPersonFileReader.OpenFile(
-                    Utils.DATA_DIR + "\\Household\\CensusNumOfPers.csv");
-                censusDwellFileReader.OpenFile(
-                    Utils.DATA_DIR + "\\Household\\CensusDwellingType.csv");
-                censusCarFileReader.OpenFile(
-                    Utils.DATA_DIR + "\\Household\\CensusNumOfCars.csv");
-
-                censusPersonFileReader.GetConditionalList();
-                censusDwellFileReader.GetConditionalList();
-                censusCarFileReader.GetConditionalList();*/
-            }
             if (currType == AgentType.Person)
             {
             	int numberofmodels = 1;
@@ -890,8 +806,6 @@ public class World extends SimulationObject
             		}
             		else if(ConfigFile.TypeOfConditionals.get(i).equals("model"))
             		{	
-            			/*	numberofmodels += numberofmodels;
-            			modelAttributesFileReader.get(i-numberofcounts+1).OpenFile(Utils.DATA_DIR + "\\"+ConfigFile.AttributesPaths.get(i));*/
             			System.out.println("--functionnality not implemented");
             		}
             	}
@@ -2834,7 +2748,6 @@ public void printLocalMarginalFittingAnalysis(String metro, long startTime){
 			
 		}
     }
- 
 }
         
         public ArrayList GetZonalCondCollections()
@@ -2862,20 +2775,6 @@ public void printLocalMarginalFittingAnalysis(String metro, long startTime){
         	   return currColl;
         }
         
-        /*public void updateCounters(Person agent) {
-    		// TODO Auto-generated method stub
-    		Iterator it = agent.myAttributes.iterator();
-    		while(it.hasNext()){
-    			KeyValPair k = (KeyValPair)it.next();
-    			if(marginalCounters.containsKey(k.category)){
-    				marginalCounters.get(k.category).update(ConfigFile.fmt(k.value));
-    			}
-    			else{
-    				System.out.println("littleproblem");
-    			}
-    			
-    		}
-        }*/
         
         private static class processZone
         implements Callable, Runnable {
@@ -2906,95 +2805,38 @@ public void printLocalMarginalFittingAnalysis(String metro, long startTime){
 			    
 	        	String statistics = new String();// Utils.NEW_LINE_DELIMITER; //new String();
 	        	String population = new String();
-	        	/*if(Utils.createLocal){
-	        		
-		        	try{
-		        		 for (Map.Entry<String, Object> entry : zones.entrySet())
-		                 {
-		        			    SpatialZone currZone = (SpatialZone)entry.getValue();
-		        			    
-		        			    OutputFileWritter outputFile = new OutputFileWritter();
-			 		            //System.out.println(Utils.DATA_DIR + "data\\" + fmt(currZone.myAttributes.get(0).value) + "\\personPool.txt");
-			 		            outputFile.OpenFile(Utils.DATA_DIR + "data\\" + fmt(currZone.myAttributes.get(0).value) + "\\personPool.txt");
-			 		            //System.out.println(currZone.myAttributes.get(1).value);
-			 		        
-			 				    
-			 				    //System.out.println(String.valueOf(currZone.myAttributes.get(0).value));
-			 		            ArrayList<Object> answer = myGibbsSampler.GenerateAgents(null, currZone,
-			 				    // actual generation
-			 		                    (int)currZone.myAttributes.get(1).value,
-			 		                    new Person(pathToSeeds,true), false,
-			 		                    attributesMainConditionals,
-			 		                    outputFile, population);
-			 				    myPersonPool = (ArrayList)answer.get(0);
-			 				    population += answer.get(1);
-			 				    //agentsCreated += myPersonPool.size();
-			 				    //System.out.println("population " + population);
-			 				    
-			 				    outputFile.CloseFile();
-			 		            statistics = statistics+
-			 		            		currZone.printLocalMarginalFittingAnalysis((int)currZone.myAttributes.get(1).value);
-			 		            
-			 		            //+ Utils.NEW_LINE_DELIMITER;
-			 		           
-			 		            //return statistics;
-		                 }
-		        		 
-			        	
-		        	}
-		        	catch (IOException e) {
-		    			// TODO Auto-generated catch block
-		    			e.printStackTrace();
-		    			
-		    		}
-		        	ArrayList<String> answer = new ArrayList<String>();
-		        	answer.add(statistics);
-		        	answer.add(population);
-		        	return answer;
+        	
+	        	try{
+	        		 for (Map.Entry<String, Object> entry : zones.entrySet())
+	                 {
+	        			    SpatialZone currZone = (SpatialZone)entry.getValue();
+		 		            System.out.println( fmt(currZone.myAttributes.get(0).value) + "  population: " + (int)currZone.myAttributes.get(1).value);
+
+		 		            ArrayList<Object> answer = myGibbsSampler.GenerateAgents(null, currZone,
+		 		                    (int)currZone.myAttributes.get(1).value,
+		 		                    new Person(pathToSeeds,true), false,
+		 		                    attributesMainConditionals,
+		 		                    null, population);
+		 		            
+		 				    myPersonPool = (ArrayList)answer.get(0);
+		 				    population += answer.get(1);
+		 		            statistics = statistics+ Utils.NEW_LINE_DELIMITER+
+		 		            		currZone.printLocalMarginalFittingAnalysis((int)currZone.myAttributes.get(1).value);
+		 		           statistics += currZone.getTotalAbsoluteError() 
+		 		        		   + currZone.getStandardizedAbsoluteError()
+		 		        		   + currZone.getTargets()
+		 		        		   +currZone.getResultStats();
+	                 }
 	        	}
-	        	
-	        	else{*/
-		        	try{
-		        		 for (Map.Entry<String, Object> entry : zones.entrySet())
-		                 {
-		        			    SpatialZone currZone = (SpatialZone)entry.getValue();
-			 		            System.out.println( fmt(currZone.myAttributes.get(0).value) + "  population: " + (int)currZone.myAttributes.get(1).value);
-			 		            //System.out.println(currZone.myAttributes.get(1).value);
-			 		        
-			 				    
-			 				    //System.out.println(String.valueOf(currZone.myAttributes.get(0).value));
-			 				    // actual generation
-			 		            ArrayList<Object> answer = myGibbsSampler.GenerateAgents(null, currZone,
-			 		                    (int)currZone.myAttributes.get(1).value,
-			 		                    new Person(pathToSeeds,true), false,
-			 		                    attributesMainConditionals,
-			 		                    null, population);
-			 		            
-			 				    myPersonPool = (ArrayList)answer.get(0);
-			 				    population += answer.get(1);
-			 				    //agentsCreated += myPersonPool.size();
-			 		            statistics = statistics+ Utils.NEW_LINE_DELIMITER+
-			 		            		currZone.printLocalMarginalFittingAnalysis((int)currZone.myAttributes.get(1).value);
-			 		           statistics += currZone.getTotalAbsoluteError() 
-			 		        		   + currZone.getStandardizedAbsoluteError()
-			 		        		   + currZone.getTargets()
-			 		        		   +currZone.getResultStats();
-			 		           
-			 		            //return statistics;
-		                 }
-		        		//System.out.println(population);
-			        	
-		        	}
-		        	catch (IOException e) {
-		    			// TODO Auto-generated catch block
-		    			e.printStackTrace();
-		    			
-		    		}
-		        	ArrayList<String> answer = new ArrayList<String>();
-		        	answer.add(statistics);
-		        	answer.add(population);
-		        	return answer;
-	        	//}
+	        	catch (IOException e) {
+	    			// TODO Auto-generated catch block
+	    			e.printStackTrace();
+	    			
+	    		}
+	        	ArrayList<String> answer = new ArrayList<String>();
+	        	answer.add(statistics);
+	        	answer.add(population);
+	        	return answer;
 	        	
 	        }
 

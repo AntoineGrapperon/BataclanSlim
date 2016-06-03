@@ -46,14 +46,14 @@ public class TabPreparePopulationSynthesis extends JPanel {
 		line1 = new PromptStringInformation("<html>Path to disaggregated data", 
 				"<html>.csv file -- Provide the path to the disaggregated data source (travel survey, public use micro sample etc)"
 				+ "<br> WARNING: for this specific case, we used the SEMI-COLON ( ;) to separate the columns instead of the more traditional COMA for specific reason related to our original case study",
-				"populationSynthesis\\data\\pumf2006GatineauOttawa.csv");
+				"populationSynthesis\\data\\pumfSlim.csv");
 		line2 = new PromptStringInformation("<html>Path to data description", 
 				"<html>.txt file -- You have to create a text file which describes each agent attributes and the number of categories for each attributes, starting from 0. For instance: <br>"
 				+ "<br>age,0,1,2,3,4,5,6" + 
 				"  <br>sex,0,1,,,,," + 
 				"  <br>mStat,0,1,2,,,," + 
 				"  <br>nPers,0,1,2,3,4,,",
-				"populationSynthesis\\ctrl\\descFile.txt");
+				"populationSynthesis\\ctrl\\descFileSlim.txt");
 		line3 = new PromptStringInformation("Path to output directory", 
 				"<html>folder -- provide the path to the output directory, if you have multiple disaggregated datasource, it is recommended to provide a different folder for each of them to avoid overwriting information. <br>"
 				+ "If you have if have various data sets, you will have to manually select the source for each conditional distribution by browsing the folders and copy pasting the file you want to use.",
@@ -73,7 +73,7 @@ public class TabPreparePopulationSynthesis extends JPanel {
 	    line5 = new PromptStringInformation("Path to census data",
 	    		"<html>.csv file -- Provide the path to aggregated data (census)<br>"
 	    		+ "please note that the column delimiter used is the semi colon - ; - because in the Canadian census, the coma - , - is being used in the headers",
-	    		"populationSynthesis\\data\\census2006GatineauOttawaDAlevel.csv");
+	    		"populationSynthesis\\data\\censusSlim.csv");
 	
 	    line6 = new PromptButton("Draw local conditional distributions",
 	    		"<html>Input: aggregated data (census counts over age and sex). <br>"

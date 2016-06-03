@@ -1,7 +1,7 @@
 
 
  
-=zonalFile_Gatineau_auto0.txt
+=zonalFile_auto0.txt
 
 Person
 

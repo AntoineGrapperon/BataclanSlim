@@ -25,6 +25,7 @@ import Controlers.PromptStringInformation;
 public class TabRunPopulationSynthesis extends JPanel {
 
 	ArrayList<PromptStringInformation>myStringPrompts = new ArrayList<PromptStringInformation>();
+	PromptStringInformation line0;
 	PromptStringInformation line1;
 	PromptStringInformation line2;
 	PromptStringInformation line3;
@@ -40,6 +41,10 @@ public class TabRunPopulationSynthesis extends JPanel {
 		super();
 		Dimension d = new Dimension(30, 50);
 		JLabel runPopSyn = new JLabel("Run the population synthesis");
+		line0 = new PromptStringInformation("Path to the population synthesis config file",
+				"The population synthesis config file is giving information about the various attributes of the population",
+				"populationSynthesis\\ctrl\\config.txt");
+		
 		line1 = new PromptStringInformation("Path to census data", 
 				"<html>.csv file -- provide the path to census data",
 				"populationSynthesis\\data\\censusSlim.csv");
@@ -99,6 +104,7 @@ public class TabRunPopulationSynthesis extends JPanel {
 		
 	    JPanel myContent = new JPanel();
 	    myContent.add(runPopSyn);
+	    myContent.add(line0);
 	    myContent.add(line1);
 	    myContent.add(line2);
 	    myContent.add(line3);
@@ -113,6 +119,7 @@ public class TabRunPopulationSynthesis extends JPanel {
 	    myContent.setLayout(new BoxLayout(myContent, BoxLayout.PAGE_AXIS));
 	    this.add(myContent,BorderLayout.SOUTH);
 	    
+	    myStringPrompts.add(line0);
 	    myStringPrompts.add(line1);
 		myStringPrompts.add(line2);
 		myStringPrompts.add(line3);

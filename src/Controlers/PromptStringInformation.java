@@ -19,7 +19,7 @@ import javax.swing.JTextField;
 public class PromptStringInformation extends JPanel{
 	
 	public TextField myText;
-	private String endOfPath = new String();
+	private String endOfPath = null;
 	
 	public PromptStringInformation(String prompt, String hlp){
 		super();
@@ -56,9 +56,11 @@ public class PromptStringInformation extends JPanel{
 	}
 	
 	public void updateText(){
-		myText.setText(Utils.Utils.DATA_DIR  + endOfPath);
-		this.repaint();
-		this.revalidate();		
+		if(endOfPath != null){
+			myText.setText(Utils.Utils.DATA_DIR  + endOfPath);
+			this.repaint();
+			this.revalidate();
+		}		
 	}
 
 }

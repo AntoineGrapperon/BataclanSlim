@@ -76,21 +76,9 @@ public class Main {
 		
 		
 
-		/*try {
-			String pathDA = "D:\\Recherche\\CharlieWorkspace\\BataclanSlim\\example\\association\\data\\disseminationArea2.shp";
-			String pathStops = "D:\\Recherche\\CharlieWorkspace\\BataclanSlim\\example\\destinationInference\\GTFS\\stops.txt";
+		try {
 			
-			GTFSLoader myLoader = new GTFSLoader();
-			HashMap<String,GTFSStop> myStop = myLoader.getStops(pathStops);
-			ArrayList<GTFSStop> myStops = new ArrayList<GTFSStop>();
-			for(GTFSStop stop : myStop.values()){
-				myStops.add(stop);
-			}
-			GeoDicoManager myDico = new GeoDicoManager();
-			//myDico.getDico(pathDA, myStops, true);
-			System.out.println("test");
-			
-			//Window gui = new Window();
+			Window gui = new Window();
 		
 
 			// ###############################################################################
@@ -113,7 +101,7 @@ public class Main {
 			mySmartcardManager.inferDestinations();
 			System.out.println("--destination infered");
 			String pathOutput = "D:\\Recherche\\CharlieWorkspace\\BataclanSlim\\example\\outputs\\smartcards_with_destinations.csv";
-			mySmartcardManager.printSmartcards(pathOutput);
+			mySmartcardManager.printSmartcards(pathOutput);*/
 
 			
 	    	
@@ -340,12 +328,12 @@ public class Main {
 			myWorld.printMetroMarginalFittingAnalysis(UtilsTS.city, startTime);*/
 	    	
 		
-	  /*  }
-		catch (IOException | MismatchedDimensionException | TransformException | FactoryException e) {
+	    }
+		catch (IOException | MismatchedDimensionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			
-		}*/
+		}
 
 		
 		long endTime = System.currentTimeMillis();

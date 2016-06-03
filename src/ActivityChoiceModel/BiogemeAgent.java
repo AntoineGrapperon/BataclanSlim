@@ -351,10 +351,10 @@ public class BiogemeAgent {
 		return agentChoiceSet;
 	}
 	
-	public ArrayList<Smartcard> generateChoiceSet(HashMap<Double,ArrayList<Smartcard>> closeSmartcards){
+	public ArrayList<Smartcard> generateChoiceSet(HashMap<String, ArrayList<Smartcard>> zonalSmartcardIndex){
 		// TODO Auto-generated method stub
 		
-		double myZone = Double.parseDouble(myAttributes.get(UtilsSM.zoneId));
+		String myZone = myAttributes.get(UtilsSM.zoneId).trim();
 		ArrayList<Smartcard> agentChoiceSet = new ArrayList<Smartcard>();
 		//ArrayList<Integer> myStations = PublicTransitSystem.geoDico.get(myZone);
 		if(isDistributed){
@@ -363,7 +363,7 @@ public class BiogemeAgent {
 			System.out.println("--problem in choice set generation 1");
 		}
 		else{
-			ArrayList<Smartcard> potentialSmartcard = closeSmartcards.get(myZone);
+			ArrayList<Smartcard> potentialSmartcard = zonalSmartcardIndex.get(myZone);
 			
 			if(potentialSmartcard.size()!=0){
 				for(int i = 0; i < potentialSmartcard.size();i++){
