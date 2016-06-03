@@ -17,28 +17,21 @@ import Utils.OutputFileWritter;
 import Utils.Utils;
 
 public class CensusPreparator extends DataManager {
-	//InputDataReader myInputDataReader = new InputDataReader();
-	//OutputFileWritter myOutputFileWritter = new OutputFileWritter();
-	//public HashMap<String, Object> myTravelSurvey;
-	//HashMap<String, ArrayList<String>> myData = new HashMap<String, ArrayList<String>>();
 	
 	
 	public CensusPreparator(String path){
 		myInputDataReader.OpenFile(path);
-		//String[] temp;
-		//temp=path.split(".csv");
-		//myOutputFileWritter.OpenFile(temp[0] + "_prepared.csv");	
 	}
 	
 	public void writeZonalInputFile() throws IOException{
 		Utils.COLUMN_DELIMETER = ";";
-		storeData(false);
+		storeData();
 		Utils.COLUMN_DELIMETER = ",";
 		FileWriter	writerZonalInputFile = createZonalWriter();
 		System.out.println(myData.get(UtilsTS.dauid).size());
 		for(int i = 0; i < myData.get(UtilsTS.dauid).size(); i++){
 			String dauid = myData.get(UtilsTS.dauid).get(i);
-			String pop = myData.get(" Population, 2006 ").get(i);
+			String pop = myData.get(Utils.population).get(i);
 			writerZonalInputFile.append(dauid + ", " + pop + "\n");
 		}
 		writerZonalInputFile.close();
@@ -46,7 +39,7 @@ public class CensusPreparator extends DataManager {
 	
 	public void writeZonalInputFile(String headerZoneId, String headerPopulationCount) throws IOException{
 		Utils.COLUMN_DELIMETER = ";";
-		storeData(false);
+		storeData();
 		Utils.COLUMN_DELIMETER = ",";
 		FileWriter	writerZonalInputFile = createZonalWriter();
 		System.out.println(myData.get(headerZoneId).size());
@@ -61,7 +54,7 @@ public class CensusPreparator extends DataManager {
 	public void writeZonalInputFile(int nBatch) throws IOException{
 		int count = 0;
 		Utils.COLUMN_DELIMETER = ";";
-		storeData(false);
+		storeData();
 		Utils.COLUMN_DELIMETER = ",";
 		int subsetSize = myData.get(UtilsTS.dauid).size()/nBatch;
 		for(int currN = 0; currN < nBatch; currN++){
@@ -98,25 +91,40 @@ public class CensusPreparator extends DataManager {
 					"\r\n" + 
 					"age(0,1,2,3,4,5,6) =count=age.txt=main\r\n" + 
 					"sex(0,1) =count=sex.txt=main\r\n" + 
-					"mStat(0,1,2) =count=mStat.txt=main\r\n" + 
-					"nPers(0, 1, 2, 3, 4) =count=nPers.txt=main\r\n" + 
-					"inc(0,1,2,3,4,5,6) =count=inc.txt=main\r\n" + 
 					"car(0, 1, 2, 3) =count=car.txt=main\r\n" + 
 					"occ(0, 1, 2, 3) =count=occ.txt=main\r\n" + 
-					"edu(0, 1, 2, 3, 4, 5, 6) =count=edu.txt=main\r\n" + 
 					"sex(0,1) =count=Censussex.csv=importance\r\n" + 
 					"age(0,1,2,3,4,5,6) =count=Censusage.csv=importance");
 			writerCtrlFile.close();
 		}
-		
-		
 	}
 	
-	public void prepareDataColumnStorage() throws IOException{
+	public void writeCtrlFile(int nBatch, String configFile) throws IOException {
+		// TODO Auto-generated method stub
+		InputDataReader currReader = new InputDataReader();
+		currReader.OpenFile(configFile);
+		ArrayList <String> currConfig = currReader.StoreLineByLine();
+		
+		for(int i = 0; i< nBatch; i++){
+			FileWriter writerCtrlFile = createCtrlFileWriter(i);
+			for(int j = 0; j < currConfig.size(); j++){
+				String str = currConfig.get(j);
+				if(j != 3){
+					writerCtrlFile.append(str + "\r\n");
+				}
+				else{
+					writerCtrlFile.append("=zonalFile_auto"+i+".txt\r\n");
+				}
+			}
+			writerCtrlFile.close();
+		}
+	}
+	
+	public void createLocalConditionalDistributions() throws IOException{
 		//We had to use the semi column delimiter instead of the comma because there was comas in the data provided by Statistics Canada
 		
 		Utils.COLUMN_DELIMETER = ";";
-		storeData(false);
+		storeData();
 		Utils.COLUMN_DELIMETER = ",";
 		System.out.println("--census data was stored");
 		for(int i = 0; i < myData.get(UtilsTS.dauid).size(); i++){
@@ -137,7 +145,6 @@ public class CensusPreparator extends DataManager {
 		int ageF0 = 0;int ageF1 = 0;int ageF2 = 0;int ageF3 = 0;int ageF4 = 0;int ageF5 = 0;int ageF6 = 0;
 		
 		ageM0 = Integer.parseInt(myData.get("Male, total / 15 to 19 years").get(i)) +
-				//Integer.parseInt(myData.get("Male, total / 5 to 9 years").get(i)) +
 				Integer.parseInt(myData.get("Male, total / 10 to 14 years").get(i));
 		
 		ageM1 = Integer.parseInt(myData.get("Male, total / 20 to 24 years").get(i));
@@ -161,7 +168,6 @@ public class CensusPreparator extends DataManager {
 				Integer.parseInt(myData.get("Male, total / 85 years and over").get(i));
 		
 		ageF0 = Integer.parseInt(myData.get("Female, total / 15 to 19 years").get(i)) +
-				//Integer.parseInt(myData.get("Female, total / 5 to 9 years").get(i)) +
 				Integer.parseInt(myData.get("Female, total / 10 to 14 years").get(i));
 		
 		ageF1 = Integer.parseInt(myData.get("Female, total / 20 to 24 years").get(i));
@@ -190,7 +196,7 @@ public class CensusPreparator extends DataManager {
 	}
 	
 	public void prepareDataRowStorage() throws IOException{
-		storeData(true);
+		storeData();
 		System.out.println("--census data was stored");
 		ArrayList<String> daList = getDAlist();
 		int cursor = 0;
@@ -292,64 +298,64 @@ public class CensusPreparator extends DataManager {
 			int ageF1, int ageF2, int ageF3, int ageF4, int ageF5, int ageF6) {
 		// TODO Auto-generated method stub
 		try{
-			writerAge.append("0|0-...-...-...-...-...-..." + ", " + ageM0);
+			writerAge.append("0|0-...-..." + ", " + ageM0);
 			writerAge.append('\n');
-			writerAge.append("1|0-...-...-...-...-...-..." + ", " + ageM1);
+			writerAge.append("1|0-...-..." + ", " + ageM1);
 			writerAge.append('\n');
-			writerAge.append("2|0-...-...-...-...-...-..." + ", " + ageM2);
+			writerAge.append("2|0-...-..." + ", " + ageM2);
 			writerAge.append('\n');
-			writerAge.append("3|0-...-...-...-...-...-..." + ", " + ageM3);
+			writerAge.append("3|0-...-..." + ", " + ageM3);
 			writerAge.append('\n');
-			writerAge.append("4|0-...-...-...-...-...-..." + ", " + ageM4);
+			writerAge.append("4|0-...-..." + ", " + ageM4);
 			writerAge.append('\n');
-			writerAge.append("5|0-...-...-...-...-...-..." + ", " + ageM5);
+			writerAge.append("5|0-...-..." + ", " + ageM5);
 			writerAge.append('\n');
-			writerAge.append("6|0-...-...-...-...-...-..." + ", " + ageM6);
-			writerAge.append('\n');
-			
-			writerAge.append("0|1-...-...-...-...-...-..." + ", " + ageF0);
-			writerAge.append('\n');
-			writerAge.append("1|1-...-...-...-...-...-..." + ", " + ageF1);
-			writerAge.append('\n');
-			writerAge.append("2|1-...-...-...-...-...-..." + ", " + ageF2);
-			writerAge.append('\n');
-			writerAge.append("3|1-...-...-...-...-...-..." + ", " + ageF3);
-			writerAge.append('\n');
-			writerAge.append("4|1-...-...-...-...-...-..." + ", " + ageF4);
-			writerAge.append('\n');
-			writerAge.append("5|1-...-...-...-...-...-..." + ", " + ageF5);
-			writerAge.append('\n');
-			writerAge.append("6|1-...-...-...-...-...-..." + ", " + ageF6);
+			writerAge.append("6|0-...-..." + ", " + ageM6);
 			writerAge.append('\n');
 			
-			writerSex.append("0|0-...-...-...-...-...-..." + ", " + ageM0);
+			writerAge.append("0|1-...-..." + ", " + ageF0);
+			writerAge.append('\n');
+			writerAge.append("1|1-...-..." + ", " + ageF1);
+			writerAge.append('\n');
+			writerAge.append("2|1-...-..." + ", " + ageF2);
+			writerAge.append('\n');
+			writerAge.append("3|1-...-..." + ", " + ageF3);
+			writerAge.append('\n');
+			writerAge.append("4|1-...-..." + ", " + ageF4);
+			writerAge.append('\n');
+			writerAge.append("5|1-...-..." + ", " + ageF5);
+			writerAge.append('\n');
+			writerAge.append("6|1-...-..." + ", " + ageF6);
+			writerAge.append('\n');
+			
+			writerSex.append("0|0-...-..." + ", " + ageM0);
 			writerSex.append('\n');
-			writerSex.append("0|1-...-...-...-...-...-..." + ", " + ageM1);
+			writerSex.append("0|1-...-..." + ", " + ageM1);
 			writerSex.append('\n');
-			writerSex.append("0|2-...-...-...-...-...-..." + ", " + ageM2);
+			writerSex.append("0|2-...-..." + ", " + ageM2);
 			writerSex.append('\n');
-			writerSex.append("0|3-...-...-...-...-...-..." + ", " + ageM3);
+			writerSex.append("0|3-...-..." + ", " + ageM3);
 			writerSex.append('\n');
-			writerSex.append("0|4-...-...-...-...-...-..." + ", " + ageM4);
+			writerSex.append("0|4-...-..." + ", " + ageM4);
 			writerSex.append('\n');
-			writerSex.append("0|5-...-...-...-...-...-..." + ", " + ageM5);
+			writerSex.append("0|5-...-..." + ", " + ageM5);
 			writerSex.append('\n');
-			writerSex.append("0|6-...-...-...-...-...-..." + ", " + ageM6);
+			writerSex.append("0|6-...-..." + ", " + ageM6);
 			writerSex.append('\n');
 			
-			writerSex.append("1|0-...-...-...-...-...-..." + ", " + ageF0);
+			writerSex.append("1|0-...-..." + ", " + ageF0);
 			writerSex.append('\n');
-			writerSex.append("1|1-...-...-...-...-...-..." + ", " + ageF1);
+			writerSex.append("1|1-...-..." + ", " + ageF1);
 			writerSex.append('\n');
-			writerSex.append("1|2-...-...-...-...-...-..." + ", " + ageF2);
+			writerSex.append("1|2-...-..." + ", " + ageF2);
 			writerSex.append('\n');
-			writerSex.append("1|3-...-...-...-...-...-..." + ", " + ageF3);
+			writerSex.append("1|3-...-..." + ", " + ageF3);
 			writerSex.append('\n');
-			writerSex.append("1|4-...-...-...-...-...-..." + ", " + ageF4);
+			writerSex.append("1|4-...-..." + ", " + ageF4);
 			writerSex.append('\n');
-			writerSex.append("1|5-...-...-...-...-...-..." + ", " + ageF5);
+			writerSex.append("1|5-...-..." + ", " + ageF5);
 			writerSex.append('\n');
-			writerSex.append("1|6-...-...-...-...-...-..." + ", " + ageF6);
+			writerSex.append("1|6-...-..." + ", " + ageF6);
 			writerSex.append('\n');
 
 		}
@@ -382,13 +388,11 @@ public class CensusPreparator extends DataManager {
 	public FileWriter createZonalWriter(){
 		try{
 			boolean b = false;
-			//File file = new File("..\\data\\" + daId);
 			File file = new File(Utils.DATA_DIR );
 			if(!file.exists()){b=file.mkdirs();}
 			if(!b){System.out.println("--directories were created");}
 			
 			FileWriter writer = new FileWriter( Utils.DATA_DIR + "zonalFile_" + UtilsTS.city +"_auto.txt");
-			//FileWriter writer = new FileWriter("..\\data\\" + daId + "\\Census" + attributeName + ".csv");
 			writer.append("da_uid, total \n");
 			return writer;
 		}
@@ -406,7 +410,8 @@ public class CensusPreparator extends DataManager {
 			if(!file.exists()){b=file.mkdirs();}
 			if(!b){}
 			
-			FileWriter writer = new FileWriter(directory +  "zonalFile_" + UtilsTS.city +"_auto"+n+".txt");
+			//FileWriter writer = new FileWriter(directory +  "zonalFile_" + UtilsTS.city +"_auto"+n+".txt");
+			FileWriter writer = new FileWriter(directory +  "zonalFile_auto"+n+".txt");
 			writer.append("da_uid, total \n");
 			return writer;
 		}
@@ -442,91 +447,8 @@ public class CensusPreparator extends DataManager {
 		}
 		return daList;
 	}
-	
-	/**
-	 * This function is useful for census file whoch attributes are not stored in columns but in rows. This kind of storage creates very long file and they can be filtered by type..
-	 * @param filter is true if filter should be used. False otherwise.
-	 * @return
-	 * @throws IOException
-	 */
-	public void storeData(boolean filter) throws IOException
-    {
-		if(filter){
-			 ArrayList<ArrayList<String>> data = new ArrayList<ArrayList<String>>();
-	    	 data = getData(true);
-	    	 
-	    	 ArrayList<String> headers = data.get(0);
-	    	 for(int i =0; i < headers.size(); i++){
-	    		 myData.put(headers.get(i), new ArrayList<String>());
-	    	 }
 
-	    	 for (int i=1; i<data.size(); i++)
-	    	 {
-	    		 	for (int j=0; j<headers.size();j++)
-	    			{
-	    				myData.get(headers.get(j)).add(data.get(i).get(j));
-	    			}
-	    	 }
-		}
-		else{
-			 ArrayList<ArrayList<String>> data = new ArrayList<ArrayList<String>>();
-	    	 data = getData();
-	    	 
-	    	 ArrayList<String> headers = data.get(0);
-	    	 for(int i =0; i < headers.size(); i++){
-	    		 myData.put(headers.get(i), new ArrayList<String>());
-	    	 }
-
-	    	 for (int i=1; i<data.size(); i++)
-	    	 {
-	    		 	for (int j=0; j<headers.size();j++)
-	    			{
-	    				myData.get(headers.get(j)).add(data.get(i).get(j));
-	    			}
-	    	 }
-		}
-    	 
-    }
 	
 	
-	/**
-	 * This function is useful for census file whoch attributes are not stored in columns but in rows. This kind of storage creates very long file and they can be filtered by type..
-	 * @param filter
-	 * @return
-	 * @throws IOException
-	 */
-	@Deprecated
-	public ArrayList<ArrayList<String>> getData(boolean filter) throws IOException
-    {
-    	String line=null;
-    	Scanner scanner = null;
-    	ArrayList<ArrayList<String>> data = new ArrayList<ArrayList<String>>();
-
-    		int i=0;
-    		while((line=myInputDataReader.myFileReader.readLine())!= null)
-    		{
-    			ArrayList<String> tempLine = new ArrayList<String>();
-    			scanner = new Scanner(line);
-    			scanner.useDelimiter(Utils.COLUMN_DELIMETER);
-
-    				while (scanner.hasNext())
-    				{
-    					String dat = scanner.next();
-    					tempLine.add(dat);
-    				}
-    				if(tempLine.get(3).equals("Detailed mother tongue") ||
-    						tempLine.get(3).equals("Knowledge of official languages")||
-    						tempLine.get(3).equals("First official language spoken")||
-    						tempLine.get(3).equals("Detailed language spoken most often at home")||
-    						tempLine.get(3).equals("Detailed other language spoken regularly at home")
-    						){	
-    				}
-    				else{
-        				i++;
-        				//data.get(i).add(dat);
-        				data.add(tempLine);	
-    				}
-    		}
-    	return data;
-    }
+	
 }

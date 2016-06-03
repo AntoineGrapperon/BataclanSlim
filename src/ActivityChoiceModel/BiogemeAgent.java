@@ -351,10 +351,10 @@ public class BiogemeAgent {
 		return agentChoiceSet;
 	}
 	
-	public ArrayList<Smartcard> generateChoiceSet(HashMap<Double,ArrayList<Smartcard>> closeSmartcards){
+	public ArrayList<Smartcard> generateChoiceSet(HashMap<String, ArrayList<Smartcard>> zonalSmartcardIndex){
 		// TODO Auto-generated method stub
 		
-		double myZone = Double.parseDouble(myAttributes.get(UtilsSM.zoneId));
+		String myZone = myAttributes.get(UtilsSM.zoneId).trim();
 		ArrayList<Smartcard> agentChoiceSet = new ArrayList<Smartcard>();
 		//ArrayList<Integer> myStations = PublicTransitSystem.geoDico.get(myZone);
 		if(isDistributed){
@@ -363,7 +363,7 @@ public class BiogemeAgent {
 			System.out.println("--problem in choice set generation 1");
 		}
 		else{
-			ArrayList<Smartcard> potentialSmartcard = closeSmartcards.get(myZone);
+			ArrayList<Smartcard> potentialSmartcard = zonalSmartcardIndex.get(myZone);
 			
 			if(potentialSmartcard.size()!=0){
 				for(int i = 0; i < potentialSmartcard.size();i++){
@@ -519,12 +519,12 @@ public class BiogemeAgent {
 		ArrayList<Double> cumProb = new ArrayList<Double>();
 		
 		HashMap<String,Double> cumProbs = new HashMap<String,Double>();
-		for(String nest: BiogemeSimulator.nests.keySet()){
+		for(String nest: BiogemeSimulator.modelNests.keySet()){
 			cumProbs.put(nest, 0.0);
 		}
 		
 		HashMap<String, Double> logsums = new HashMap<String, Double>();
-		for(String nest: BiogemeSimulator.nests.keySet()){
+		for(String nest: BiogemeSimulator.modelNests.keySet()){
 			logsums.put(nest, 0.0);
 		}
 		//double noPtScale = BiogemeSimulator.noPtScale;
@@ -534,7 +534,7 @@ public class BiogemeAgent {
 		//compute sum of exp(utility*scale)
 		for(BiogemeChoice curChoice: choices){
 			String nestName = curChoice.getNestName();
-			double scale = BiogemeSimulator.nests.get(nestName);
+			double scale = BiogemeSimulator.modelNests.get(nestName);
 			double logsum = logsums.get(nestName);
 			
 			logsum += Math.exp(scale * curChoice.utility);
@@ -552,14 +552,14 @@ public class BiogemeAgent {
 		double denom = 0;
 		for(String nest: nests.keySet()){
 			double logsum = logsums.get(nest);
-			double scale = BiogemeSimulator.nests.get(nest);
+			double scale = BiogemeSimulator.modelNests.get(nest);
 			denom+= Math.exp(logsum/scale);
 		}
 		
 		//compute the probabilities
 		for(String nest: nests.keySet()){
 			double logsum = logsums.get(nest);
-			double scale = BiogemeSimulator.nests.get(nest);
+			double scale = BiogemeSimulator.modelNests.get(nest);
 			double prob = Math.exp(logsum/scale)/denom;
 			cumProbs.put(nest, prob);
 		}
@@ -623,14 +623,7 @@ public class BiogemeAgent {
 			thisProb = (Math.exp(nestScale * curChoice.utility) / Math.exp(nestLog)) *
 					(Math.exp(nestLog/nestScale) / sumLog);
 			
-			/*if(curChoice.biogeme_case_id == 0){
-				thisProb = (Math.exp(noPtScale * curChoice.utility) / Math.exp(logsumNoPtNest)) *
-						(Math.exp(logsumNoPtNest/noPtScale) / (Math.exp(logsumNoPtNest/noPtScale) +Math.exp(logsumStoNest/stoScale)));
-			}
-			else{
-				thisProb = (Math.exp(stoScale * curChoice.utility) / Math.exp(logsumStoNest)) *
-						(Math.exp(logsumStoNest/stoScale) / (Math.exp(logsumNoPtNest/noPtScale) +Math.exp(logsumStoNest/stoScale) ));
-			}*/
+			
 			cumP+=thisProb;
 			cumProb.add(cumP);
 		}
@@ -644,7 +637,7 @@ public class BiogemeAgent {
 		HashMap<String, Double> realizedNests = new HashMap<String, Double>();
 		for(BiogemeChoice choice: myChoices){
 			String name = choice.getNestName();
-			Double scale = BiogemeSimulator.nests.get(name);
+			Double scale = BiogemeSimulator.modelNests.get(name);
 			realizedNests.put(name, scale);
 		}
 		

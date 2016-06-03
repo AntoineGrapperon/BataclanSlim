@@ -112,7 +112,7 @@ public class BiogemeChoice {
 	public static String getNestName(HashMap<String, Integer> combination){
 		String constantName = new String();
 		String nestDimensionName = BiogemeControlFileGenerator.getNestDimension();
-		constantName = Integer.toString(combination.get(nestDimensionName));
+		constantName = "nest_" + Integer.toString(combination.get(nestDimensionName));
 		/*if(combination.get(UtilsTS.nest) == 0){
 			constantName = UtilsTS.carDriver;
 		}

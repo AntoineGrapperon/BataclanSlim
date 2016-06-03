@@ -22,6 +22,7 @@ import Controlers.PromptStringInformation;
  */
 public class TabRunModelValidation extends JPanel {
 	
+	ArrayList<PromptStringInformation> myStringPrompts = new ArrayList<PromptStringInformation>();
 	PromptStringInformation line1;
 	PromptStringInformation line2;
 	PromptStringInformation line3;
@@ -35,7 +36,7 @@ public class TabRunModelValidation extends JPanel {
 		JLabel header1 = new JLabel("Apply the model on the data used for its calibration");
 		line1 = new PromptStringInformation("Path to the travel survey",
 				"<html>.csv file -- path to the travel survey used for the model calibration. It is recommanded to calibrate the model over 80% of the data available and to apply to model on the 20% remaining.</html>",
-				"\\modelCalibration\\data\\travelSurvey.csv");
+				"\\modelCalibration\\data\\travelSurvey_prepared.csv");
 		
 		line2 = new PromptStringInformation("Path to the choice description file", 
 				"<html> .txt file -- this file describes choices attribute following this format: <br>"
@@ -98,10 +99,18 @@ public class TabRunModelValidation extends JPanel {
 	    myContent.add(line1);
 	    myContent.add(line2);
 	    myContent.add(line3);
+	    myContent.add(line4);
+	    myContent.add(line5);
 	    myContent.add(line6);
 	    myContent.add(line7);
 	    
 	    myContent.setLayout(new BoxLayout(myContent, BoxLayout.PAGE_AXIS));
 	    this.add(myContent,BorderLayout.SOUTH);
+	    
+	    myStringPrompts.add(line1);
+		myStringPrompts.add(line2);
+		myStringPrompts.add(line3);
+		myStringPrompts.add(line4);
+		myStringPrompts.add(line6);
 	}
 }

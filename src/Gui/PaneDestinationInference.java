@@ -19,7 +19,7 @@ public class PaneDestinationInference extends JScrollPane {
 	JTabbedPane myTabs = new JTabbedPane();
 	JPanel myContent = new JPanel();
 	
-	TabRunDestinationInference tabRunDestinationInference = new TabRunDestinationInference();
+	TabRunDestinationInference tabRunDestinationInference = new TabRunDestinationInference(new Dimension(30,50));
 	TabAnalyzeDestinationInference tabAnalyzeDestinationInference = new TabAnalyzeDestinationInference();
 	
 	public PaneDestinationInference(){

@@ -6,6 +6,7 @@ package Smartcard;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -14,6 +15,11 @@ import java.util.Random;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.GeodeticCalculator;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
+import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
 
 import ActivityChoiceModel.BiogemeAgent;
 import ActivityChoiceModel.BiogemeChoice;
@@ -41,8 +47,8 @@ public class PublicTransitSystem {
 	
 	public static ArrayList<Smartcard> mySmartcards = new ArrayList<Smartcard>();
 	
-	public static HashMap<Double,ArrayList<BiogemeAgent>> zonalPopulation = new HashMap<Double,ArrayList<BiogemeAgent>>();
-	public static HashMap<Double, ArrayList<Smartcard>> zonalChoiceSets = new HashMap<Double, ArrayList<Smartcard>>();
+	public static HashMap<String,ArrayList<BiogemeAgent>> zonalPopulation = new HashMap<String,ArrayList<BiogemeAgent>>();
+	public static HashMap<String, ArrayList<Smartcard>> zonalChoiceSets = new HashMap<String, ArrayList<Smartcard>>();
 	
 	public static ArrayList<BiogemeAgent> myPopulation = new ArrayList<BiogemeAgent>();
 	PopulationWriter myPopWriter = new PopulationWriter();
@@ -51,7 +57,7 @@ public class PublicTransitSystem {
 	/**
 	 * The geoDico has zonal identifiers as keys and an ArrayList of close station identifiers.
 	 */
-	public static HashMap<Double,ArrayList<Integer>> geoDico = new HashMap<Double,ArrayList<Integer>>();
+	public static HashMap<String, ArrayList<String>> geoDico = new HashMap<String,ArrayList<String>>();
 	public static BiogemeSimulator mySimulator = new BiogemeSimulator();
 
 	public static BiogemeControlFileGenerator myCtrlGen;
@@ -68,7 +74,7 @@ public class PublicTransitSystem {
 	 * @param pathGTFSRoutes
 	 * @throws IOException
 	 */
-	public void initializePTsystem(
+	public void initializePTsystemForDestinationInference(
 			String pathGTFSTrips,
 			String pathGTFSStops,
 			String pathGTFSStopTimes,
@@ -80,20 +86,57 @@ public class PublicTransitSystem {
 		myGTFSLoader.constructRouteItinerary(myTrips, myRoutes, myStops, pathGTFSStopTimes);
 	}
 	
+	
+	
 
-	
-	//
-	
-	@Deprecated
-	public void initialize(BiogemeControlFileGenerator ctrlGenerator, 
+	public void initializeForSocioInference(BiogemeControlFileGenerator ctrlGenerator, 
 			String pathSmartcard, 
-			String pathStations, 
+			String pathPop,
+			String pathModel,
+			String pathGtfsStops,
+			String pathLocalZonesShp) throws IOException, ParseException, MismatchedDimensionException, TransformException, FactoryException{
+		
+		GTFSLoader myLoader = new GTFSLoader();
+		myStops = myLoader.getStops(pathGtfsStops);
+		
+		CoordinateReferenceSystem targetCRS;
+		
+		try{
+			targetCRS = CRS.decode(UtilsSM.CRS);
+		}
+		catch(NoSuchAuthorityCodeException e){
+			targetCRS = CRS.decode("AUTO2:42001,"+myStops.get(0).lat+","+myStops.get(0).lon);
+		}
+		
+		
+		myCtrlGen = ctrlGenerator;
+		
+		mySimulator.extractChoiceUniverse();
+		mySimulator.setHypothesis();
+		mySimulator.importBiogemeModel(pathModel);
+		mySimulator.importNest(pathModel);
+		
+		SmartcardDataManager mySmartcardManager = new SmartcardDataManager(myCtrlGen);
+		mySmartcardManager.prepareSmartcards(pathSmartcard);
+		mySmartcards = mySmartcardManager.processTripChainChoiceIds();
+		
+		
+		PopulationDataManager myPopGenerator = new PopulationDataManager();
+		myPopulation = myPopGenerator.getAgents(pathPop);
+		
+		GeoDicoManager myGeoDico = new GeoDicoManager();
+		geoDico = myGeoDico.getDico(pathLocalZonesShp, myStops, targetCRS);
+		
+		
+	}
+	
+	public void initializeForSocioInference(BiogemeControlFileGenerator ctrlGenerator, 
+			String pathSmartcard, 
 			String pathGeoDico, 
 			String pathPop,
-			String pathModel) throws IOException{
+			String pathModel) throws IOException, ParseException{
 		myCtrlGen = ctrlGenerator;
 		SmartcardDataManager mySmartcardManager = new SmartcardDataManager(myCtrlGen);
-		StationDataManager myStationManager = new StationDataManager();
 		GeoDicoManager myGeoDico = new GeoDicoManager();
 		PopulationDataManager myPopGenerator = new PopulationDataManager();
 		
@@ -102,26 +145,24 @@ public class PublicTransitSystem {
 		mySimulator.importBiogemeModel(pathModel);
 		mySimulator.importNest(pathModel);
 		
-		
-		myStops = myStationManager.prepareStations(pathStations);
-		mySmartcards = mySmartcardManager.enrichWithTripChainChoice(pathSmartcard);
+		mySmartcardManager.prepareSmartcards(pathSmartcard);
+		mySmartcards = mySmartcardManager.processTripChainChoiceIds();
 		geoDico = myGeoDico.getDico(pathGeoDico);
 		System.out.println("--geodico assigned");
 		myPopulation = myPopGenerator.getAgents(pathPop);
-		
 		
 	}
 	
 	
 	
 	public void createZonalSmartcardIndex(){
-		for(double currZone : geoDico.keySet()){
-			ArrayList<Integer> closeStations = geoDico.get(currZone);
+		for(String currZone : geoDico.keySet()){
+			ArrayList<String> closeStations = geoDico.get(currZone);
 			ArrayList<Smartcard> zonalChoiceSet = new ArrayList<Smartcard>();
 			Iterator<Smartcard> universalChoiceSet = mySmartcards.iterator();
 			while(universalChoiceSet.hasNext()){
 				Smartcard currCard = universalChoiceSet.next();
-				if(closeStations.contains(currCard.stationId)){
+				if(closeStations.contains(currCard.stationId.myId.trim())){
 					zonalChoiceSet.add(currCard);
 				}
 			}
@@ -130,16 +171,16 @@ public class PublicTransitSystem {
 		}
 	}
 	
-	private HashMap<Double, ArrayList<Smartcard>> createZonalSmartcardIndex(ArrayList<Smartcard> mySmartcards){
+	private HashMap<String, ArrayList<Smartcard>> createZonalSmartcardIndex(ArrayList<Smartcard> mySmartcards){
 		
-		HashMap<Double, ArrayList<Smartcard>> localZonalChoiceSets = new HashMap<Double, ArrayList<Smartcard>>();
-		for(double currZone : geoDico.keySet()){
-			ArrayList<Integer> closeStations = geoDico.get(currZone);
+		HashMap<String, ArrayList<Smartcard>> localZonalChoiceSets = new HashMap<String, ArrayList<Smartcard>>();
+		for(String currZone : geoDico.keySet()){
+			ArrayList<String> closeStations = geoDico.get(currZone);
 			ArrayList<Smartcard> zonalChoiceSet = new ArrayList<Smartcard>();
 			Iterator<Smartcard> universalChoiceSet = mySmartcards.iterator();
 			while(universalChoiceSet.hasNext()){
 				Smartcard currCard = universalChoiceSet.next();
-				if(closeStations.contains(currCard.stationId)){
+				if(closeStations.contains(currCard.stationId.myId.trim())){
 					zonalChoiceSet.add(currCard);
 				}
 			}
@@ -151,12 +192,12 @@ public class PublicTransitSystem {
 	
 	public void createZonalPopulationIndex() {
 		// TODO Auto-generated method stub
-		for(double currZone : geoDico.keySet()){
+		for(String currZone : geoDico.keySet()){
 			Iterator<BiogemeAgent> it = myPopulation.iterator();
 			zonalPopulation.put(currZone, new ArrayList<BiogemeAgent>());
 			while(it.hasNext()){
 				BiogemeAgent currAgent = it.next();
-				if(Double.parseDouble(currAgent.myAttributes.get(UtilsSM.zoneId)) == currZone){
+				if(currAgent.myAttributes.get(UtilsSM.zoneId).trim().equals(currZone.trim())){
 					zonalPopulation.get(currZone).add(currAgent);
 				}
 			}
@@ -167,7 +208,7 @@ public class PublicTransitSystem {
 	private double[][] createLocalCostMatrix(
 			ArrayList<BiogemeAgent> myPopulation, 
 			ArrayList<Smartcard> mySmartcards, 
-			HashMap<Double, ArrayList<Smartcard>> zonalSmartcardIndex
+			HashMap<String, ArrayList<Smartcard>> zonalSmartcardIndex
 			) throws IOException{
 		
 		int n = 0;
@@ -214,7 +255,7 @@ public class PublicTransitSystem {
 	
 	public void processMatchingOnPtRiders() throws IOException {
 		// TODO Auto-generated method stub
-		HashMap<Double, ArrayList<Smartcard>> zonalSmartcardIndex = zonalChoiceSets;// createZonalSmartcardIndex(mySmartcards);
+		HashMap<String, ArrayList<Smartcard>> zonalSmartcardIndex = zonalChoiceSets;// createZonalSmartcardIndex(mySmartcards);
 		System.out.println("--prepare to get pt riders");
 		ArrayList<GTFSStop> gTFSStops = new ArrayList<GTFSStop>();
 		for(GTFSStop st: myStops.values()){
@@ -247,7 +288,7 @@ public class PublicTransitSystem {
 	
 	public void processMatchingOnPtRidersByBatch(int n) throws IOException {
 		// TODO Auto-generated method stub
-		HashMap<Double, ArrayList<Smartcard>> zonalSmartcardIndex;
+		HashMap<String, ArrayList<Smartcard>> zonalSmartcardIndex;
 		System.out.println("--prepare to get pt riders");
 		
 		ArrayList<ArrayList<GTFSStop>> batches = new ArrayList<ArrayList<GTFSStop>>();
@@ -326,7 +367,7 @@ public class PublicTransitSystem {
 				currLocalPopulation.addAll(currStation.getLocalPopulation());
 				
 				assignColumnIndex(currLocalSmartcards);
-				HashMap<Double, ArrayList<Smartcard>> zonalSmartcardIndex = createZonalSmartcardIndex(currLocalSmartcards);
+				HashMap<String, ArrayList<Smartcard>> zonalSmartcardIndex = createZonalSmartcardIndex(currLocalSmartcards);
 				
 				
 				double[][] costMatrix = createLocalCostMatrix(currLocalPopulation, currLocalSmartcards, zonalSmartcardIndex);
@@ -572,7 +613,7 @@ public class PublicTransitSystem {
 					newLine+= currAgent.myAttributes.get(key) + Utils.COLUMN_DELIMETER;
 				}
 				newLine+= sm.cardId + Utils.COLUMN_DELIMETER
-						+ sm.stationId + Utils.COLUMN_DELIMETER
+						+ sm.stationId.myId + Utils.COLUMN_DELIMETER
 						+ sm.fare + Utils.COLUMN_DELIMETER +
 						sm.getConstantName();
 				for(String key : sm.myAttributes.keySet()){
@@ -619,7 +660,6 @@ public class PublicTransitSystem {
 	public void getValues() {
 		// TODO Auto-generated method stub
 		for(BiogemeHypothesis currH: BiogemeSimulator.modelHypothesis){
-			
 			System.out.println(currH.coefName + " " + currH.coefValue);
 		}
 	}

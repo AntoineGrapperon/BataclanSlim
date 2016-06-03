@@ -1,50 +1,35 @@
 package Main;
 
-
-
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
-import javax.swing.JFrame;
-
-import org.omg.CORBA.Environment;
+import org.joda.time.DateTime;
+import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.operation.TransformException;
+import org.geotools.feature.SchemaException;
+import org.geotools.referencing.CRS;
 
 import ActivityChoiceModel.BiogemeControlFileGenerator;
 import ActivityChoiceModel.BiogemeSimulator;
 import ActivityChoiceModel.CensusPreparator;
 import ActivityChoiceModel.TravelSurveyPreparator;
 import ActivityChoiceModel.UtilsTS;
-import Associations.HungarianAlgoRithmOptimized;
-import Associations.HungarianAlgorithm;
 import Gui.Window;
-import SRMSE.JointDistributionTravelSurvey;
-import SRMSE.SRMSE;
 import SimulationObjects.World;
+import Smartcard.GTFSLoader;
 import Smartcard.GTFSRoute;
+import Smartcard.GTFSStop;
+import Smartcard.GeoDicoManager;
 import Smartcard.PublicTransitSystem;
 import Smartcard.SmartcardDataManager;
-import Smartcard.StationDataManager;
 import Smartcard.UtilsSM;
-import Smartcard.UtilsST;
-
-import org.geotools.data.FileDataStore;
-import org.geotools.data.FileDataStoreFinder;
-import org.geotools.data.simple.SimpleFeatureSource;
-import org.geotools.map.FeatureLayer;
-import org.geotools.map.Layer;
-import org.geotools.map.MapContent;
-import org.geotools.styling.SLD;
-import org.geotools.styling.Style;
-import org.geotools.swing.JMapFrame;
-import org.geotools.swing.data.JFileDataStoreChooser;
-
-import java.util.*;
-
-import Utils.*;
+import Utils.ConditionalGenerator;
+import Utils.ConfigFile;
+import Utils.OutputFileWritter;
+import Utils.Utils;
 
 /*
  * created by: Antoine Grapperon
@@ -56,105 +41,70 @@ import Utils.*;
  */
 public class Main {
 
-    public static void main(String[] args) {
-    	
-        /*ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        //PrintStream ps = new PrintStream(baos);
-        // IMPORTANT: Save the old System.out!
-        PrintStream old = System.out;
-        // Tell Java to use your special stream
-        //System.setOut(ps);*/
-    	
-    	
-        // TODO code application logic here
-    	System.out.println(Double.MAX_VALUE);
-    	long startTime = System.currentTimeMillis();
-	    World myWorld = new World(505);
-	    ConditionalGenerator condGenerator = new ConditionalGenerator();
-	    
-	    //TravelSurveyPreparator odPreparator = new TravelSurveyPreparator("D:\\Recherche\\model\\model\\ODprepared.csv");
-	    TravelSurveyPreparator odGatineau = new TravelSurveyPreparator();
-	    BiogemeSimulator odGatineauValidation;
-	    //BiogemeControlFileGenerator myCtrlGenerator = new BiogemeControlFileGenerator();
-	    BiogemeSimulator mySimulator;
-	    
-	    String city = "Gatineau";
-	    UtilsTS odDictionnary = new UtilsTS(city);
-	    Utils utils = new Utils(city);
-	    UtilsSM utilsSM = new UtilsSM();
-	    
-	    String workingDir = System.getProperty("user.dir");
+	public static void main(String[] args) {
+
+		/*
+		 * ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		 * //PrintStream ps = new PrintStream(baos); // IMPORTANT: Save the old
+		 * System.out! PrintStream old = System.out; // Tell Java to use your
+		 * special stream //System.setOut(ps);
+		 */
+
+		// TODO code application logic here
+		System.out.println(Double.MAX_VALUE);
+		long startTime = System.currentTimeMillis();
+		World myWorld = new World(505);
+		ConditionalGenerator condGenerator = new ConditionalGenerator();
+
+		// TravelSurveyPreparator odPreparator = new
+		// TravelSurveyPreparator("D:\\Recherche\\model\\model\\ODprepared.csv");
+		TravelSurveyPreparator odGatineau = new TravelSurveyPreparator();
+		BiogemeSimulator odGatineauValidation;
+		// BiogemeControlFileGenerator myCtrlGenerator = new
+		// BiogemeControlFileGenerator();
+		BiogemeSimulator mySimulator;
+
+		String city = "Gatineau";
+		UtilsTS odDictionnary = new UtilsTS(city);
+		Utils utils = new Utils(city);
+		UtilsSM utilsSM = new UtilsSM();
+
+		String workingDir = System.getProperty("user.dir");
 		System.out.println("Current working directory : " + workingDir);
-	   
-		Utils.DATA_DIR =  System.getProperty("user.dir") + "\\example\\";
-		
-		
-		
-		//////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////
-		/*File file = JFileDataStoreChooser.showOpenFile("shp", null);
-        if (file == null) {
-            return;
-        }
 
-        FileDataStore store;
+		Utils.DATA_DIR = System.getProperty("user.dir") + "\\example\\";
+
+		
+		
+
 		try {
-			store = FileDataStoreFinder.getDataStore(file);
-			SimpleFeatureSource featureSource = store.getFeatureSource();
-			MapContent map = new MapContent();
-	        map.setTitle("Quickstart");
-	        
-	        Style style = SLD.createSimpleStyle(featureSource.getSchema());
-	        Layer layer = new FeatureLayer(featureSource, style);
-	        map.addLayer(layer);
-	        JMapFrame.showMap(map);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        
+			
+			Window gui = new Window();
+		
 
-        // Create a map content and add our shapefile to it
-        
+			// ###############################################################################
+			// Infer smartcard destinations
+			// ###############################################################################
+			/*PublicTransitSystem myPublicTransitSystem = new PublicTransitSystem();
 
-        // Now display the map
-         * 
-         */
-        
-		
-//////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////
-		
-		
-		
-    	
-	   // Window gui = new Window();
-	    //PublicTransitSystem myPublicTransitSystem = new PublicTransitSystem();
-		
-		
-	    
-	    try {
-		
-			//###############################################################################
-	    	//Infer smartcard destinations
-	    	//###############################################################################
-	    	PublicTransitSystem myPublicTransitSystem = new PublicTransitSystem();
-	    	
-	    	String pathGTFSTrips = "D:\\Recherche\\CharlieWorkspace\\BataclanSlim\\example\\destinationInference\\GTFS\\trips.txt";
-	    	String pathGTFSStops = "D:\\Recherche\\CharlieWorkspace\\BataclanSlim\\example\\destinationInference\\GTFS\\stops.txt";
-	    	String pathGTFSStopTimes = "D:\\Recherche\\CharlieWorkspace\\BataclanSlim\\example\\destinationInference\\GTFS\\stop_times.txt";
-	    	String pathGTFSRoutes = "D:\\Recherche\\CharlieWorkspace\\BataclanSlim\\example\\destinationInference\\GTFS\\routes.txt";
-	    	myPublicTransitSystem.initializePTsystem(pathGTFSTrips, pathGTFSStops, pathGTFSStopTimes, pathGTFSRoutes);
-	    	System.out.println("-- public transportation system loaded");
-	    	
-	    	HashMap<String, GTFSRoute> cur = PublicTransitSystem.myRoutes;
-	    	
-	    	String pathSmartcards = "D:\\Recherche\\CharlieWorkspace\\BataclanSlim\\example\\destinationInference\\smartcardSlim.csv";
-	    	SmartcardDataManager mySmartcardManager = new SmartcardDataManager();
-	    	mySmartcardManager.prepareSmartcards(pathSmartcards);
-	    	mySmartcardManager.inferDestinations();
-	    	System.out.println("--destination infered");
-	    	
+			String pathGTFSTrips = "D:\\Recherche\\CharlieWorkspace\\BataclanSlim\\example\\destinationInference\\GTFS\\trips.txt";
+			String pathGTFSStops = "D:\\Recherche\\CharlieWorkspace\\BataclanSlim\\example\\destinationInference\\GTFS\\stops.txt";
+			String pathGTFSStopTimes = "D:\\Recherche\\CharlieWorkspace\\BataclanSlim\\example\\destinationInference\\GTFS\\stop_times.txt";
+			String pathGTFSRoutes = "D:\\Recherche\\CharlieWorkspace\\BataclanSlim\\example\\destinationInference\\GTFS\\routes.txt";
+			myPublicTransitSystem.initializePTsystem(pathGTFSTrips, pathGTFSStops, pathGTFSStopTimes, pathGTFSRoutes);
+			System.out.println("-- public transportation system loaded");
+
+			HashMap<String, GTFSRoute> cur = PublicTransitSystem.myRoutes;
+
+			String pathSmartcards = "D:\\Recherche\\CharlieWorkspace\\BataclanSlim\\example\\destinationInference\\smartcardSlim.csv";
+			SmartcardDataManager mySmartcardManager = new SmartcardDataManager();
+			mySmartcardManager.prepareSmartcards(pathSmartcards);
+			mySmartcardManager.inferDestinations();
+			System.out.println("--destination infered");
+			String pathOutput = "D:\\Recherche\\CharlieWorkspace\\BataclanSlim\\example\\outputs\\smartcards_with_destinations.csv";
+			mySmartcardManager.printSmartcards(pathOutput);*/
+
+			
 	    	
 	    	//###############################################################################
 	    	//Create conditional distributions at the metro level from disaggregate data
@@ -303,7 +253,7 @@ public class Main {
 			mySimulator.initialize(Utils.DATA_DIR + "biogeme\\dataZones2.csv");
 			mySimulator.importBiogemeModel(pathToModel);
 			mySimulator.importNest(pathToModel);
-			mySimulator.applyModelOnTravelSurveyPopulation(Utils.DATA_DIR + "Outputs\\simuleOD2704.csv",1, true);*/
+			mySimulator.applyModelOnTravelSurveyPopulation(Utils.DATA_DIR + "Outputs\\simuleOD2704.csv",1, true);
 			
 			//############################################################################################
 	    	//Load Smartcard data and process them to label with a choice id
@@ -378,64 +328,21 @@ public class Main {
 	    	myWorld.CreatePersonPopulationPoolLocalLevelMultiThreads(Utils.DATA_DIR + "myPersonPool.csv", pathToSeeds,numberOfLogicalProcessors);
 			myWorld.printMetroMarginalFittingAnalysis(UtilsTS.city, startTime);*/
 	    	
-			
-			//###############################################################################
-	    	//Generate a synthetic population and output statistical analysis of the goodness
-	    	//of fit for Vancouver
-	    	//###############################################################################
-			/*myWorld.Initialize(true, 1);
-	    	System.out.println("--initialization completed");
-	    	String pathToSeeds = Utils.DATA_DIR+"data\\ImportanceSamplingConditionals\\Vancouver.txt";
-			//myWorld.CreatePersonPopulationPoolMetroLevel(Utils.DATA_DIR + "myPersonPool.csv", pathToSeeds);
-	    	//myWorld.CreatePersonPopulationPoolLocalLevel(Utils.DATA_DIR + "myPersonPool.csv", pathToSeeds);
-	    	
-	    	int numberOfLogicalProcessors = Runtime.getRuntime().availableProcessors() -1;
-	    	System.out.println("--computation with: " + numberOfLogicalProcessors + " logical processors");
-	    	myWorld.CreatePersonPopulationPoolLocalLevelMultiThreads(Utils.DATA_DIR + "myPersonPool.csv", pathToSeeds,numberOfLogicalProcessors);
-			myWorld.printMetroMarginalFittingAnalysis("Vancouver", startTime);*/
-	    	
-	    	
-			
-	    	
-	    	
-	    	//Generate conditional distributions at metro level for Vancouver
-	    	/*String data = Utils.DATA_DIR+"data\\ImportanceSamplingConditionals\\Vancouver.txt";
-	    	String descFile = Utils.DATA_DIR+"data\\ImportanceSamplingConditionals\\descFile.txt";
-	    	String zonalData = "D://Recherche//CharlieWorkspace//PopSynz//data//933VancouverDA.csv";
-	    	String  destPath = "933";
-	    	condGenerator.GenerateConditionalsStepByStep(data,descFile,zonalData,destPath);*/
-	    	
-	    	
-	    	
-	    	/*String data = Utils.DATA_DIR+"data\\ImportanceSamplingConditionals\\Vancouver.txt";
-	    	String descFile = Utils.DATA_DIR+"data\\ImportanceSamplingConditionals\\descFile.txt";
-	    	String zonalData = "D://Recherche//CharlieWorkspace//PopSynz//data//933VancouverDA.csv";
-	    	String  destPath = "933";
-	    	condGenerator.GenerateConditionalsStepByStep(data,descFile,zonalData,destPath);*/
-	    	
-	    	
-	    	
-	    	
-	    
 		
 	    }
-		catch (IOException | ParseException e) {
+		catch (IOException | MismatchedDimensionException | SchemaException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			
 		}
-	    
-	    long endTime = System.currentTimeMillis();
-		
-		System.out.println("--time to compute age x gender : "+ (endTime-startTime) + "ms");
-		
-		
-		/*System.out.flush();
-	    System.setOut(old);*/
-    }
 
-	
-		// TODO Auto-generated method stub
 		
+		long endTime = System.currentTimeMillis();
+
+		System.out.println("--time to compute age x gender : " + (endTime - startTime) + "ms");
+
 	}
 
+	// TODO Auto-generated method stub
+
+}

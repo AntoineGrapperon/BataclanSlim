@@ -61,14 +61,8 @@ public class PaneGeneral extends JPanel{
 				new Dimension(30,50));
 		line3.myButton.setSize(new Dimension(30,50));
 		
-		line4 = new JLabel("<html> <br><br><br><br><br><br><br><br><br><br><br><br><br><br>"
-				+ "This software was named 'Bataclan' as a tribute to the victims of the DAECH "
-				+ "terrorist attacks in Paris: <br>"
-				+ "-the 7th of January 2016, 12 persons working for Charlie Hebdo were killed in Paris<br>"
-				+ "-the 13rd of November 2016, 130 persons were killed in various places as they were <br>enjoying the Paris nightlife. "
-				+ "90 of them were attending a music concert at the Bataclan showroom. <br>"
-				+ "-hundreds more were injured severly.<br>"
-				+ "Qu'ils reposent en paix.");
+		line4 = new JLabel("<html> This software may evolve. You are kindly invited to transmit your review to: </br>"
+				+ "antoine.grapperon@free.fr");
 		JPanel format = new JPanel();
 		format.add(line4);
 		format.setLayout(new FlowLayout(FlowLayout.LEFT));

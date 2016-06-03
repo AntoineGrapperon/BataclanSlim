@@ -582,49 +582,13 @@ public class GibbsSampler extends Sampler
 			
 			    ConditionalDistribution currDist =
 			        (ConditionalDistribution)mainAttributesCollection.get(seltdDim);
-			    
-			    //System.out.println(currDist.GetDimensionName());
-			    			
-			    /*if (currDist.GetDimensionName().equals("age"))
-			    {
-			    	index = ConfigFile.AttributesImportanceNames.indexOf("age");			    
-			        newAgent = (Person) currImpSampler.GetNextAgent(
-			                    currZone.myAttributesDiscConditional.get(index),
-			                    currDist, currDist.GetDimensionName(),
-			                    prevAgent, currZone);
-			    }
-			    else if (currDist.GetDimensionName() == "sex")
-			    {
-			    	index = ConfigFile.AttributesImportanceNames.indexOf("sex");			    
-			        newAgent = (Person) currImpSampler.GetNextAgent(
-			                    currZone.myAttributesDiscConditional.get(index),
-			                    currDist, currDist.GetDimensionName(),
-			                    prevAgent, currZone);
-			    }
-			    else if (currDist.GetDimensionName().equals("mStat"))
-			    {
-			    	index = ConfigFile.AttributesImportanceNames.indexOf("mStat");			    
-			        newAgent = (Person) currImpSampler.GetNextAgent(
-			                    currZone.myAttributesDiscConditional.get(index),
-			                    currDist, currDist.GetDimensionName(),
-			                    prevAgent, currZone);
-			    }
-			    else if (currDist.GetDimensionName() == "nPers")
-			    {
-			    	index = ConfigFile.AttributesImportanceNames.indexOf("nPers");			    
-			        newAgent = (Person) currImpSampler.GetNextAgent(
-			                    currZone.myAttributesDiscConditional.get(index),
-			                    currDist, currDist.GetDimensionName(),
-			                    prevAgent, currZone);
-			    }
-			    else
-			    {*/
-				    ArrayList currComm = currDist.GetCommulativeValue(   // it seems that Conditional distribution does not contains any defined "GetComulativeValue" : return null
-				             prevAgent.GetNewJointKey(currDist.GetDimensionName())
-				                ,null);
-				        newAgent = (Person)GenerateNextAgent(currComm,
-				                (SimulationObject)prevAgent,
-				                currDist.GetDimensionName());  
+
+			    ArrayList currComm = currDist.GetCommulativeValue(   // it seems that Conditional distribution does not contains any defined "GetComulativeValue" : return null
+			             prevAgent.GetNewJointKey(currDist.GetDimensionName())
+			                ,null);
+			        newAgent = (Person)GenerateNextAgent(currComm,
+			                (SimulationObject)prevAgent,
+			                currDist.GetDimensionName());  
 			    //}
 			    if(!(newAgent == null)){
 			    	prevAgent = newAgent;
@@ -655,8 +619,7 @@ public class GibbsSampler extends Sampler
         private SimulationObject GenerateNextAgent(ArrayList curCom,
             SimulationObject prvAgnt, String genDim)
         {
-            double currMax = (double)
-                ((KeyValPair)curCom.get(curCom.size() - 1)).value;
+            double currMax = (double) ((KeyValPair)curCom.get(curCom.size() - 1)).value;
             if (currMax != 0.00)
             {
                 double randVal = randGen.NextDoubleInRange(0, currMax);
@@ -664,17 +627,14 @@ public class GibbsSampler extends Sampler
                 {
                     if (randVal <= ((KeyValPair)curCom.get(i)).value)
                     {
-                    	//System.out.println("not fake");
-                        return prvAgnt.CreateNewCopy(genDim, i); // it returns a lot of new agent ???
+                        return prvAgnt.CreateNewCopy(genDim, i); 
                     }
                 }
             }
             else
             {
-            	//System.out.println("fake");
                 return prvAgnt.CreateNewCopy(genDim,
                     randGen.NextInRange(0, (curCom.size() - 1)));
-            	//return null;
             }
             return null;
         }

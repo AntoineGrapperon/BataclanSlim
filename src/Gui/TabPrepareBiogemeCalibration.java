@@ -22,6 +22,7 @@ import Controlers.PromptStringInformation;
  */
 public class TabPrepareBiogemeCalibration extends JPanel {
 	
+	ArrayList<PromptStringInformation> myStringPrompts = new ArrayList<PromptStringInformation>();
 	PromptStringInformation line1;
 	PromptStringInformation line2;
 	PromptStringInformation line3;
@@ -131,8 +132,16 @@ public class TabPrepareBiogemeCalibration extends JPanel {
 		myContent.add(line10);
 		myContent.add(line11);
 		
-		myContent.setLayout(new BoxLayout(myContent, BoxLayout.PAGE_AXIS));
-		    
+		myContent.setLayout(new BoxLayout(myContent, BoxLayout.PAGE_AXIS));	    
 		this.add(myContent, BorderLayout.SOUTH);
+		
+		myStringPrompts.add(line1);
+		myStringPrompts.add(line2);
+		myStringPrompts.add(line3);
+		myStringPrompts.add(line5);
+		myStringPrompts.add(line6);
+		myStringPrompts.add(line7);
+		myStringPrompts.add(line9);
+		myStringPrompts.add(line10);
 	}
 }

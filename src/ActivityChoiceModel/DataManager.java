@@ -51,14 +51,14 @@ public class DataManager {
     	 ArrayList<String> headers = data.get(0);
     	 for(int i =0; i < headers.size(); i++){
     		 //System.out.println(headers.get(i));
-    		 myData.put(headers.get(i), new ArrayList<String>());
+    		 myData.put(headers.get(i).trim(), new ArrayList<String>());
     	 }
 
     	 for (int i=1; i<data.size(); i++)
     	 {
     			for (int j=0; j<data.get(i).size();j++)
     			{
-    				myData.get(headers.get(j)).add(data.get(i).get(j));
+    				myData.get(headers.get(j).trim()).add(data.get(i).get(j));
     			}
     	 }
     }
@@ -105,6 +105,11 @@ public class DataManager {
 			myOutputFileWriter.WriteToFile(line);
 		}
 		myOutputFileWriter.CloseFile();
+	}
+	
+	public void printColumns(ArrayList<String> toPrint, String outputPath) throws IOException{
+		myOutputFileWriter.OpenFile(outputPath);
+		printColumns(toPrint);
 	}
 	
 	public void printColumns(ArrayList<String> toPrint) throws IOException {
