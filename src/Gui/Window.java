@@ -22,6 +22,7 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
 import org.geotools.data.store.ContentState;
+import org.geotools.feature.SchemaException;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
@@ -52,7 +53,7 @@ public class Window extends JFrame implements ActionListener {
     InformationPane informationPane = new InformationPane();
     PaneButtons paneButtons = new PaneButtons();
 
-	public Window() throws IOException{
+	public Window() throws IOException, SchemaException{
 		content = new PaneContent();
 		this.setTitle("BataclanGUI");
 		this.setExtendedState(JFrame.MAXIMIZED_BOTH);

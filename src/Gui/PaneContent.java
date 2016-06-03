@@ -15,6 +15,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
+import org.geotools.feature.SchemaException;
+
 /**
  * @author Antoine
  *
@@ -30,7 +32,7 @@ public class PaneContent extends JPanel {
 	PaneSocioDemographicInference paneSocioDemographicInference = new PaneSocioDemographicInference();
     PaneMap map;
     
-	public PaneContent() throws IOException{
+	public PaneContent() throws IOException, SchemaException{
 		map = new PaneMap();
 	    this.setLayout(cl);
 	    this.add(paneGeneral,listContent[0]);

@@ -9,6 +9,7 @@ import org.joda.time.DateTime;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
+import org.geotools.feature.SchemaException;
 import org.geotools.referencing.CRS;
 
 import ActivityChoiceModel.BiogemeControlFileGenerator;
@@ -329,7 +330,7 @@ public class Main {
 	    	
 		
 	    }
-		catch (IOException | MismatchedDimensionException e) {
+		catch (IOException | MismatchedDimensionException | SchemaException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			

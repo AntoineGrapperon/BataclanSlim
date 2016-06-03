@@ -45,14 +45,12 @@ public class PromptStringInformation extends JPanel{
 	
 	public PromptStringInformation(String prompt, String hlp, String endPath, Dimension d){
 		super();
+		
 		endOfPath = endPath;
 		this.setLayout(new GridLayout(2,1));
 		JLabel label = new JLabel(prompt);
 		myText = new TextField(Utils.Utils.DATA_DIR + "\\" + endOfPath, hlp);
 		myText.setPreferredSize(d);
-		//myText.setSize(d);
-	    this.add(label);
-	    this.add(myText);
 	}
 	
 	public void updateText(){
